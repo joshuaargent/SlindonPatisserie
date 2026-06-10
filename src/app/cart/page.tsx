@@ -1,13 +1,8 @@
-import { Metadata } from 'next';
+'use client'
+
 import Link from 'next/link';
 import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, Clock, ArrowRight } from 'lucide-react';
-import { useCartStore } from '@/lib/stores/cart';
-import { formatPrice } from '@/lib/stores/cart';
-
-export const metadata: Metadata = {
-  title: 'Your Cart',
-  description: 'Review your order before checkout',
-};
+import { useCartStore, formatPrice } from '@/lib/stores/cart';
 
 // Client component for cart content
 function CartContent() {
