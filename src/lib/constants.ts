@@ -46,20 +46,22 @@ export const meta = {
 
 export const mainNav = [
   { label: 'Home', href: '/' },
+  { label: 'Products', href: '/products' },
   { label: 'Our Story', href: '/about' },
-  { label: 'Find Us', href: '/markets' },
   { label: 'Wholesale', href: '/wholesale' },
   { label: 'Franchise', href: '/franchise' },
+  { label: 'Careers', href: '/careers' },
   { label: 'Contact', href: '/contact' },
 ];
 
 export const footerNav = {
   main: [
     { label: 'Home', href: '/' },
+    { label: 'Products', href: '/products' },
     { label: 'Our Story', href: '/about' },
-    { label: 'Find Us', href: '/markets' },
     { label: 'Wholesale', href: '/wholesale' },
     { label: 'Franchise', href: '/franchise' },
+    { label: 'Careers', href: '/careers' },
     { label: 'Contact', href: '/contact' },
   ],
   content: [
