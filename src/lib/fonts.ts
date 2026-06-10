@@ -1,50 +1,18 @@
-import { Inter, Lora, Playfair_Display, JetBrains_Mono, Pinyon_Script, Dancing_Script, Shadows_Into_Light } from "next/font/google";
+import { Inter, Lora, Playfair_Display, JetBrains_Mono } from "next/font/google";
 
 // ============================================
 // Font Configuration - Slindon Patisserie
-// Old School French Patisserie Style (Ratatouille/Disneyland)
 // ============================================
 
 /**
  * Inter - Primary sans-serif font for UI and body text
+ * Supports: Latin, Latin Extended, Cyrillic, Greek, Vietnamese
  */
 export const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
-});
-
-/**
- * Pinyon Script - Classic French script font
- * Perfect for old school patisserie branding
- * Think: Ratatouille menus, French bakery signs
- */
-export const pinyonScript = Pinyon_Script({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-script",
-  weight: ["400"],
-});
-
-/**
- * Dancing Script - Casual script font for accents
- */
-export const dancingScript = Dancing_Script({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-dancing",
-  weight: ["400", "500", "600", "700"],
-});
-
-/**
- * Shadows Into Light - Handwritten feel
- */
-export const shadowsIntoLight = Shadows_Into_Light({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-handwritten",
-  weight: ["400"],
 });
 
 /**
@@ -61,6 +29,7 @@ export const playfair = Playfair_Display({
 
 /**
  * Lora - Serif font for long-form reading content
+ * Supports: Latin, Latin Extended, Cyrillic, Vietnamese
  */
 export const lora = Lora({
   subsets: ["latin"],
@@ -72,6 +41,7 @@ export const lora = Lora({
 
 /**
  * JetBrains Mono - Monospace font for code blocks
+ * Supports: Latin, Latin Extended, Cyrillic, Greek, Vietnamese
  */
 export const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],

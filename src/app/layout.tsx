@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { inter, lora, playfair, jetbrainsMono, pinyonScript, dancingScript, shadowsIntoLight } from '@/lib/fonts';
+import { inter, lora, playfair, jetbrainsMono } from '@/lib/fonts';
 import { siteConfig, meta } from '@/lib/constants';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -9,13 +9,12 @@ import './globals.css';
 
 // ============================================
 // Metadata - Slindon Patisserie
-// Old School French Patisserie Style
 // ============================================
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#D42426',
+  themeColor: '#FDF8F0',
 };
 
 export const metadata: Metadata = {
@@ -83,11 +82,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} ${lora.variable} ${jetbrainsMono.variable} ${pinyonScript.variable} ${dancingScript.variable} ${shadowsIntoLight.variable}`}
+      className={`${inter.variable} ${playfair.variable} ${lora.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>
-        <meta name="theme-color" content="#D42426" />
+        <meta name="theme-color" content="#FDF8F0" />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
         <NextAuthProvider>
