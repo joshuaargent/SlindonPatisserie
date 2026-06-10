@@ -79,15 +79,16 @@ export const footerNav = {
 // ============================================
 
 export const colors = {
-  primary: '#8B4513', // Rich brown (saddle brown)
-  primaryHover: '#6B3410', // Darker brown
-  accent: '#D4A574', // Warm caramel/golden brown
+  primary: '#D42426', // Deep Red - main brand color
+  primaryHover: '#B81E20', // Darker red
+  accent: '#F5C518', // Golden Yellow - secondary/highlights
   background: '#FDF8F0', // Warm cream
   surface: '#FFFFFF', // White cards
   text: '#2D1810', // Dark chocolate
-  textMuted: '#6B5B4F', // Warm gray-brown
+  textMuted: '#5C4033', // Warm brown
   border: '#E8DDD0', // Light warm border
   gold: '#C9A962', // Antique gold
+  brown: '#4A3728', // Rich brown for secondary elements
 } as const;
 
 // ============================================
