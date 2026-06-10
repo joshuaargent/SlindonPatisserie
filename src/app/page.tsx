@@ -1,46 +1,17 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, ShoppingBag, MapPin, Clock, Package, ChefHat, Coffee, PartyPopper, ShoppingCart } from 'lucide-react';
+import { ArrowRight, MapPin, Clock, ShoppingCart, ShoppingBag, Package, Loader2 } from 'lucide-react';
 
-// Product categories with icons
-const categories = [
-  {
-    name: 'Patisserie',
-    description: 'Croissants, Danish, Pain au Chocolat',
-    icon: ChefHat,
-    href: '/products?category=bakery',
-    color: 'bg-[#D42426]'
-  },
-  {
-    name: 'Artisan Bread',
-    description: 'Sourdough, Baguettes, Ciabatta',
-    icon: Coffee,
-    href: '/products?category=bread',
-    color: 'bg-[#8B5A2B]'
-  },
-  {
-    name: 'Catering',
-    description: 'Sandwiches, Platters, Afternoon Tea',
-    icon: PartyPopper,
-    href: '/products?category=catering',
-    color: 'bg-[#F5C518]'
-  },
-  {
-    name: 'Wholesale',
-    description: 'Bulk orders for your business',
-    icon: Package,
-    href: '/wholesale',
-    color: 'bg-[#4A3728]'
-  },
-];
-
-// Featured products (sample - in production these come from DB)
-const featuredProducts = [
-  { name: 'Butter Croissant', price: 2.50, category: 'Patisserie', tag: 'Best Seller' },
-  { name: 'Sourdough Boule', price: 4.50, category: 'Artisan Bread', tag: 'Fresh Daily' },
-  { name: 'Pain au Chocolat', price: 2.80, category: 'Patisserie', tag: 'Popular' },
-  { name: 'Mini Sandwich Selection', price: 15.00, category: 'Catering', tag: 'Pre-order' },
-];
+// Category display configuration
+const categoryConfig: Record<string, { label: string; description: string; color: string; emoji: string }> = {
+  bakery: { label: 'Patisserie', description: 'Croissants, Danish, Pain au Chocolat', color: 'bg-[#D42426]', emoji: '🥐' },
+  bread: { label: 'Artisan Bread', description: 'Sourdough, Baguettes, Ciabatta', color: 'bg-[#8B5A2B]', emoji: '🍞' },
+  catering: { label: 'Catering', description: 'Sandwiches, Platters, Afternoon Tea', color: 'bg-[#F5C518]', emoji: '🥪' },
+  wholesale: { label: 'Wholesale', description: 'Bulk orders for your business', color: 'bg-[#4A3728]', emoji: '📦' },
+  sundries: { label: 'Sundries', description: 'Jam, Cream, and more', color: 'bg-[#6B5B4F]', emoji: '🛒' },
+}
 
 // Market schedule
 const markets = [
@@ -50,10 +21,51 @@ const markets = [
 ];
 
 // ============================================
-// Homepage - Slindon Patisserie
+// Homepage - Dynamic from Database
 // ============================================
 
 export default function HomePage() {
+  const [products, setProducts] = useState<Array<{
+    id: string;
+    name: string;
+    retailPrice: number;
+    category: string;
+    image: string | null;
+    available: boolean;
+  }>>([])
+  const [categories, setCategories] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products?available=true&includeWholesale=true')
+        if (response.ok) {
+          const data = await response.json()
+          setProducts(data.products.slice(0, 4)) // Featured: first 4 products
+          setCategories(data.categories)
+        }
+      } catch (error) {
+        console.error('Failed to fetch products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
+  // Get category display info
+  const getCategoryInfo = (category: string) => {
+    return categoryConfig[category] || { label: category, description: '', color: 'bg-[#4A3728]', emoji: '🧁' }
+  }
+
+  // Get first 4 available categories for category cards
+  const categoryCards = categories.slice(0, 4).map(cat => ({
+    ...categoryConfig[cat],
+    href: `/products?category=${cat}`,
+  }))
+
   return (
     <>
       {/* Hero Section */}
@@ -105,7 +117,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Category Cards - Shop by Type */}
+      {/* Category Cards - Shop by Type (Dynamic) */}
       <section className="py-16 md:py-20 bg-[#FDF8F0]">
         <div className="container">
           <div className="text-center mb-12">
@@ -117,20 +129,24 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 text-[#D42426] animate-spin" />
+              <span className="ml-3 text-[#5C4033]">Loading...</span>
+            </div>
+          ) : categoryCards.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {categoryCards.map((category, index) => (
                 <Link
-                  key={category.name}
-                  href={category.href}
+                  key={index}
+                  href={category.href || '/products'}
                   className="group relative rounded-2xl overflow-hidden aspect-square md:aspect-auto md:h-48 p-6 flex flex-col justify-end transition-transform hover:scale-[1.02] shadow-md"
-                  style={{ backgroundColor: category.color }}
+                  style={{ backgroundColor: category.color.includes('[') ? undefined : category.color }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  <Icon className="h-10 w-10 text-white/90 mb-3 relative z-10" />
+                  <span className="text-4xl relative z-10 mb-2">{category.emoji}</span>
                   <h3 className="font-serif text-xl md:text-2xl font-bold text-white relative z-10">
-                    {category.name}
+                    {category.label}
                   </h3>
                   <p className="text-sm text-white/80 relative z-10 mt-1">
                     {category.description}
@@ -139,9 +155,11 @@ export default function HomePage() {
                     <ArrowRight className="h-6 w-6 text-white" />
                   </div>
                 </Link>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-[#5C4033]">No categories available yet.</p>
+          )}
 
           <div className="text-center mt-8">
             <Link
@@ -155,7 +173,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products (Dynamic) */}
       <section className="py-16 md:py-20 bg-white">
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
@@ -176,41 +194,49 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts.map((product, index) => (
-              <div
-                key={index}
-                className="group bg-[#FDF8F0] rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                {/* Product Image Placeholder */}
-                <div className="aspect-square bg-[#E8DDD0] relative flex items-center justify-center">
-                  <div className="text-center p-4">
-                    <span className="text-5xl">🥐</span>
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 text-[#D42426] animate-spin" />
+            </div>
+          ) : products.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {products.map((product) => {
+                const categoryInfo = getCategoryInfo(product.category)
+                return (
+                  <div
+                    key={product.id}
+                    className="group bg-[#FDF8F0] rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    {/* Product Image */}
+                    <div className="aspect-square bg-[#E8DDD0] relative flex items-center justify-center">
+                      {product.image ? (
+                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-5xl">{categoryInfo.emoji}</span>
+                      )}
+                    </div>
+                    
+                    {/* Product Info */}
+                    <div className="p-4">
+                      <p className="text-xs text-[#8B7D6B] uppercase tracking-wide">{categoryInfo.label}</p>
+                      <h3 className="font-semibold text-[#2D1810] mt-1">{product.name}</h3>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-lg font-bold text-[#D42426]">£{product.retailPrice.toFixed(2)}</span>
+                        <Link
+                          href="/products"
+                          className="text-sm text-[#4A3728] hover:text-[#D42426] font-medium"
+                        >
+                          Add to Cart
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                  {product.tag && (
-                    <span className="absolute top-3 left-3 px-2 py-1 bg-[#F5C518] text-[#2D1810] text-xs font-bold rounded">
-                      {product.tag}
-                    </span>
-                  )}
-                </div>
-                
-                {/* Product Info */}
-                <div className="p-4">
-                  <p className="text-xs text-[#8B7D6B] uppercase tracking-wide">{product.category}</p>
-                  <h3 className="font-semibold text-[#2D1810] mt-1">{product.name}</h3>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-lg font-bold text-[#D42426]">£{product.price.toFixed(2)}</span>
-                    <Link
-                      href="/products"
-                      className="text-sm text-[#4A3728] hover:text-[#D42426] font-medium"
-                    >
-                      Add to Cart
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                )
+              })}
+            </div>
+          ) : (
+            <p className="text-center text-[#5C4033] py-12">No products available yet. Check back soon!</p>
+          )}
         </div>
       </section>
 
