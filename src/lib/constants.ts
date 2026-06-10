@@ -3,22 +3,27 @@
 // ============================================
 
 export const siteConfig = {
-  name: 'My Template',
-  description: 'A reusable Next.js template for any website project.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com',
+  name: 'Slindon Patisserie',
+  description: 'Handmade patisserie products from Slindon, West Sussex. Over 40 years of crafting delicious treats.',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://slindonpatisserie.co.uk',
   ogImage: '/og-image.png',
-  location: 'Surrey, United Kingdom',
+  location: 'Slindon, Arundel, West Sussex, BN18 0RP',
+  phone: '01243 814369',
   links: {
-    youtube: 'https://youtube.com/@joshua_argent',
-    github: 'https://github.com/joshuaargent',
-    instagram: 'https://instagram.com/joshua_argent',
-    facebook: 'https://facebook.com/joshua_argent',
-    strava: 'https://www.strava.com/athletes/500534339',
-    email: 'mailto:argentjackjoshua@outlook.com',
+    youtube: 'https://youtube.com/@SlindonBakery',
+    instagram: 'https://instagram.com/slindonpatisserie',
+    email: 'mailto:info@slindonpatisserie.co.uk',
+  },
+  address: {
+    line1: 'The Old Bakery',
+    line2: 'Slindon',
+    line3: 'Arundel',
+    county: 'West Sussex',
+    postcode: 'BN18 0RP',
   },
   author: {
-    name: 'Your Name',
-    bio: 'Your bio here',
+    name: 'Slindon Patisserie',
+    bio: 'Family-run bakery with over 40 years of history in the South Downs National Park.',
   },
 };
 
@@ -27,12 +32,12 @@ export const siteConfig = {
 // ============================================
 
 export const meta = {
-  title: 'My Template',
-  description: 'A reusable Next.js template for any website project.',
-  keywords: ['template', 'nextjs', 'website', 'portfolio'] as string[],
-  siteName: 'My Template',
-  twitter: '@yourhandle',
-  instagramHandle: '@yourhandle',
+  title: 'Slindon Patisserie',
+  description: 'Handmade patisserie products from Slindon, West Sussex. Over 40 years of crafting delicious treats.',
+  keywords: ['bakery', 'patisserie', 'slindon', 'west sussex', 'farmers market', 'wholesale', 'artisan'] as string[],
+  siteName: 'Slindon Patisserie',
+  twitter: '@slindonpatisserie',
+  instagramHandle: '@slindonpatisserie',
 };
 
 // ============================================
@@ -41,37 +46,46 @@ export const meta = {
 
 export const mainNav = [
   { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
+  { label: 'Our Story', href: '/about' },
+  { label: 'Find Us', href: '/markets' },
+  { label: 'Wholesale', href: '/wholesale' },
+  { label: 'Franchise', href: '/franchise' },
   { label: 'Contact', href: '/contact' },
 ];
 
 export const footerNav = {
   main: [
     { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
+    { label: 'Our Story', href: '/about' },
+    { label: 'Find Us', href: '/markets' },
+    { label: 'Wholesale', href: '/wholesale' },
+    { label: 'Franchise', href: '/franchise' },
     { label: 'Contact', href: '/contact' },
   ],
   content: [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms & Conditions', href: '/terms' },
   ],
   social: [
     { label: 'YouTube', href: siteConfig.links.youtube },
-    { label: 'GitHub', href: siteConfig.links.github },
     { label: 'Instagram', href: siteConfig.links.instagram },
-    { label: 'Facebook', href: siteConfig.links.facebook },
-    { label: 'Strava', href: siteConfig.links.strava },
   ],
 };
 
 // ============================================
-// Design Tokens
+// Design Tokens - Bakery Theme
 // ============================================
 
 export const colors = {
-  primary: '#0D9488',
-  primaryHover: '#0F766E',
+  primary: '#8B4513', // Rich brown (saddle brown)
+  primaryHover: '#6B3410', // Darker brown
+  accent: '#D4A574', // Warm caramel/golden brown
+  background: '#FDF8F0', // Warm cream
+  surface: '#FFFFFF', // White cards
+  text: '#2D1810', // Dark chocolate
+  textMuted: '#6B5B4F', // Warm gray-brown
+  border: '#E8DDD0', // Light warm border
+  gold: '#C9A962', // Antique gold
 } as const;
 
 // ============================================

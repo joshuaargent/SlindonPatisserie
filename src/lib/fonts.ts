@@ -1,7 +1,7 @@
-import { Inter, Lora, JetBrains_Mono } from "next/font/google";
+import { Inter, Lora, Playfair_Display, JetBrains_Mono } from "next/font/google";
 
 // ============================================
-// Font Configuration
+// Font Configuration - Slindon Patisserie
 // ============================================
 
 /**
@@ -13,6 +13,18 @@ export const inter = Inter({
   display: "swap",
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
+});
+
+/**
+ * Playfair Display - Elegant serif for headings
+ * Classic, high-contrast serif perfect for bakery branding
+ */
+export const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 /**
