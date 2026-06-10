@@ -1,58 +1,53 @@
 /* ============================================
    Global Styles for Slindon Patisserie
+   Old School French Patisserie - Ratatouille Style
    ============================================ */
 
 @import "tailwindcss";
 
 /* ------------------------------------------
-   CSS Custom Properties (Design Tokens)
-   French Patisserie Theme - Ratatouille/Disneyland style
-   Brand Colors: Red primary, Yellow secondary
+   CSS Custom Properties - French Patisserie Theme
+   Red (#D42426) and Yellow (#F5C518) - Joby's Colors
+   Script fonts for that classic French feel
    ------------------------------------------ */
 
 @theme {
-  /* Colors - Joby's Brand Colors */
-  --color-primary: #D42426; /* Deep Red - primary brand color */
-  --color-primary-hover: #B81E20; /* Darker red */
-  --color-accent: #F5C518; /* Golden Yellow - secondary/highlights */
-  --color-gold: #E8A818; /* Rich gold */
+  /* Brand Colors - Joby's Red and Yellow */
+  --color-primary: #D42426;
+  --color-primary-dark: #A81B1D;
+  --color-accent: #F5C518;
+  --color-accent-dark: #D4A000;
   
-  --color-bg-primary: #FDF8F0; /* Warm cream */
-  --color-bg-secondary: #FFF9E6; /* Slightly yellow cream */
-  --color-bg-card: #FFFFFF; /* White cards */
-
-  --color-text-primary: #2D1810; /* Dark chocolate */
-  --color-text-secondary: #5C4033; /* Medium brown */
-  --color-text-muted: #6B5B4F; /* Warm gray-brown */
-
-  --color-border: #E8DDD0; /* Light warm border */
-
+  /* Background - Warm cream like old paper */
+  --color-bg-cream: #FFF8E7;
+  --color-bg-light: #FFFDF5;
+  --color-bg-card: #FFFFFF;
+  
+  /* Text - Rich brown like chocolate */
+  --color-text-dark: #2C1810;
+  --color-text-medium: #5C4033;
+  --color-text-light: #8B7355;
+  
+  /* Borders */
+  --color-border: #E8D5B5;
+  --color-border-dark: #C4A67A;
+  
   /* Font Families */
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, serif; /* Elegant serif for headings */
-  --font-mono: var(--font-mono), monospace;
-
-  /* Spacing */
-  --spacing-section: 6rem;
-  --spacing-container: 80rem;
-
-  /* Border Radius */
-  --radius-sm: 0.375rem;
+  --font-sans: var(--font-inter), Georgia, serif;
+  --font-script: var(--font-script), 'Brush Script MT', cursive;
+  --font-dancing: var(--font-dancing), cursive;
+  --font-serif: var(--font-playfair), Georgia, serif;
+  
+  /* Borders */
+  --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(139 69 19 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(139 69 19 / 0.1), 0 2px 4px -2px rgb(139 69 19 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(139 69 19 / 0.1), 0 4px 6px -4px rgb(139 69 19 / 0.1);
-
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
+  
+  /* Shadows - Soft, warm shadows */
+  --shadow-soft: 0 2px 8px rgba(44, 24, 16, 0.08);
+  --shadow-medium: 0 4px 12px rgba(44, 24, 16, 0.12);
+  --shadow-heavy: 0 8px 24px rgba(44, 24, 16, 0.16);
 }
 
 /* ------------------------------------------
@@ -61,123 +56,55 @@
 
 html {
   scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
+  background-color: var(--color-bg-cream);
+  color: var(--color-text-dark);
   line-height: 1.6;
 }
 
 /* ------------------------------------------
-   Typography - Bakery Style
+   Typography - Old School French Style
    ------------------------------------------ */
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.font-script {
+  font-family: var(--font-script);
+}
+
+.font-dancing {
+  font-family: var(--font-dancing);
+}
+
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
-  font-weight: 600;
+  color: var(--color-text-dark);
   line-height: 1.2;
-  color: var(--color-text-primary);
+}
+
+/* Script-style heading for hero/logo areas */
+.heading-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 h1 {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-size: clamp(2.5rem, 6vw, 4rem);
 }
 
 h2 {
-  font-size: clamp(1.875rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 4vw, 3rem);
 }
 
 h3 {
-  font-size: clamp(1.5rem, 3vw, 1.875rem);
-}
-
-h4 {
-  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
 p {
-  max-width: 72ch;
-}
-
-.prose {
-  font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.8;
-}
-
-.prose p {
-  margin-bottom: 1.5em;
-}
-
-.prose h2 {
-  font-family: var(--font-sans);
-  margin-top: 2.5em;
-  margin-bottom: 0.75em;
-}
-
-.prose h3 {
-  font-family: var(--font-sans);
-  margin-top: 2em;
-  margin-bottom: 0.5em;
-}
-
-.prose ul,
-.prose ol {
-  margin-bottom: 1.5em;
-  padding-left: 1.5em;
-}
-
-.prose li {
-  margin-bottom: 0.5em;
-}
-
-.prose blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding-left: 1.5em;
-  margin: 1.5em 0;
-  font-style: italic;
-  color: var(--color-text-secondary);
-}
-
-.prose code {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  background-color: var(--color-bg-secondary);
-  padding: 0.125em 0.375em;
-  border-radius: var(--radius-sm);
-}
-
-html.dark .prose code {
-  background-color: var(--color-bg-secondary);
-}
-
-.prose pre {
-  background-color: #1c1917;
-  color: #fafaf9;
-  padding: 1.5em;
-  border-radius: var(--radius-lg);
-  overflow-x: auto;
-  margin: 1.5em 0;
-}
-
-html.dark .prose pre {
-  background-color: #292524;
-  color: #fafaf9;
-}
-
-.prose pre code {
-  background: none;
-  padding: 0;
-  font-size: 0.875rem;
+  max-width: 65ch;
+  color: var(--color-text-medium);
 }
 
 /* ------------------------------------------
@@ -187,25 +114,95 @@ html.dark .prose pre {
 a {
   color: var(--color-primary);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--color-primary-hover);
+  color: var(--color-primary-dark);
 }
 
 /* ------------------------------------------
-   Selection
+   Buttons - French Patisserie Style
+   ------------------------------------------ */
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-secondary {
+  background-color: var(--color-accent);
+  color: var(--color-text-dark);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-accent-dark);
+  transform: translateY(-1px);
+}
+
+/* ------------------------------------------
+   Cards - Warm, Soft Cards
+   ------------------------------------------ */
+
+.card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------
+   Section Styles - Classic Patisserie
+   ------------------------------------------ */
+
+.section-cream {
+  background-color: var(--color-bg-cream);
+}
+
+.section-yellow {
+  background-color: #FFF5D6;
+}
+
+.section-red {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.section-dark {
+  background-color: #2C1810;
+  color: var(--color-bg-cream);
+}
+
+/* ------------------------------------------
+   Focus & Selection
    ------------------------------------------ */
 
 ::selection {
   background-color: var(--color-accent);
-  color: var(--color-text-primary);
+  color: var(--color-text-dark);
 }
-
-/* ------------------------------------------
-   Focus Styles
-   ------------------------------------------ */
 
 :focus-visible {
   outline: 2px solid var(--color-primary);
@@ -213,57 +210,34 @@ a:hover {
 }
 
 /* ------------------------------------------
-   Scrollbar
+   Scrollbar - Warm & Creamy
    ------------------------------------------ */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-cream);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-text-muted);
-  border-radius: var(--radius-full);
+  background: var(--color-border-dark);
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-secondary);
+  background: var(--color-text-light);
 }
 
 /* ------------------------------------------
-   Utilities
+   Container
    ------------------------------------------ */
 
 .container {
-  width: 100%;
-  max-width: var(--spacing-container);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-.section {
-  padding-top: var(--spacing-section);
-  padding-bottom: var(--spacing-section);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 /* ------------------------------------------
@@ -271,45 +245,18 @@ a:hover {
    ------------------------------------------ */
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes gentleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 .animate-fade-in {
@@ -320,69 +267,131 @@ a:hover {
   animation: slideUp 0.4s ease forwards;
 }
 
-.animate-slide-down {
-  animation: slideDown 0.4s ease forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.3s ease forwards;
+.animate-gentle-bounce {
+  animation: gentleBounce 2s ease-in-out infinite;
 }
 
 /* ------------------------------------------
-   Stagger Animation Delays
+   Price Tags - Classic French Style
    ------------------------------------------ */
 
-.stagger-1 {
-  animation-delay: 0.1s;
+.price-tag {
+  font-family: var(--font-serif);
+  color: var(--color-primary);
+  font-weight: 700;
 }
-.stagger-2 {
-  animation-delay: 0.2s;
-}
-.stagger-3 {
-  animation-delay: 0.3s;
-}
-.stagger-4 {
-  animation-delay: 0.4s;
-}
-.stagger-5 {
-  animation-delay: 0.5s;
-}
-.stagger-6 {
-  animation-delay: 0.6s;
+
+.price-tag-large {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  font-weight: 700;
 }
 
 /* ------------------------------------------
-   Video Embed
+   Badges - French Cafe Style
    ------------------------------------------ */
 
-.video-container {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background-color: var(--color-bg-secondary);
+.badge-red {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
+.badge-yellow {
+  background-color: var(--color-accent);
+  color: var(--color-text-dark);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 /* ------------------------------------------
-   Skeleton Loading
+   Forms - Soft & Warm
+   ------------------------------------------ */
+
+input, textarea, select {
+  font-family: var(--font-sans);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark);
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(212, 36, 38, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-light);
+}
+
+/* ------------------------------------------
+   Tables - French Bistro Style
+   ------------------------------------------ */
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead {
+  background-color: var(--color-bg-cream);
+}
+
+th {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--color-text-dark);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+td {
+  color: var(--color-text-medium);
+}
+
+tbody tr:hover {
+  background-color: rgba(245, 197, 24, 0.1);
+}
+
+/* ------------------------------------------
+   Modal - Classic French
+   ------------------------------------------ */
+
+.modal-overlay {
+  background-color: rgba(44, 24, 16, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-heavy);
+}
+
+/* ------------------------------------------
+   Loading States
    ------------------------------------------ */
 
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-bg-secondary) 25%,
+    var(--color-bg-cream) 25%,
     var(--color-border) 50%,
-    var(--color-bg-secondary) 75%
+    var(--color-bg-cream) 75%
   );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
@@ -390,34 +399,6 @@ a:hover {
 }
 
 @keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* ------------------------------------------
-   Print Styles
-   ------------------------------------------ */
-
-@media print {
-  .no-print {
-    display: none !important;
-  }
-
-  body {
-    font-size: 12pt;
-    line-height: 1.5;
-  }
-
-  a {
-    text-decoration: underline;
-  }
-
-  .container {
-    max-width: none;
-    padding: 0;
-  }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
