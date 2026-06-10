@@ -6,31 +6,33 @@
 
 /* ------------------------------------------
    CSS Custom Properties (Design Tokens)
-   French Patisserie Theme - Ratatouille/Disneyland style
-   Brand Colors: Red primary, Yellow secondary
+   Old School French Patisserie / Disneyland Style
+   Red and Yellow brand colors with script fonts
    ------------------------------------------ */
 
 @theme {
-  /* Colors - Joby's Brand Colors */
+  /* Colors - Joby's Brand Colors (Red & Yellow) */
   --color-primary: #D42426; /* Deep Red - primary brand color */
   --color-primary-hover: #B81E20; /* Darker red */
   --color-accent: #F5C518; /* Golden Yellow - secondary/highlights */
   --color-gold: #E8A818; /* Rich gold */
   
-  --color-bg-primary: #FDF8F0; /* Warm cream */
-  --color-bg-secondary: #FFF9E6; /* Slightly yellow cream */
+  --color-bg-primary: #FFF8E7; /* Warm cream like old paper */
+  --color-bg-secondary: #FFF3D6; /* Slightly yellow cream */
   --color-bg-card: #FFFFFF; /* White cards */
 
-  --color-text-primary: #2D1810; /* Dark chocolate */
+  --color-text-primary: #2D1810; /* Dark chocolate brown */
   --color-text-secondary: #5C4033; /* Medium brown */
   --color-text-muted: #6B5B4F; /* Warm gray-brown */
 
   --color-border: #E8DDD0; /* Light warm border */
 
-  /* Font Families */
+  /* Font Families - Script/Swishy fonts for bakery style */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, serif; /* Elegant serif for headings */
+  --font-serif: var(--font-playfair), Georgia, serif;
   --font-mono: var(--font-mono), monospace;
+  --font-script: var(--font-script), cursive; /* Pacifico - main swishy font */
+  --font-handwritten: var(--font-handwritten), cursive; /* Caveat - handwritten accents */
 
   /* Spacing */
   --spacing-section: 6rem;
@@ -73,9 +75,20 @@ body {
 }
 
 /* ------------------------------------------
-   Typography - Bakery Style
+   Typography - Old School French Patisserie Style
    ------------------------------------------ */
 
+/* Script font for main headings - Disney/Ratatouille style */
+.font-script {
+  font-family: var(--font-script) !important;
+}
+
+/* Handwritten style for accents and special text */
+.font-handwritten {
+  font-family: var(--font-handwritten) !important;
+}
+
+/* Regular headings use serif */
 h1,
 h2,
 h3,
