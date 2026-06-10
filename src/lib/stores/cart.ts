@@ -5,6 +5,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// Helper function for formatting prices
+export function formatPrice(amount: number): string {
+  return `£${amount.toFixed(2)}`;
+}
+
 export interface CartItem {
   id: string;
   productId: string;

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, Clock, ArrowRight } from 'lucide-react';
 import { useCartStore } from '@/lib/stores/cart';
-import { formatPrice } from '@/lib/pricing';
+import { formatPrice } from '@/lib/stores/cart';
 
 export const metadata: Metadata = {
   title: 'Your Cart',

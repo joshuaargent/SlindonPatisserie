@@ -1,0 +1,190 @@
+// Prisma schema for Slindon Patisserie
+// Database: SQLite for development (PostgreSQL for production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// User & Authentication
+// ============================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      String   @default("customer") // 'customer' | 'wholesale' | 'admin'
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+  cart   Cart?
+}
+
+// ============================================
+// Products
+// ============================================
+
+model Product {
+  id                     String   @id @default(cuid())
+  name                   String
+  description            String
+  category               String   // 'bakery' | 'catering' | 'wholesale' | 'pos' | 'sundries'
+  retailPrice            Float
+  wholesalePrice         Float?
+  wholesaleDiscountOverride Boolean @default(false)
+  image                  String?
+  available              Boolean  @default(true)
+  productionTimeHours    Int      @default(24) // hours needed to prepare
+  madeAtFactoryA         Boolean  @default(true)
+  madeAtFactoryB         Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+}
+
+// ============================================
+// Factory (for order routing)
+// ============================================
+
+model Factory {
+  id          String   @id @default(cuid())
+  name        String   // 'Factory A' or 'Factory B'
+  location    String
+  address     String
+  contactEmail String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  orderItems   OrderItem[]
+}
+
+// ============================================
+// Pickup Slots
+// ============================================
+
+model PickupSlot {
+  id        String   @id @default(cuid())
+  date      DateTime
+  time      String   // e.g., '09:00', '10:00'
+  capacity  Int      @default(10)
+  booked    Int      @default(0)
+  available Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([date, time])
+}
+
+// ============================================
+// Cart
+// ============================================
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+// ============================================
+// Orders
+// ============================================
+
+model Order {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  subtotal        Float
+  deliveryFee     Float    @default(0)
+  total           Float
+  deliveryMethod  String   // 'collection' | 'delivery'
+  deliveryAddress String?
+  pickupDate      DateTime
+  pickupTime      String
+  status          String   @default("pending") // 'pending' | 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled'
+  teyaOrderId     String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+  quantity   Int
+  unitPrice  Float
+  factoryId  String? // null means both factories
+  factory    Factory? @relation(fields: [factoryId], references: [id])
+}
+
+// ============================================
+// Franchise Enquiries
+// ============================================
+
+model FranchiseEnquiry {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String
+  status      String   @default("new") // 'new' | 'contacted' | 'interested' | 'not_interested'
+  createdAt   DateTime @default(now())
+}
+
+// ============================================
+// Careers Applications
+// ============================================
+
+model CareerApplication {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String
+  cvPath      String?
+  status      String   @default("new") // 'new' | 'reviewing' | 'contacted' | 'hired' | 'rejected'
+  createdAt   DateTime @default(now())
+}
+
+// ============================================
+// Contact Enquiries
+// ============================================
+
+model ContactEnquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("new") // 'new' | 'replied' | 'closed'
+  createdAt DateTime @default(now())
+}
