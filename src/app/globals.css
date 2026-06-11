@@ -6,25 +6,26 @@
 
 /* ------------------------------------------
    CSS Custom Properties (Design Tokens)
-   Old School Bakery Style - Warm browns and creams
+   Based on SPEC.md - Old World Patisserie Style
    ------------------------------------------ */
 
 @theme {
-  /* Colors - Warm bakery tones */
-  --color-primary: #8B4513; /* Saddle Brown - main bakery color */
-  --color-primary-hover: #6B3410; /* Darker brown */
-  --color-accent: #F5C518; /* Golden Yellow - highlights */
-  --color-gold: #E8A818; /* Rich gold */
+  /* Colors - From SPEC.md */
+  --color-primary: #4A3728; /* Rich Brown - headings, primary text */
+  --color-primary-hover: #2C1810; /* Darker brown */
+  --color-accent: #C4A35A; /* Gilded Gold - CTAs, highlights */
+  --color-gold: #C4A35A; /* Gilded Gold */
   
-  --color-bg-primary: #FFF8E7; /* Warm cream like old paper */
-  --color-bg-secondary: #F5EDE0; /* Slightly darker cream */
+  --color-bg-primary: #F5F0E6; /* Warm Cream - backgrounds, cards */
+  --color-bg-secondary: #FFFEF9; /* Antique White - elevated surfaces */
   --color-bg-card: #FFFFFF; /* White cards */
 
-  --color-text-primary: #2D1810; /* Dark chocolate brown */
-  --color-text-secondary: #5C4033; /* Medium brown */
-  --color-text-muted: #6B5B4F; /* Warm gray-brown */
+  --color-text-primary: #2C1810; /* Dark Espresso - body copy */
+  --color-text-secondary: #4A3728; /* Rich Brown - secondary text */
+  --color-text-muted: #8B7D6B; /* Warm Gray - captions */
 
   --color-border: #E8DDD0; /* Light warm border */
+  --color-warm: #8B5A2B; /* Burnt Sienna - buttons, links */
 
   /* Font Families */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
