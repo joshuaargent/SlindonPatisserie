@@ -6,19 +6,18 @@
 
 /* ------------------------------------------
    CSS Custom Properties (Design Tokens)
-   Old School French Patisserie / Disneyland Style
-   Red and Yellow brand colors with script fonts
+   Old School Bakery Style - Warm browns and creams
    ------------------------------------------ */
 
 @theme {
-  /* Colors - Joby's Brand Colors (Red & Yellow) */
-  --color-primary: #D42426; /* Deep Red - primary brand color */
-  --color-primary-hover: #B81E20; /* Darker red */
-  --color-accent: #F5C518; /* Golden Yellow - secondary/highlights */
+  /* Colors - Warm bakery tones */
+  --color-primary: #8B4513; /* Saddle Brown - main bakery color */
+  --color-primary-hover: #6B3410; /* Darker brown */
+  --color-accent: #F5C518; /* Golden Yellow - highlights */
   --color-gold: #E8A818; /* Rich gold */
   
   --color-bg-primary: #FFF8E7; /* Warm cream like old paper */
-  --color-bg-secondary: #FFF3D6; /* Slightly yellow cream */
+  --color-bg-secondary: #F5EDE0; /* Slightly darker cream */
   --color-bg-card: #FFFFFF; /* White cards */
 
   --color-text-primary: #2D1810; /* Dark chocolate brown */
@@ -27,12 +26,10 @@
 
   --color-border: #E8DDD0; /* Light warm border */
 
-  /* Font Families - Script/Swishy fonts for bakery style */
+  /* Font Families */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-mono: var(--font-mono), monospace;
-  --font-script: var(--font-script), cursive; /* Pacifico - main swishy font */
-  --font-handwritten: var(--font-handwritten), cursive; /* Caveat - handwritten accents */
 
   /* Spacing */
   --spacing-section: 6rem;
@@ -75,20 +72,9 @@ body {
 }
 
 /* ------------------------------------------
-   Typography - Old School French Patisserie Style
+   Typography - Bakery Style
    ------------------------------------------ */
 
-/* Script font for main headings - Disney/Ratatouille style */
-.font-script {
-  font-family: var(--font-script) !important;
-}
-
-/* Handwritten style for accents and special text */
-.font-handwritten {
-  font-family: var(--font-handwritten) !important;
-}
-
-/* Regular headings use serif */
 h1,
 h2,
 h3,

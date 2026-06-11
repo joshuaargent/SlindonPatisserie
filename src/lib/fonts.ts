@@ -1,4 +1,4 @@
-import { Inter, Lora, Playfair_Display, JetBrains_Mono, Pacifico, Caveat } from "next/font/google";
+import { Inter, Lora, Playfair_Display, JetBrains_Mono } from "next/font/google";
 
 // ============================================
 // Font Configuration - Slindon Patisserie
@@ -6,7 +6,6 @@ import { Inter, Lora, Playfair_Display, JetBrains_Mono, Pacifico, Caveat } from 
 
 /**
  * Inter - Primary sans-serif font for UI and body text
- * Supports: Latin, Latin Extended, Cyrillic, Greek, Vietnamese
  */
 export const inter = Inter({
   subsets: ["latin"],
@@ -29,7 +28,6 @@ export const playfair = Playfair_Display({
 
 /**
  * Lora - Serif font for long-form reading content
- * Supports: Latin, Latin Extended, Cyrillic, Vietnamese
  */
 export const lora = Lora({
   subsets: ["latin"],
@@ -41,32 +39,10 @@ export const lora = Lora({
 
 /**
  * JetBrains Mono - Monospace font for code blocks
- * Supports: Latin, Latin Extended, Cyrillic, Greek, Vietnamese
  */
 export const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-mono",
-  weight: ["400", "500", "600", "700"],
-});
-
-/**
- * Pacifico - Script font for Disney/Ratatouille style headings
- * Classic hand-written bakery sign aesthetic
- */
-export const pacifico = Pacifico({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-script",
-  weight: ["400"],
-});
-
-/**
- * Caveat - Handwritten style for accents
- */
-export const caveat = Caveat({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-handwritten",
   weight: ["400", "500", "600", "700"],
 });
