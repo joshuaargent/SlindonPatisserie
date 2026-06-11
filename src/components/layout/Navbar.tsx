@@ -51,8 +51,8 @@ export function Navbar() {
         className={cn(
           'fixed top-0 right-0 left-0 z-[50] transition-all duration-200',
           isScrolled 
-            ? 'bg-[#FDF8F0]/95 border-b border-[#E8DDD0] backdrop-blur-md shadow-sm' 
-            : 'bg-[#FDF8F0]'
+            ? 'bg-[#FFF8E7]/95 border-b border-[#E8DDD0] backdrop-blur-md shadow-sm' 
+            : 'bg-[#FFF8E7]'
         )}
         style={{ transform: 'translateZ(0)' }}
       >
@@ -60,7 +60,7 @@ export function Navbar() {
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-[#D42426] text-xl md:text-2xl font-serif font-semibold">
+              <span className="text-[#8B4513] text-xl md:text-2xl font-serif font-semibold">
                 {siteConfig.name}
               </span>
             </Link>
@@ -74,8 +74,8 @@ export function Navbar() {
                   className={cn(
                     'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     pathname === item.href
-                      ? 'text-[#D42426] bg-[#F5C518]/20'
-                      : 'text-[#5C4033] hover:text-[#D42426] hover:bg-[#FFF9E6]'
+                      ? 'text-white bg-[#8B4513]'
+                      : 'text-[#5C4033] hover:text-white hover:bg-[#8B4513]'
                   )}
                 >
                   {item.label}
@@ -85,7 +85,7 @@ export function Navbar() {
               {/* Phone CTA */}
               <a
                 href={`tel:${siteConfig.phone}`}
-                className="ml-2 inline-flex items-center gap-2 rounded-lg bg-[#D42426] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#B81E20]"
+                className="ml-2 inline-flex items-center gap-2 rounded-lg bg-[#8B4513] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#6B3410]"
               >
                 <Phone className="h-4 w-4" />
                 <span className="hidden lg:inline">{siteConfig.phone}</span>
@@ -94,7 +94,7 @@ export function Navbar() {
 
             {/* Mobile Menu Button */}
             <button
-              className="rounded-lg p-2 text-[#5C4033] transition-colors hover:bg-[#FFF9E6] md:hidden"
+              className="rounded-lg p-2 text-[#8B4513] transition-colors hover:bg-[#8B4513]/10 md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
@@ -112,7 +112,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="bg-[#FDF8F0] fixed inset-0 z-[45] pt-16 md:hidden"
+            className="bg-[#FFF8E7] fixed inset-0 z-[45] pt-16 md:hidden"
             style={{ transform: 'translateZ(0)' }}
           >
             <nav className="container py-6">
@@ -129,8 +129,8 @@ export function Navbar() {
                       className={cn(
                         'flex items-center rounded-lg px-4 py-3 text-base font-medium transition-colors',
                         pathname === item.href
-                          ? 'text-[#D42426] bg-[#F5C518]/20'
-                          : 'text-[#5C4033] hover:text-[#D42426] hover:bg-[#FFF9E6]'
+                          ? 'text-white bg-[#8B4513]'
+                          : 'text-[#5C4033] hover:text-white hover:bg-[#8B4513]'
                       )}
                     >
                       {item.label}
@@ -144,7 +144,7 @@ export function Navbar() {
                 {/* Phone CTA */}
                 <a
                   href={`tel:${siteConfig.phone}`}
-                  className="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#D42426] px-4 py-3 text-lg font-medium text-white transition-colors hover:bg-[#B81E20]"
+                  className="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#8B4513] px-4 py-3 text-lg font-medium text-white transition-colors hover:bg-[#6B3410]"
                 >
                   <Phone className="h-5 w-5" />
                   <span>Call Us: {siteConfig.phone}</span>
@@ -155,7 +155,7 @@ export function Navbar() {
                     href={siteConfig.links.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#5C4033] hover:text-[#8B4513] p-2 transition-colors"
+                    className="text-[#8B4513] hover:text-[#6B3410] p-2 transition-colors"
                     aria-label="YouTube"
                   >
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@ export function Navbar() {
                     href={siteConfig.links.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#5C4033] hover:text-[#8B4513] p-2 transition-colors"
+                    className="text-[#8B4513] hover:text-[#6B3410] p-2 transition-colors"
                     aria-label="Instagram"
                   >
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">

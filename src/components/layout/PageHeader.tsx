@@ -1,6 +1,4 @@
 import { cn } from '@/lib/utils';
-import { Container } from '@/components/layout/Container';
-import { SectionHeading } from '@/components/shared/SectionHeading';
 
 // ============================================
 // Types
@@ -28,11 +26,11 @@ export function PageHeader({
   size = 'default',
 }: PageHeaderProps) {
   return (
-    <header className={cn('py-12 md:py-16', size === 'large' && 'py-16 md:py-24', className)}>
+    <header className={cn('py-12 md:py-16 bg-[#FFF8E7]', size === 'large' && 'py-16 md:py-24', className)}>
       <div className={cn('container', align === 'center' && 'text-center')}>
         <h1
           className={cn(
-            'text-text-primary font-bold tracking-tight',
+            'text-[#2D1810] font-bold tracking-tight font-serif',
             size === 'default' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'
           )}
         >
@@ -41,7 +39,7 @@ export function PageHeader({
         {description && (
           <p
             className={cn(
-              'text-text-secondary mt-4 max-w-2xl text-lg',
+              'text-[#5C4033] mt-4 max-w-2xl text-lg',
               align === 'center' && 'mx-auto'
             )}
           >
