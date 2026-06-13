@@ -157,7 +157,7 @@ export default function AdminCategoriesPage() {
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 bg-[#8B1E22] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors"
+          className="btn-secondary-sm"
         >
           <Plus className="w-5 h-5" />
           Add Category
@@ -328,7 +328,7 @@ export default function AdminCategoriesPage() {
               <button
                 onClick={handleSave}
                 disabled={saving || !formData.name || !formData.label}
-                className="flex items-center gap-2 bg-[#8B1E22] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors disabled:opacity-50"
+                className="btn-secondary-sm disabled:opacity-50"
               >
                 {saving ? (
                   <>

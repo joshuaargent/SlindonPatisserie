@@ -240,7 +240,7 @@ export default function HomePage() {
                 </a>
                 <Link
                   href="/contact?type=delivery"
-                  className="flex items-center gap-3 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-5 py-3 rounded-xl transition-colors"
+                  className="btn-primary"
                 >
                   <ArrowRight className="h-5 w-5" />
                   <span className="font-medium">Enquire About Delivery</span>
