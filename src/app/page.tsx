@@ -32,7 +32,7 @@ export default function HomePage() {
               
               {/* Subheadline */}
               <p className="text-lg md:text-xl text-white/85 max-w-xl mb-8 leading-relaxed">
-                Order online, pay via Teya, collect in Camberley. Or partner with us — wholesale & franchise opportunities available.
+                Freshly baked patisserie for collection in Camberley. Order online, collect same-day. Also available — wholesale & franchise.
               </p>
               
               {/* Primary CTAs */}
@@ -57,7 +57,7 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-6 text-white/80 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-[#D0A246]" />
-                  <span>Pay via Teya (Secure)</span>
+                  <span>Freshly Baked Daily</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-[#D0A246]" />
@@ -116,7 +116,7 @@ export default function HomePage() {
               </div>
               <h3 className="font-serif text-2xl font-bold text-[#3A2C2A] mb-3">Order Online</h3>
               <p className="text-[#6B5344] mb-6">
-                Browse our full range and order for collection in Camberley. Pay securely via Teya.
+                Browse our full range and order for collection in Camberley. Freshly baked, ready for pickup.
               </p>
               <Link
                 href="/products"

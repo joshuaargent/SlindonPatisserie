@@ -18,8 +18,8 @@ export function Footer() {
             <Link href="/" className="text-xl font-semibold text-white hover:text-[#D0A246] transition-colors font-serif">
               {siteConfig.name}
             </Link>
-            <p className="mt-3 max-w-xs text-white">
-              Handmade patisserie crafted fresh daily. Order online for collection from our Camberley bakery.
+            <p className="mt-3 max-w-xs text-white font-medium">
+              Slindon Patisserie
             </p>
             <Link
               href="/products"

@@ -189,7 +189,7 @@ export default function CheckoutSuccessPage() {
 
           {/* Payment Note */}
           <p className="mt-6 text-center text-sm text-[#6B5344]">
-            Payment will be collected when you pick up your order. You can pay by card, cash, or contactless.
+            We'll confirm your order via email. See you soon!
           </p>
         </div>
       </div>
