@@ -112,17 +112,17 @@ export default function ReviewsPage() {
   return (
     <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
-      <section className="bg-[#8B1E22] text-white py-12">
+      <section className="bg-[#8B1E22] text-[#F7F2E9] py-12">
         <div className="container">
           <Link 
             href="/"
-            className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-white/80 hover:text-[#D0A246] mb-6 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Customer Reviews</h1>
-          <p className="text-white/85 text-lg max-w-2xl">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#F7F2E9] mb-4">Customer Reviews</h1>
+          <p className="text-[#F7F2E9]/85 text-lg max-w-2xl">
             See what our customers say about their experience with Slindon Patisserie.
           </p>
         </div>

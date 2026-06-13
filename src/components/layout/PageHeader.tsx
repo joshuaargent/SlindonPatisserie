@@ -11,6 +11,7 @@ export interface PageHeaderProps {
   className?: string;
   align?: 'left' | 'center';
   size?: 'default' | 'large';
+  variant?: 'dark' | 'light';
 }
 
 // ============================================
@@ -24,13 +25,19 @@ export function PageHeader({
   className,
   align = 'center',
   size = 'default',
+  variant = 'dark',
 }: PageHeaderProps) {
+  const bgClass = variant === 'dark' ? 'bg-[#3A2C2A]' : 'bg-[#FFF8E7]';
+  const titleClass = variant === 'dark' ? 'text-[#F7F2E9]' : 'text-[#3A2C2A]';
+  const descClass = variant === 'dark' ? 'text-[#F7F2E9]/80' : 'text-[#6B5344]';
+
   return (
-    <header className={cn('py-12 md:py-16 bg-[#FFF8E7]', size === 'large' && 'py-16 md:py-24', className)}>
+    <header className={cn('py-12 md:py-16', bgClass, size === 'large' && 'py-16 md:py-24', className)}>
       <div className={cn('container', align === 'center' && 'text-center')}>
         <h1
           className={cn(
-            'text-[#F7F2E9] font-bold tracking-tight font-serif',
+            'font-bold tracking-tight font-serif',
+            titleClass,
             size === 'default' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'
           )}
         >
@@ -39,7 +46,8 @@ export function PageHeader({
         {description && (
           <p
             className={cn(
-              'text-[#6B5344] mt-4 max-w-2xl text-lg',
+              'mt-4 max-w-2xl text-lg',
+              descClass,
               align === 'center' && 'mx-auto'
             )}
           >

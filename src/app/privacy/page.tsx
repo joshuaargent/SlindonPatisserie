@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-[#F7F2E9]">
             Privacy Policy
           </h1>
           <p className="mt-4 text-[#F7F2E9]/80">

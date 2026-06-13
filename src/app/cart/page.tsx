@@ -144,7 +144,7 @@ export default function CartPage() {
   return (
     <div className="bg-[#F7F2E9] min-h-screen">
       {/* Hero */}
-      <section className="bg-[#8B1E22] text-white py-12">
+      <section className="bg-[#8B1E22] text-[#F7F2E9] py-12">
         <div className="container">
           <Link 
             href="/"
@@ -153,7 +153,7 @@ export default function CartPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
-          <h1 className="font-serif text-3xl md:text-4xl font-bold">Your Cart</h1>
+          <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#F7F2E9]">Your Cart</h1>
         </div>
       </section>
 
