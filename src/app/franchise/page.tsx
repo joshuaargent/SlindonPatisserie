@@ -210,14 +210,14 @@ export default function FranchisePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href={`tel:${businessInfo.phone}`}
-                className="btn-secondary"
+                className="btn-primary text-lg px-8 py-4"
               >
                 <Phone className="h-5 w-5" />
                 Call to Discuss
               </a>
               <Link
                 href="/contact?type=franchise"
-                className="btn-outline-gold"
+                className="btn-outline-white text-lg px-6 py-4"
               >
                 <Mail className="h-5 w-5" />
                 Send Enquiry

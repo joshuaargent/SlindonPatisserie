@@ -174,14 +174,14 @@ export default function CheckoutSuccessPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/account/orders"
-              className="btn-secondary flex-1"
+              className="btn-primary text-lg px-6 py-4 flex-1"
             >
               View Order History
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/"
-              className="btn-outline-red flex-1"
+              className="btn-outline-white text-lg px-6 py-4 flex-1"
             >
               Continue Shopping
             </Link>

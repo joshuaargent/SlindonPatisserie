@@ -201,7 +201,7 @@ export default function CareersPage() {
               {/* Submit */}
               <button
                 type="submit"
-                className="btn-secondary w-full"
+                className="btn-primary text-lg px-8 py-4 w-full"
               >
                 <Send className="w-4 h-4" />
                 Submit Application

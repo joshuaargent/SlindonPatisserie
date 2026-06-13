@@ -163,13 +163,13 @@ export default function MarketsPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`tel:${businessInfo.phone}`}
-              className="btn-secondary"
+              className="btn-primary text-lg px-8 py-4"
             >
               Call Us
             </a>
             <Link
               href="/contact"
-              className="btn-outline-gold"
+              className="btn-outline-white text-lg px-6 py-4"
             >
               Contact Form
             </Link>

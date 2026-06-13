@@ -118,14 +118,14 @@ function CartContent() {
         <div className="space-y-3">
           <Link
             href="/checkout"
-            className="btn-secondary w-full"
+            className="btn-primary text-lg px-8 py-4 w-full"
           >
             Proceed to Checkout
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/products"
-            className="btn-outline-red w-full"
+            className="btn-outline-red text-lg px-6 py-4 w-full"
           >
             Continue Shopping
           </Link>

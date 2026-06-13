@@ -184,7 +184,7 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="btn-secondary w-full"
+                  className="btn-primary text-lg px-8 py-4 w-full"
                 >
                   Send Message
                 </button>
