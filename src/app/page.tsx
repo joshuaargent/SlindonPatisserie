@@ -25,14 +25,14 @@ export default function HomePage() {
               
               {/* Main Headline */}
               <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-                Handmade Patisserie,
+                Slindon Patisseries,
                 <br />
                 <span className="text-[#D0A246]">Baked Fresh Daily</span>
               </h1>
               
               {/* Subheadline */}
               <p className="text-lg md:text-xl text-white/85 max-w-xl mb-8 leading-relaxed">
-                Freshly baked patisserie for collection in Camberley. Order online, collect same-day. Also available — wholesale & franchise.
+                Freshly baked patisserie for collection in Camberley. Order online, collect same-day. Also available for wholesale and franchise.
               </p>
               
               {/* Primary CTAs */}

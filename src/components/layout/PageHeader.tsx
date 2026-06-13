@@ -30,7 +30,7 @@ export function PageHeader({
       <div className={cn('container', align === 'center' && 'text-center')}>
         <h1
           className={cn(
-            'text-[#3A2C2A] font-bold tracking-tight font-serif',
+            'text-[#F7F2E9] font-bold tracking-tight font-serif',
             size === 'default' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'
           )}
         >
