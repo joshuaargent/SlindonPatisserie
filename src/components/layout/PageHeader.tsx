@@ -30,7 +30,7 @@ export function PageHeader({
       <div className={cn('container', align === 'center' && 'text-center')}>
         <h1
           className={cn(
-            'text-[#2D1810] font-bold tracking-tight font-serif',
+            'text-[#3A2C2A] font-bold tracking-tight font-serif',
             size === 'default' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'
           )}
         >
@@ -39,7 +39,7 @@ export function PageHeader({
         {description && (
           <p
             className={cn(
-              'text-[#5C4033] mt-4 max-w-2xl text-lg',
+              'text-[#6B5344] mt-4 max-w-2xl text-lg',
               align === 'center' && 'mx-auto'
             )}
           >

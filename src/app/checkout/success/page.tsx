@@ -27,12 +27,12 @@ export default function CheckoutSuccessPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#FDF8F0] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F7F2E9] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[#6B5B4F] mb-4">No order found</p>
+          <p className="text-[#6B5344] mb-4">No order found</p>
           <Link
             href="/"
-            className="text-[#D42426] font-semibold hover:underline"
+            className="text-[#8B1E22] font-semibold hover:underline"
           >
             Return to Home
           </Link>
@@ -60,13 +60,13 @@ export default function CheckoutSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDF8F0]">
+    <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
-      <div className="bg-[#D42426] text-white py-8">
+      <div className="bg-[#8B1E22] text-white py-8">
         <div className="container mx-auto px-4 text-center">
-          <CheckCircle className="w-16 h-16 mx-auto mb-4 text-[#F5C518]" />
+          <CheckCircle className="w-16 h-16 mx-auto mb-4 text-[#D0A246]" />
           <h1 className="text-3xl font-serif font-bold mb-2">Order Confirmed!</h1>
-          <p className="text-[#FFF9E6]">Thank you for your order, {order.customer.name}</p>
+          <p className="text-white/80">Thank you for your order, {order.customer.name}</p>
         </div>
       </div>
 
@@ -77,40 +77,44 @@ export default function CheckoutSuccessPage() {
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#6B5B4F]">Order Number</p>
-                <p className="text-2xl font-bold text-[#2D1810]">{order.orderId}</p>
+                <p className="text-sm text-[#6B5344]">Order Number</p>
+                <p className="text-2xl font-bold text-[#3A2C2A]">{order.orderId}</p>
               </div>
-              <div className="px-4 py-2 bg-[#FFF9E6] rounded-lg">
-                <p className="text-sm text-[#6B5B4F]">Total</p>
-                <p className="text-xl font-bold text-[#D42426]">£{order.total.toFixed(2)}</p>
+              <div className="px-4 py-2 bg-[#FDF8E8] rounded-lg">
+                <p className="text-sm text-[#6B5344]">Total</p>
+                <p className="text-xl font-bold text-[#8B1E22]">£{order.total.toFixed(2)}</p>
               </div>
             </div>
           </div>
 
           {/* Pickup Details */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#2D1810] mb-4">Pickup Details</h2>
+            <h2 className="text-lg font-semibold text-[#3A2C2A] mb-4">
+              {order.deliveryMethod === 'delivery' ? 'Delivery Details' : 'Collection Details'}
+            </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#D42426] mt-1" />
+                <MapPin className="w-5 h-5 text-[#8B1E22] mt-1" />
                 <div>
-                  <p className="font-medium text-[#2D1810]">
+                  <p className="font-medium text-[#3A2C2A]">
                     {order.deliveryMethod === 'delivery' ? 'Delivery Address' : 'Collection Point'}
                   </p>
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="text-sm text-[#6B5344]">
                     {order.deliveryMethod === 'delivery' 
-                      ? 'Your order will be delivered' 
-                      : 'Slindon Patisserie\n123 Main Street, Camberley'}
+                      ? 'Your order will be delivered to you. We will contact you to arrange.' 
+                      : 'Camberley, Surrey\n(Full address in confirmation email)'}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-[#D42426] mt-1" />
+                <Clock className="w-5 h-5 text-[#8B1E22] mt-1" />
                 <div>
-                  <p className="font-medium text-[#2D1810]">Pickup Time</p>
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="font-medium text-[#3A2C2A]">
+                    {order.deliveryMethod === 'delivery' ? 'Delivery Time' : 'Pickup Time'}
+                  </p>
+                  <p className="text-sm text-[#6B5344]">
                     {formatDate(order.pickupDate)}
                     <br />
                     {formatTime(order.pickupTime)}
@@ -118,20 +122,29 @@ export default function CheckoutSuccessPage() {
                 </div>
               </div>
             </div>
+            
+            {order.deliveryMethod === 'collection' && (
+              <div className="mt-4 p-4 bg-[#F7F2E9] rounded-lg">
+                <p className="text-sm text-[#6B5344]">
+                  <strong>Important:</strong> Your full collection address is included in the confirmation 
+                  email sent to {order.customer.email}. Please bring your order confirmation when collecting.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Order Items */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#2D1810] mb-4">Order Items</h2>
+            <h2 className="text-lg font-semibold text-[#3A2C2A] mb-4">Order Items</h2>
             
             <div className="space-y-3">
               {order.items.map((item) => (
                 <div key={item.id} className="flex justify-between items-center py-2 border-b border-[#E8DDD0] last:border-0">
                   <div>
-                    <p className="font-medium text-[#2D1810]">{item.name}</p>
-                    <p className="text-sm text-[#6B5B4F]">Qty: {item.quantity}</p>
+                    <p className="font-medium text-[#3A2C2A]">{item.name}</p>
+                    <p className="text-sm text-[#6B5344]">Qty: {item.quantity}</p>
                   </div>
-                  <p className="font-medium text-[#2D1810]">
+                  <p className="font-medium text-[#3A2C2A]">
                     £{(item.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
@@ -139,18 +152,18 @@ export default function CheckoutSuccessPage() {
             </div>
 
             <div className="mt-4 pt-4 border-t border-[#E8DDD0] flex justify-between">
-              <span className="font-semibold text-[#2D1810]">Total</span>
-              <span className="font-bold text-[#D42426]">£{order.total.toFixed(2)}</span>
+              <span className="font-semibold text-[#3A2C2A]">Total</span>
+              <span className="font-bold text-[#8B1E22]">£{order.total.toFixed(2)}</span>
             </div>
           </div>
 
           {/* Confirmation Email */}
-          <div className="bg-[#FFF9E6] rounded-lg p-6 mb-6">
+          <div className="bg-[#F7F2E9] rounded-lg p-6 mb-6">
             <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-[#D42426] mt-1" />
+              <Mail className="w-5 h-5 text-[#8B1E22] mt-1" />
               <div>
-                <p className="font-medium text-[#2D1810]">Confirmation Email</p>
-                <p className="text-sm text-[#6B5B4F]">
+                <p className="font-medium text-[#3A2C2A]">Confirmation Email</p>
+                <p className="text-sm text-[#6B5344]">
                   We've sent a confirmation to <strong>{order.customer.email}</strong>
                 </p>
               </div>
@@ -161,21 +174,21 @@ export default function CheckoutSuccessPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/account/orders"
-              className="flex-1 py-3 bg-[#D42426] text-white rounded-lg font-semibold hover:bg-[#B81E20] transition-colors text-center flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#9B2A32] transition-colors text-center flex items-center justify-center gap-2"
             >
               View Order History
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/"
-              className="flex-1 py-3 bg-white text-[#D42426] border-2 border-[#D42426] rounded-lg font-semibold hover:bg-[#FFF9E6] transition-colors text-center"
+              className="flex-1 py-3 bg-white text-[#8B1E22] border-2 border-[#8B1E22] rounded-lg font-semibold hover:bg-[#F7F2E9] transition-colors text-center"
             >
               Continue Shopping
             </Link>
           </div>
 
           {/* Payment Note */}
-          <p className="mt-6 text-center text-sm text-[#6B5B4F]">
+          <p className="mt-6 text-center text-sm text-[#6B5344]">
             Payment will be collected when you pick up your order. You can pay by card, cash, or contactless.
           </p>
         </div>

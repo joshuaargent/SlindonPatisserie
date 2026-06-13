@@ -6,14 +6,24 @@ import { siteConfig } from '@/lib/constants';
 
 export const businessInfo = {
   name: 'Slindon Patisserie',
-  tagline: 'Handmade Patisserie Since 1740',
-  description: `Slindon Patisserie is a family-run bakery nestled in the heart of the South Downs National Park. For over 40 years, we have been crafting handmade patisserie products using traditional recipes and the finest ingredients. Our master bakers continue the legacy of excellence passed down through generations.`,
-  history: `Our story began in 1740, making us one of the oldest bakeries in the region. Today, led by Master Baker Andrew Turner-Cross, we continue the traditions that have made us a beloved fixture in the community. Every product that leaves our bakery carries the same dedication to quality that has defined us for nearly three centuries.`,
+  tagline: 'Handmade Patisserie, Traditional Quality',
+  description: `Slindon Patisserie is a family-run bakery. We craft handmade patisserie products using traditional recipes and the finest ingredients. Order online for collection from our Camberley bakery or find us at local farmers markets.`,
+  history: `For over 40 years, Slindon Patisserie has been crafting handmade bakery products using recipes passed down through generations. Led by Master Baker Andrew Turner-Cross, we continue the traditions that have made us a beloved fixture in the community. Every product that leaves our bakery carries the same dedication to quality.`,
+  // Main bakery location (Slindon)
   location: 'Slindon, Arundel, West Sussex',
   address: 'The Old Bakery, Slindon, Arundel, West Sussex, BN18 0RP',
   phone: '01243 814369',
   email: 'info@slindonpatisserie.co.uk',
   avatar: '/images/bakery-logo.png',
+  
+  // Collection point (Camberley) - where customers pick up online orders
+  collectionPoint: {
+    name: 'Camberley Collection',
+    address: 'Camberley, Surrey',
+    note: 'Full address provided in order confirmation',
+    hours: 'Mon-Sat: 9:00 AM - 5:00 PM',
+    phone: '01243 814369',
+  },
 };
 
 export const socialLinks = {

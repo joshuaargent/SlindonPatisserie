@@ -10,22 +10,23 @@
    ------------------------------------------ */
 
 @theme {
-  /* Colors - From SPEC.md */
-  --color-primary: #4A3728; /* Rich Brown - headings, primary text */
-  --color-primary-hover: #2C1810; /* Darker brown */
-  --color-accent: #C4A35A; /* Gilded Gold - CTAs, highlights */
-  --color-gold: #C4A35A; /* Gilded Gold */
+  /* Colors - Heritage Brand Palette */
+  --color-primary: #8B1E22; /* Heritage Deep Red - headers, buttons */
+  --color-primary-hover: #9B2A32; /* Lighter red for hover */
+  --color-accent: #D0A246; /* Antique Gold - CTAs, highlights */
+  --color-gold: #D0A246; /* Antique Gold */
+  --color-gold-hover: #E0B256; /* Lighter gold for hover */
   
-  --color-bg-primary: #F5F0E6; /* Warm Cream - backgrounds, cards */
-  --color-bg-secondary: #FFFEF9; /* Antique White - elevated surfaces */
+  --color-bg-primary: #F7F2E9; /* Soft Cream - backgrounds, cards */
+  --color-bg-secondary: #FDFBF7; /* Antique White - elevated surfaces */
   --color-bg-card: #FFFFFF; /* White cards */
 
-  --color-text-primary: #2C1810; /* Dark Espresso - body copy */
-  --color-text-secondary: #4A3728; /* Rich Brown - secondary text */
-  --color-text-muted: #8B7D6B; /* Warm Gray - captions */
+  --color-text-primary: #3A2C2A; /* Dark Brown - body copy */
+  --color-text-secondary: #3A2C2A; /* Dark Brown - secondary text */
+  --color-text-muted: #6B5344; /* Warm Brown - captions */
 
   --color-border: #E8DDD0; /* Light warm border */
-  --color-warm: #8B5A2B; /* Burnt Sienna - buttons, links */
+  --color-warm: #8B1E22; /* Heritage Red - buttons, links */
 
   /* Font Families */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
@@ -45,9 +46,9 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(139 69 19 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(139 69 19 / 0.1), 0 2px 4px -2px rgb(139 69 19 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(139 69 19 / 0.1), 0 4px 6px -4px rgb(139 69 19 / 0.1);
+  --shadow-sm: 0 1px 2px 0 rgb(139 30 34 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(139 30 34 / 0.1), 0 2px 4px -2px rgb(139 30 34 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(139 30 34 / 0.1), 0 4px 6px -4px rgb(139 30 34 / 0.1);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -232,6 +233,57 @@ a:hover {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-secondary);
+}
+
+/* ------------------------------------------
+   Buttons - Heritage Bakery Theme
+   ------------------------------------------ */
+
+/* Primary Button - Gold (for main CTAs) */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-primary-sm {
+  @apply inline-flex items-center justify-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200;
+}
+
+/* Secondary Button - Red (for alternative CTAs) */
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-secondary-sm {
+  @apply inline-flex items-center justify-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200;
+}
+
+/* Outline Button - White (for dark backgrounds) */
+.btn-outline-white {
+  @apply inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition-colors;
+}
+
+/* Outline Button - Red (for light backgrounds) */
+.btn-outline-red {
+  @apply inline-flex items-center justify-center gap-2 border-2 border-[#8B1E22] text-[#8B1E22] px-6 py-3 rounded-lg font-medium hover:bg-[#8B1E22] hover:text-white transition-colors;
+}
+
+/* Outline Button - Gold (for light backgrounds) */
+.btn-outline-gold {
+  @apply inline-flex items-center justify-center gap-2 border-2 border-[#D0A246] text-[#D0A246] px-6 py-3 rounded-lg font-medium hover:bg-[#D0A246] hover:text-[#3A2C2A] transition-colors;
+}
+
+/* Link Style */
+.btn-link {
+  @apply inline-flex items-center gap-2 text-[#8B1E22] font-medium hover:text-[#D0A246] transition-colors;
+}
+
+/* Badge */
+.badge-gold {
+  @apply inline-flex items-center gap-1 bg-[#D0A246] text-[#3A2C2A] px-2 py-0.5 rounded text-xs font-bold;
+}
+
+.badge-red {
+  @apply inline-flex items-center gap-1 bg-[#8B1E22] text-white px-2 py-0.5 rounded text-xs font-bold;
 }
 
 /* ------------------------------------------

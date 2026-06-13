@@ -56,12 +56,12 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#F5F0E6] flex flex-col">
-        <div className="bg-[#4A3728] text-white py-4">
+      <div className="min-h-screen bg-[#F7F2E9] flex flex-col">
+        <div className="bg-[#8B1E22] text-white py-4">
           <div className="container mx-auto px-4">
             <Link
               href="/"
-              className="inline-flex items-center text-sm hover:text-[#C4A35A] transition-colors"
+              className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -72,8 +72,8 @@ export default function RegisterPage() {
         <div className="flex-1 flex items-center justify-center py-12 px-4">
           <div className="text-center">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-[#4A3728] mb-2">Account Created!</h2>
-            <p className="text-[#8B7D6B]">Redirecting you to login...</p>
+            <h2 className="text-2xl font-semibold text-[#8B1E22] mb-2">Account Created!</h2>
+            <p className="text-[#6B5344]">Redirecting you to login...</p>
           </div>
         </div>
       </div>
@@ -81,13 +81,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F0E6] flex flex-col">
+    <div className="min-h-screen bg-[#F7F2E9] flex flex-col">
       {/* Header */}
-      <div className="bg-[#4A3728] text-white py-4">
+      <div className="bg-[#8B1E22] text-white py-4">
         <div className="container mx-auto px-4">
           <Link
             href="/"
-            className="inline-flex items-center text-sm hover:text-[#C4A35A] transition-colors"
+            className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
@@ -100,13 +100,13 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           {/* Logo / Brand */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-serif font-bold text-[#4A3728]">Slindon Patisserie</h1>
-            <p className="text-[#8B7D6B] mt-2">Create your account</p>
+            <h1 className="text-3xl font-serif font-bold text-[#8B1E22]">Slindon Patisserie</h1>
+            <p className="text-[#6B5344] mt-2">Create your account</p>
           </div>
 
           {/* Register Form */}
           <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-semibold text-[#4A3728] mb-6">Register</h2>
+            <h2 className="text-2xl font-semibold text-[#8B1E22] mb-6">Register</h2>
 
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
@@ -118,11 +118,11 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Name */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-[#2C1810] mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-[#3A2C2A] mb-2">
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="text"
                     id="name"
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Your full name"
                   />
                 </div>
@@ -138,11 +138,11 @@ export default function RegisterPage() {
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-[#2C1810] mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[#3A2C2A] mb-2">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="email"
                     id="email"
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -158,18 +158,18 @@ export default function RegisterPage() {
 
               {/* Phone */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-[#2C1810] mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-[#3A2C2A] mb-2">
                   Phone Number (Optional)
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="01234 567890"
                   />
                 </div>
@@ -177,11 +177,11 @@ export default function RegisterPage() {
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-[#2C1810] mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-[#3A2C2A] mb-2">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="password"
                     id="password"
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="At least 6 characters"
                   />
                 </div>
@@ -197,11 +197,11 @@ export default function RegisterPage() {
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#2C1810] mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#3A2C2A] mb-2">
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="password"
                     id="confirmPassword"
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Confirm your password"
                   />
                 </div>
@@ -219,21 +219,21 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-[#8B5A2B] text-white rounded-lg font-semibold hover:bg-[#6B4423] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#9B2A32] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Creating account...' : 'Create Account'}
               </button>
             </form>
 
             {/* Info */}
-            <p className="mt-4 text-sm text-[#8B7D6B] text-center">
+            <p className="mt-4 text-sm text-[#6B5344] text-center">
               For wholesale accounts, please contact us after registration.
             </p>
 
             {/* Login Link */}
-            <p className="mt-6 text-center text-sm text-[#8B7D6B]">
+            <p className="mt-6 text-center text-sm text-[#6B5344]">
               Already have an account?{' '}
-              <Link href="/login" className="text-[#8B5A2B] font-semibold hover:underline">
+              <Link href="/login" className="text-[#8B1E22] font-semibold hover:underline">
                 Sign in
               </Link>
             </p>

@@ -134,27 +134,27 @@ export default function AdminOrdersPage() {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-[#2D1810]">Orders</h1>
-        <p className="text-[#5C4033] mt-1">Manage and track customer orders</p>
+        <h1 className="text-3xl font-serif font-bold text-[#3A2C2A]">Orders</h1>
+        <p className="text-[#6B5344] mt-1">Manage and track customer orders</p>
       </div>
 
       {/* Filters */}
       <div className="bg-white rounded-xl p-4 shadow-sm mb-6 flex flex-wrap gap-4">
         <div className="flex-1 min-w-[200px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#5C4033]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
           <input
             type="text"
             placeholder="Search by order ID, customer name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+            className="w-full pl-10 pr-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
           />
         </div>
         
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+          className="px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
         >
           <option value="all">All Statuses</option>
           {Object.entries(statusConfig).map(([key, config]) => (
@@ -167,33 +167,33 @@ export default function AdminOrdersPage() {
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {filteredOrders.length === 0 ? (
           <div className="text-center py-20">
-            <Package className="w-16 h-16 mx-auto text-[#8B7D6B] mb-4" />
-            <p className="text-[#8B7D6B] text-lg">No orders found</p>
+            <Package className="w-16 h-16 mx-auto text-[#6B5344] mb-4" />
+            <p className="text-[#6B5344] text-lg">No orders found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#FDF8F0]">
+              <thead className="bg-[#F7F2E9]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Order ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Items
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Total
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Pickup
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -202,28 +202,28 @@ export default function AdminOrdersPage() {
                 {filteredOrders.map((order) => {
                   const StatusIcon = statusConfig[order.status]?.icon || Clock
                   return (
-                    <tr key={order.id} className="hover:bg-[#FDF8F0]/50">
+                    <tr key={order.id} className="hover:bg-[#F7F2E9]/50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-medium text-[#2D1810]">{order.id}</span>
-                        <p className="text-xs text-[#5C4033] mt-0.5">
+                        <span className="font-medium text-[#3A2C2A]">{order.id}</span>
+                        <p className="text-xs text-[#6B5344] mt-0.5">
                           {new Date(order.createdAt).toLocaleDateString()}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-medium text-[#2D1810]">{order.customer.name}</p>
-                        <p className="text-sm text-[#5C4033]">{order.customer.email}</p>
+                        <p className="font-medium text-[#3A2C2A]">{order.customer.name}</p>
+                        <p className="text-sm text-[#6B5344]">{order.customer.email}</p>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-[#5C4033]">
+                      <td className="px-6 py-4 whitespace-nowrap text-[#6B5344]">
                         {order.items.reduce((sum, item) => sum + item.quantity, 0)} items
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-medium text-[#2D1810]">£{order.total.toFixed(2)}</span>
+                        <span className="font-medium text-[#3A2C2A]">£{order.total.toFixed(2)}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm text-[#2D1810]">
+                        <p className="text-sm text-[#3A2C2A]">
                           {new Date(order.pickupDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                         </p>
-                        <p className="text-xs text-[#5C4033]">{order.pickupTime}</p>
+                        <p className="text-xs text-[#6B5344]">{order.pickupTime}</p>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center gap-1 w-fit ${statusConfig[order.status]?.color}`}>
@@ -234,7 +234,7 @@ export default function AdminOrdersPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="flex items-center gap-1 text-[#D42426] font-medium hover:underline"
+                          className="flex items-center gap-1 text-[#8B1E22] font-medium hover:underline"
                         >
                           <Eye className="w-4 h-4" />
                           View
@@ -250,7 +250,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Order Count */}
-      <div className="mt-4 text-sm text-[#5C4033]">
+      <div className="mt-4 text-sm text-[#6B5344]">
         Showing {filteredOrders.length} of {orders.length} orders
       </div>
 
@@ -261,14 +261,14 @@ export default function AdminOrdersPage() {
             {/* Modal Header */}
             <div className="p-6 border-b border-[#E8DDD0] flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-[#2D1810]">Order {selectedOrder.id}</h2>
-                <p className="text-sm text-[#5C4033]">
+                <h2 className="text-xl font-semibold text-[#3A2C2A]">Order {selectedOrder.id}</h2>
+                <p className="text-sm text-[#6B5344]">
                   Placed on {new Date(selectedOrder.createdAt).toLocaleString('en-GB')}
                 </p>
               </div>
               <button 
                 onClick={() => setSelectedOrder(null)}
-                className="text-[#5C4033] hover:text-[#2D1810] text-2xl"
+                className="text-[#6B5344] hover:text-[#3A2C2A] text-2xl"
               >
                 ×
               </button>
@@ -278,7 +278,7 @@ export default function AdminOrdersPage() {
             <div className="p-6 space-y-6">
               {/* Status */}
               <div>
-                <h3 className="text-sm font-medium text-[#5C4033] mb-2">Status</h3>
+                <h3 className="text-sm font-medium text-[#6B5344] mb-2">Status</h3>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(statusConfig).map(([key, config]) => (
                     <button
@@ -301,29 +301,29 @@ export default function AdminOrdersPage() {
 
               {/* Customer Info */}
               <div>
-                <h3 className="text-sm font-medium text-[#5C4033] mb-2">Customer</h3>
-                <div className="bg-[#FDF8F0] rounded-lg p-4">
-                  <p className="font-medium text-[#2D1810]">{selectedOrder.customer.name}</p>
-                  <p className="text-sm text-[#5C4033]">{selectedOrder.customer.email}</p>
-                  <p className="text-sm text-[#5C4033]">{selectedOrder.customer.phone}</p>
+                <h3 className="text-sm font-medium text-[#6B5344] mb-2">Customer</h3>
+                <div className="bg-[#F7F2E9] rounded-lg p-4">
+                  <p className="font-medium text-[#3A2C2A]">{selectedOrder.customer.name}</p>
+                  <p className="text-sm text-[#6B5344]">{selectedOrder.customer.email}</p>
+                  <p className="text-sm text-[#6B5344]">{selectedOrder.customer.phone}</p>
                 </div>
               </div>
 
               {/* Pickup Info */}
               <div>
-                <h3 className="text-sm font-medium text-[#5C4033] mb-2">Pickup Details</h3>
-                <div className="bg-[#FDF8F0] rounded-lg p-4">
-                  <p className="text-[#2D1810]">
+                <h3 className="text-sm font-medium text-[#6B5344] mb-2">Pickup Details</h3>
+                <div className="bg-[#F7F2E9] rounded-lg p-4">
+                  <p className="text-[#3A2C2A]">
                     <span className="font-medium">Date:</span> {new Date(selectedOrder.pickupDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
                   </p>
-                  <p className="text-[#2D1810]">
+                  <p className="text-[#3A2C2A]">
                     <span className="font-medium">Time:</span> {selectedOrder.pickupTime}
                   </p>
-                  <p className="text-[#2D1810]">
+                  <p className="text-[#3A2C2A]">
                     <span className="font-medium">Method:</span> {selectedOrder.deliveryMethod === 'delivery' ? 'Delivery' : 'Collection'}
                   </p>
                   {selectedOrder.deliveryAddress && (
-                    <p className="text-[#2D1810]">
+                    <p className="text-[#3A2C2A]">
                       <span className="font-medium">Address:</span> {selectedOrder.deliveryAddress}
                     </p>
                   )}
@@ -332,41 +332,41 @@ export default function AdminOrdersPage() {
 
               {/* Order Items */}
               <div>
-                <h3 className="text-sm font-medium text-[#5C4033] mb-2">Items</h3>
+                <h3 className="text-sm font-medium text-[#6B5344] mb-2">Items</h3>
                 <div className="border border-[#E8DDD0] rounded-lg overflow-hidden">
                   <table className="w-full">
-                    <thead className="bg-[#FDF8F0]">
+                    <thead className="bg-[#F7F2E9]">
                       <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-[#5C4033]">Item</th>
-                        <th className="px-4 py-2 text-center text-xs font-medium text-[#5C4033]">Qty</th>
-                        <th className="px-4 py-2 text-right text-xs font-medium text-[#5C4033]">Price</th>
-                        <th className="px-4 py-2 text-right text-xs font-medium text-[#5C4033]">Total</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-[#6B5344]">Item</th>
+                        <th className="px-4 py-2 text-center text-xs font-medium text-[#6B5344]">Qty</th>
+                        <th className="px-4 py-2 text-right text-xs font-medium text-[#6B5344]">Price</th>
+                        <th className="px-4 py-2 text-right text-xs font-medium text-[#6B5344]">Total</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#E8DDD0]">
                       {selectedOrder.items.map((item, index) => (
                         <tr key={index}>
-                          <td className="px-4 py-2 text-[#2D1810]">{item.name}</td>
-                          <td className="px-4 py-2 text-center text-[#5C4033]">{item.quantity}</td>
-                          <td className="px-4 py-2 text-right text-[#5C4033]">£{item.price.toFixed(2)}</td>
-                          <td className="px-4 py-2 text-right text-[#2D1810] font-medium">£{(item.price * item.quantity).toFixed(2)}</td>
+                          <td className="px-4 py-2 text-[#3A2C2A]">{item.name}</td>
+                          <td className="px-4 py-2 text-center text-[#6B5344]">{item.quantity}</td>
+                          <td className="px-4 py-2 text-right text-[#6B5344]">£{item.price.toFixed(2)}</td>
+                          <td className="px-4 py-2 text-right text-[#3A2C2A] font-medium">£{(item.price * item.quantity).toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>
-                    <tfoot className="bg-[#FDF8F0]">
+                    <tfoot className="bg-[#F7F2E9]">
                       <tr>
-                        <td colSpan={3} className="px-4 py-2 text-right font-medium text-[#2D1810]">Subtotal</td>
-                        <td className="px-4 py-2 text-right text-[#2D1810]">£{selectedOrder.subtotal.toFixed(2)}</td>
+                        <td colSpan={3} className="px-4 py-2 text-right font-medium text-[#3A2C2A]">Subtotal</td>
+                        <td className="px-4 py-2 text-right text-[#3A2C2A]">£{selectedOrder.subtotal.toFixed(2)}</td>
                       </tr>
                       {selectedOrder.deliveryFee > 0 && (
                         <tr>
-                          <td colSpan={3} className="px-4 py-2 text-right text-[#5C4033]">Delivery</td>
-                          <td className="px-4 py-2 text-right text-[#5C4033]">£{selectedOrder.deliveryFee.toFixed(2)}</td>
+                          <td colSpan={3} className="px-4 py-2 text-right text-[#6B5344]">Delivery</td>
+                          <td className="px-4 py-2 text-right text-[#6B5344]">£{selectedOrder.deliveryFee.toFixed(2)}</td>
                         </tr>
                       )}
                       <tr>
-                        <td colSpan={3} className="px-4 py-2 text-right font-bold text-[#2D1810]">Total</td>
-                        <td className="px-4 py-2 text-right font-bold text-[#D42426]">£{selectedOrder.total.toFixed(2)}</td>
+                        <td colSpan={3} className="px-4 py-2 text-right font-bold text-[#3A2C2A]">Total</td>
+                        <td className="px-4 py-2 text-right font-bold text-[#8B1E22]">£{selectedOrder.total.toFixed(2)}</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -378,7 +378,7 @@ export default function AdminOrdersPage() {
             <div className="p-6 border-t border-[#E8DDD0] flex justify-end">
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-4 py-2 border border-[#E8DDD0] rounded-lg text-[#5C4033] hover:bg-[#FDF8F0] transition-colors"
+                className="px-4 py-2 border border-[#E8DDD0] rounded-lg text-[#6B5344] hover:bg-[#F7F2E9] transition-colors"
               >
                 Close
               </button>

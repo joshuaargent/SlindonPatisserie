@@ -14,7 +14,7 @@ import './globals.css';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#8B4513',
+  themeColor: '#8B1E22',
 };
 
 export const metadata: Metadata = {
@@ -86,7 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <meta name="theme-color" content="#8B4513" />
+        <meta name="theme-color" content="#8B1E22" />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
         <NextAuthProvider>
