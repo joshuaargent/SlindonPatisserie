@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section - Clean, Conversion Focused */}
-      <section className="relative bg-[#8B1E22] overflow-hidden">
+      <section className="relative bg-[#8B1E22] overflow-hidden -mt-16 pt-16">
         <div className="container py-16 md:py-24 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Hero Content - Left Side */}
