@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { hash } from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -13,7 +13,7 @@ async function main() {
       email: 'admin@slindonpatisserie.co.uk',
       password: hashedPassword,
       name: 'Admin',
-      role: UserRole.ADMIN,
+      role: 'ADMIN',
     },
   })
   console.log('Created admin user:', admin.email)

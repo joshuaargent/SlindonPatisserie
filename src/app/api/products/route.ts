@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 
 // GET /api/products - List all products with optional filters
 export async function GET(request: Request) {
@@ -39,9 +39,9 @@ export async function GET(request: Request) {
 
     // Get unique categories for filters
     const categories = await prisma.product.findMany({
-      select: { category: true },
-      distinct: ['category'],
-      orderBy: { category: 'asc' },
+      select: { categoryId: true, category: true },
+      distinct: ['categoryId'],
+      orderBy: { category: { name: 'asc' } },
     })
 
     return NextResponse.json({
@@ -65,11 +65,11 @@ export async function POST(request: Request) {
     const product = await prisma.product.create({
       data: {
         name: body.name,
+        slug: body.slug || body.name.toLowerCase().replace(/\s+/g, '-'),
         description: body.description,
-        category: body.category,
+        category: { connect: { id: body.categoryId } },
         retailPrice: body.retailPrice,
         wholesalePrice: body.wholesalePrice,
-        wholesaleDiscountOverride: body.wholesaleDiscountOverride || false,
         image: body.image,
         available: body.available ?? true,
         productionTimeHours: body.productionTimeHours || 24,
