@@ -1,5 +1,5 @@
 // Prisma schema for Slindon Patisserie
-// Database: SQLite for development (PostgreSQL for production)
+// Production-ready database schema
 
 generator client {
   provider = "prisma-client-js"
@@ -20,12 +20,38 @@ model User {
   password  String
   name      String
   phone     String?
-  role      String   @default("customer") // 'customer' | 'wholesale' | 'admin'
+  role      UserRole @default(CUSTOMER)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  orders Order[]
-  cart   Cart?
+  orders  Order[]
+  cart    Cart?
+  reviews Review[]
+}
+
+enum UserRole {
+  CUSTOMER
+  WHOLESALE
+  ADMIN
+}
+
+// ============================================
+// Product Categories
+// ============================================
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  image       String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
 }
 
 // ============================================
@@ -35,37 +61,41 @@ model User {
 model Product {
   id                     String   @id @default(cuid())
   name                   String
+  slug                   String   @unique
   description            String
-  category               String   // 'bakery' | 'catering' | 'wholesale' | 'pos' | 'sundries'
+  categoryId             String
+  category               Category @relation(fields: [categoryId], references: [id])
   retailPrice            Float
   wholesalePrice         Float?
-  wholesaleDiscountOverride Boolean @default(false)
   image                  String?
   available              Boolean  @default(true)
-  productionTimeHours    Int      @default(24) // hours needed to prepare
+  productionTimeHours    Int      @default(24)
   madeAtFactoryA         Boolean  @default(true)
   madeAtFactoryB         Boolean  @default(false)
+  featured               Boolean  @default(false)
+  isWholesaleOnly        Boolean  @default(false)
+  stockQuantity          Int      @default(100)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
-  orderItems  OrderItem[]
-  cartItems   CartItem[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
 }
 
 // ============================================
-// Factory (for order routing)
+// Factories (for order routing)
 // ============================================
 
 model Factory {
-  id          String   @id @default(cuid())
-  name        String   // 'Factory A' or 'Factory B'
-  location    String
-  address     String
+  id           String   @id @default(cuid())
+  name         String
+  location     String
+  address      String
   contactEmail String
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
 
-  orderItems   OrderItem[]
+  orderItems OrderItem[]
 }
 
 // ============================================
@@ -75,7 +105,7 @@ model Factory {
 model PickupSlot {
   id        String   @id @default(cuid())
   date      DateTime
-  time      String   // e.g., '09:00', '10:00'
+  time      String
   capacity  Int      @default(10)
   booked    Int      @default(0)
   available Boolean  @default(true)
@@ -95,7 +125,7 @@ model Cart {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items     CartItem[]
+  items CartItem[]
 }
 
 model CartItem {
@@ -114,77 +144,181 @@ model CartItem {
 // ============================================
 
 model Order {
-  id              String   @id @default(cuid())
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
   userId          String
-  user            User     @relation(fields: [userId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
   subtotal        Float
-  deliveryFee     Float    @default(0)
+  deliveryFee     Float         @default(0)
   total           Float
-  deliveryMethod  String   // 'collection' | 'delivery'
+  deliveryMethod  DeliveryMethod
   deliveryAddress String?
   pickupDate      DateTime
   pickupTime      String
-  status          String   @default("pending") // 'pending' | 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled'
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String?
   teyaOrderId     String?
   notes           String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  items       OrderItem[]
+  items   OrderItem[]
+  history OrderStatusHistory[]
 }
 
 model OrderItem {
-  id         String  @id @default(cuid())
-  orderId    String
-  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId  String
-  product    Product @relation(fields: [productId], references: [id])
-  quantity   Int
-  unitPrice  Float
-  factoryId  String? // null means both factories
-  factory    Factory? @relation(fields: [factoryId], references: [id])
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Float
+  factoryId String?
+  factory   Factory? @relation(fields: [factoryId], references: [id])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+}
+
+enum DeliveryMethod {
+  COLLECTION
+  DELIVERY
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
 }
 
 // ============================================
-// Franchise Enquiries
+// Customer Reviews
+// ============================================
+
+model Review {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  rating    Int
+  title     String?
+  comment   String
+  status    ReviewStatus @default(PENDING)
+  reply     String?
+  repliedAt DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([status])
+  @@index([userId])
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ============================================
+// Enquiries
 // ============================================
 
 model FranchiseEnquiry {
-  id          String   @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  message     String
-  status      String   @default("new") // 'new' | 'contacted' | 'interested' | 'not_interested'
-  createdAt   DateTime @default(now())
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  status    EnquiryStatus @default(NEW)
+  note      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
-// ============================================
-// Careers Applications
-// ============================================
+model WholesaleEnquiry {
+  id           String        @id @default(cuid())
+  businessName String
+  name         String
+  email        String
+  phone        String?
+  message      String
+  status       EnquiryStatus @default(NEW)
+  note         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
 
 model CareerApplication {
-  id          String   @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  message     String
-  cvPath      String?
-  status      String   @default("new") // 'new' | 'reviewing' | 'contacted' | 'hired' | 'rejected'
-  createdAt   DateTime @default(now())
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  position  String?
+  message   String
+  cvData    String?
+  status    EnquiryStatus @default(NEW)
+  note      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
-// ============================================
-// Contact Enquiries
-// ============================================
-
 model ContactEnquiry {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   name      String
   email     String
   phone     String?
   subject   String?
   message   String
-  status    String   @default("new") // 'new' | 'replied' | 'closed'
+  status    EnquiryStatus @default(NEW)
+  note      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum EnquiryStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
+}
+
+// ============================================
+// Site Settings
+// ============================================
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("string")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// Newsletter Subscribers
+// ============================================
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }

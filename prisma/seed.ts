@@ -1,269 +1,123 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, UserRole } from '@prisma/client'
+import { hash } from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  // Create factories
-  const factoryA = await prisma.factory.create({
-    data: {
-      name: 'Factory A',
-      location: 'Camberley',
-      address: '123 Main Street, Camberley, GU15 3YN',
-      contactEmail: 'factory-a@slindonpatisserie.co.uk',
-      active: true,
+  // Create admin user
+  const hashedPassword = await hash('admin123', 12)
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@slindonpatisserie.co.uk' },
+    update: {},
+    create: {
+      email: 'admin@slindonpatisserie.co.uk',
+      password: hashedPassword,
+      name: 'Admin',
+      role: UserRole.ADMIN,
     },
   })
+  console.log('Created admin user:', admin.email)
 
-  const factoryB = await prisma.factory.create({
-    data: {
-      name: 'Factory B',
-      location: 'Camberley',
-      address: '456 Industrial Estate, Camberley, GU15 4AB',
-      contactEmail: 'factory-b@slindonpatisserie.co.uk',
-      active: true,
-    },
-  })
+  // Create categories
+  const categories = await Promise.all([
+    prisma.category.upsert({
+      where: { slug: 'pastries' },
+      update: {},
+      create: { name: 'Pastries', slug: 'pastries', sortOrder: 1 },
+    }),
+    prisma.category.upsert({
+      where: { slug: 'breads' },
+      update: {},
+      create: { name: 'Breads', slug: 'breads', sortOrder: 2 },
+    }),
+    prisma.category.upsert({
+      where: { slug: 'cakes' },
+      update: {},
+      create: { name: 'Cakes', slug: 'cakes', sortOrder: 3 },
+    }),
+    prisma.category.upsert({
+      where: { slug: 'seasonal' },
+      update: {},
+      create: { name: 'Seasonal', slug: 'seasonal', sortOrder: 4 },
+    }),
+  ])
+  console.log('Created categories:', categories.length)
 
-  // Create products - Bakery category
-  const bakeryProducts = [
-    {
-      name: 'Butter Croissant',
-      description: 'Flaky, buttery French croissant made with finest French butter. Golden and crispy on the outside, soft and layered within.',
-      category: 'bakery',
-      retailPrice: 2.50,
-      wholesalePrice: 1.25,
-      productionTimeHours: 8,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Pain au Chocolat',
-      description: 'Classic French pastry with rich dark chocolate batons. Layers of buttery dough wrapped around premium chocolate.',
-      category: 'bakery',
-      retailPrice: 2.80,
-      wholesalePrice: 1.40,
-      productionTimeHours: 8,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Almond Croissant',
-      description: 'Croissant filled with almond cream and topped with flaked almonds and icing sugar.',
-      category: 'bakery',
-      retailPrice: 3.20,
-      wholesalePrice: 1.60,
-      productionTimeHours: 10,
-      madeAtFactoryA: true,
-      madeAtFactoryB: false,
-    },
-    {
-      name: 'Pain aux Raisins',
-      description: 'Spiral pastry with custard and raisins, dusted with sugar.',
-      category: 'bakery',
-      retailPrice: 2.70,
-      wholesalePrice: 1.35,
-      productionTimeHours: 10,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'French Baguette',
-      description: 'Traditional long loaf with a crispy crust and light, airy interior. Perfect for sandwiches or with cheese.',
-      category: 'bakery',
-      retailPrice: 2.20,
-      wholesalePrice: 1.10,
-      productionTimeHours: 4,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Sourdough Boule',
-      description: 'Rustic round loaf with a caramelized crust and tangy, open crumb. Made with our 48-hour fermented starter.',
-      category: 'bakery',
-      retailPrice: 4.50,
-      wholesalePrice: 2.25,
-      productionTimeHours: 48,
-      madeAtFactoryA: true,
-      madeAtFactoryB: false,
-    },
-    {
-      name: 'Chocolate Brownie',
-      description: 'Rich, fudgy brownie with Belgian chocolate chunks. Dense and decadent.',
-      category: 'bakery',
-      retailPrice: 3.00,
-      wholesalePrice: 1.50,
-      productionTimeHours: 24,
-      madeAtFactoryA: false,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Victoria Sponge',
-      description: 'Classic British sandwich cake with vanilla buttercream and strawberry jam between two light sponge layers.',
-      category: 'bakery',
-      retailPrice: 4.80,
-      wholesalePrice: 2.40,
-      productionTimeHours: 12,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
+  const [pastries, breads, cakes, seasonal] = categories
+
+  // Create products
+  const products = [
+    // Pastries
+    { name: 'Butter Croissant', slug: 'butter-croissant', description: 'Flaky, buttery French croissant made with finest French butter.', categoryId: pastries.id, retailPrice: 2.50, productionTimeHours: 8 },
+    { name: 'Pain au Chocolat', slug: 'pain-au-chocolat', description: 'Classic French pastry with rich dark chocolate batons.', categoryId: pastries.id, retailPrice: 2.80, productionTimeHours: 8 },
+    { name: 'Almond Croissant', slug: 'almond-croissant', description: 'Croissant filled with almond cream and topped with flaked almonds.', categoryId: pastries.id, retailPrice: 3.20, productionTimeHours: 10 },
+    { name: 'Pain aux Raisins', slug: 'pain-aux-raisins', description: 'Spiral pastry with custard and raisins, dusted with sugar.', categoryId: pastries.id, retailPrice: 2.70, productionTimeHours: 10 },
+    // Breads
+    { name: 'French Baguette', slug: 'french-baguette', description: 'Traditional long loaf with a crispy crust and light, airy interior.', categoryId: breads.id, retailPrice: 2.20, productionTimeHours: 4 },
+    { name: 'Sourdough Boule', slug: 'sourdough-boule', description: 'Rustic round loaf with a caramelized crust and tangy, open crumb.', categoryId: breads.id, retailPrice: 4.50, productionTimeHours: 48 },
+    { name: 'Ciabatta', slug: 'ciabatta', description: 'Italian white bread with a crisp crust and porous interior.', categoryId: breads.id, retailPrice: 3.00, productionTimeHours: 6 },
+    // Cakes
+    { name: 'Victoria Sponge', slug: 'victoria-sponge', description: 'Classic British sandwich cake with vanilla buttercream and strawberry jam.', categoryId: cakes.id, retailPrice: 4.80, productionTimeHours: 12 },
+    { name: 'Chocolate Brownie', slug: 'chocolate-brownie', description: 'Rich, fudgy brownie with Belgian chocolate chunks.', categoryId: cakes.id, retailPrice: 3.00, productionTimeHours: 24 },
+    { name: 'Carrot Cake', slug: 'carrot-cake', description: 'Moist carrot cake with cream cheese frosting and walnuts.', categoryId: cakes.id, retailPrice: 5.50, productionTimeHours: 16 },
+    // Seasonal
+    { name: 'Hot Cross Buns', slug: 'hot-cross-buns', description: 'Traditional spiced buns with cross marking, dried fruits.', categoryId: seasonal.id, retailPrice: 3.50, productionTimeHours: 12, isWholesaleOnly: false },
+    { name: 'Christmas Pudding', slug: 'christmas-pudding', description: 'Rich, moist pudding with brandy and dried fruits. Pre-order only.', categoryId: seasonal.id, retailPrice: 18.00, productionTimeHours: 72 },
   ]
 
-  // Create products - Catering category
-  const cateringProducts = [
-    {
-      name: 'Mini Sandwich Selection',
-      description: 'Assorted mini sandwiches: cucumber, egg mayo, ham & mustard, cheese & pickle. Perfect for events.',
-      category: 'catering',
-      retailPrice: 15.00,
-      wholesalePrice: 7.50,
-      productionTimeHours: 4,
-      madeAtFactoryA: true,
-      madeAtFactoryB: false,
-    },
-    {
-      name: 'Savory Platter',
-      description: 'Selection of quiches, sausage rolls, and savory tarts. Serves 8-10 people.',
-      category: 'catering',
-      retailPrice: 35.00,
-      wholesalePrice: 17.50,
-      productionTimeHours: 8,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Fruit Scones (6 pack)',
-      description: 'Traditional fruit scones with currents and sultanas. Best served warm with clotted cream and jam.',
-      category: 'catering',
-      retailPrice: 8.50,
-      wholesalePrice: 4.25,
-      productionTimeHours: 6,
-      madeAtFactoryA: true,
-      madeAtFactoryB: false,
-    },
-    {
-      name: 'Cream Tea for Two',
-      description: 'Two plain scones, clotted cream, strawberry jam, and a pot of loose leaf tea.',
-      category: 'catering',
-      retailPrice: 12.00,
-      wholesalePrice: 6.00,
-      productionTimeHours: 2,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Pastry Selection Box',
-      description: '12 assorted Danish pastries and croissants. Ideal for meetings or breakfast service.',
-      category: 'catering',
-      retailPrice: 28.00,
-      wholesalePrice: 14.00,
-      productionTimeHours: 12,
-      madeAtFactoryA: true,
-      madeAtFactoryB: false,
-    },
-  ]
-
-  // Create wholesale products
-  const wholesaleProducts = [
-    {
-      name: 'Large Croissant Box (30)',
-      description: 'Box of 30 premium butter croissants. Bulk pricing for bakeries and cafes.',
-      category: 'wholesale',
-      retailPrice: 45.00,
-      wholesalePrice: 35.00,
-      wholesaleDiscountOverride: true,
-      productionTimeHours: 8,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Baguette Box (20)',
-      description: 'Box of 20 freshly baked French baguettes.',
-      category: 'wholesale',
-      retailPrice: 32.00,
-      wholesalePrice: 25.00,
-      wholesaleDiscountOverride: true,
-      productionTimeHours: 4,
-      madeAtFactoryA: true,
-      madeAtFactoryB: true,
-    },
-    {
-      name: 'Patisserie Selection Box',
-      description: 'Assorted selection of 40 mixed patisserie items including croissants, Danish, and tarts.',
-      category: 'wholesale',
-      retailPrice: 75.00,
-      wholesalePrice: 60.00,
-      wholesaleDiscountOverride: true,
-      productionTimeHours: 12,
-      madeAtFactoryA: true,
-      madeAtFactoryB: false,
-    },
-  ]
-
-  // Create POS products
-  const posProducts = [
-    {
-      name: 'Paper Bags (500)',
-      description: 'Plain brown paper bags. Medium size.',
-      category: 'pos',
-      retailPrice: 15.00,
-      productionTimeHours: 0,
-      madeAtFactoryA: false,
-      madeAtFactoryB: false,
-    },
-    {
-      name: 'Branded Paper Bags (250)',
-      description: 'Paper bags printed with Slindon Patisserie logo.',
-      category: 'pos',
-      retailPrice: 35.00,
-      productionTimeHours: 0,
-      madeAtFactoryA: false,
-      madeAtFactoryB: false,
-    },
-  ]
-
-  // Create sundries products
-  const sundriesProducts = [
-    {
-      name: 'Clotted Cream (227g)',
-      description: 'Premium Cornish clotted cream. Keep refrigerated.',
-      category: 'sundries',
-      retailPrice: 4.50,
-      productionTimeHours: 0,
-      madeAtFactoryA: false,
-      madeAtFactoryB: false,
-    },
-    {
-      name: 'Strawberry Jam (340g)',
-      description: 'Homemade strawberry jam with real fruit.',
-      category: 'sundries',
-      retailPrice: 3.50,
-      productionTimeHours: 0,
-      madeAtFactoryA: false,
-      madeAtFactoryB: false,
-    },
-  ]
-
-  // Insert all products
-  const allProducts = [
-    ...bakeryProducts,
-    ...cateringProducts,
-    ...wholesaleProducts,
-    ...posProducts,
-    ...sundriesProducts,
-  ]
-
-  for (const product of allProducts) {
-    await prisma.product.create({
-      data: {
+  for (const product of products) {
+    await prisma.product.upsert({
+      where: { slug: product.slug },
+      update: {},
+      create: {
         ...product,
-        image: `/images/products/${product.name.toLowerCase().replace(/ /g, '-')}.jpg`,
+        wholesalePrice: product.retailPrice * 0.6,
         available: true,
+        featured: product.retailPrice >= 4.50,
+        madeAtFactoryA: true,
+        madeAtFactoryB: true,
       },
     })
   }
+  console.log('Created products:', products.length)
 
-  console.log('Database seeded successfully!')
-  console.log(`Created 2 factories and ${allProducts.length} products`)
+  // Create factory
+  await prisma.factory.upsert({
+    where: { id: 'factory-main' },
+    update: {},
+    create: {
+      id: 'factory-main',
+      name: 'Main Bakery',
+      location: 'Camberley',
+      address: 'Camberley, Surrey',
+      contactEmail: 'bakery@slindonpatisserie.co.uk',
+      active: true,
+    },
+  })
+  console.log('Created factory')
+
+  // Create site settings
+  const settings = [
+    { key: 'site_name', value: 'Slindon Patisserie', type: 'string' },
+    { key: 'contact_email', value: 'info@slindonpatisserie.co.uk', type: 'string' },
+    { key: 'contact_phone', value: '01243 814369', type: 'string' },
+    { key: 'collection_address', value: 'Camberley, Surrey', type: 'string' },
+    { key: 'delivery_fee', value: '5', type: 'number' },
+    { key: 'free_delivery_threshold', value: '50', type: 'number' },
+  ]
+
+  for (const setting of settings) {
+    await prisma.siteSetting.upsert({
+      where: { key: setting.key },
+      update: {},
+      create: setting,
+    })
+  }
+  console.log('Created site settings:', settings.length)
+
+  console.log('\n✅ Database seeded successfully!')
+  console.log('\n📋 Login credentials:')
+  console.log('   Admin: admin@slindonpatisserie.co.uk / admin123')
 }
 
 main()

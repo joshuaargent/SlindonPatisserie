@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ShoppingBag, Phone, Users, DollarSign, TrendingUp, Clock, MapPin, CheckCircle, Star, Heart, Award, Truck } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Phone, Users, DollarSign, TrendingUp, Clock, MapPin, CheckCircle, Star, Heart, Award, Truck, Quote } from 'lucide-react';
 import { businessInfo, marketSchedule } from '@/data/site';
 
 // ============================================
@@ -450,6 +450,80 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 text-[#8B1E22] font-medium hover:text-[#D0A246] transition-colors"
             >
               View Full Market Schedule
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Reviews Section */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="container">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+            <div>
+              <p className="text-[#D0A246] text-sm font-semibold tracking-wider uppercase mb-2">Testimonials</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#3A2C2A]">
+                What Our Customers Say
+              </h2>
+            </div>
+            <Link
+              href="/reviews"
+              className="inline-flex items-center gap-2 text-[#8B1E22] font-medium hover:text-[#D0A246] transition-colors"
+            >
+              Read All Reviews
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          
+          {/* Review Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                name: 'Sarah M.',
+                rating: 5,
+                text: 'Absolutely divine croissants! The best I\'ve had outside of Paris. Will definitely be ordering again.',
+                location: 'Camberley'
+              },
+              {
+                name: 'James P.',
+                rating: 5,
+                text: 'The wedding cake exceeded all expectations. Beautiful design and even better taste. Our guests loved it!',
+                location: 'Windsor'
+              },
+              {
+                name: 'Emma L.',
+                rating: 5,
+                text: 'So glad I found this gem. Every item is made with such care and the customer service is exceptional.',
+                location: 'Guildford'
+              },
+            ].map((review, index) => (
+              <div key={index} className="bg-[#F7F2E9] rounded-xl p-6 relative">
+                <Quote className="absolute top-4 right-4 h-8 w-8 text-[#D0A246]/20" />
+                <div className="flex gap-1 mb-4">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-[#D0A246] text-[#D0A246]" />
+                  ))}
+                </div>
+                <p className="text-[#3A2C2A] leading-relaxed mb-4">{review.text}</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-[#D0A246]/20 flex items-center justify-center">
+                    <span className="text-[#8B1E22] font-bold text-sm">{review.name.charAt(0)}</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-[#3A2C2A] text-sm">{review.name}</p>
+                    <p className="text-[#6B5344] text-xs">{review.location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-8">
+            <Link
+              href="/reviews"
+              className="btn-secondary"
+            >
+              Share Your Experience
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
