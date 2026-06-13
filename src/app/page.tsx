@@ -39,14 +39,14 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-4 mb-10">
                 <Link
                   href="/products"
-                  className="inline-flex items-center gap-3 bg-[#D0A246] hover:bg-[#E0B256] px-8 py-4 text-lg font-bold text-[#3A2C2A] rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  className="btn-primary text-lg px-8 py-4 hover:-translate-y-0.5"
                 >
                   <ShoppingBag className="h-5 w-5" />
                   Order Online Now
                 </Link>
                 <Link
                   href="#franchise"
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 px-6 py-4 text-lg font-semibold text-white rounded-xl transition-all duration-200"
+                  className="btn-outline-white text-lg px-6 py-4"
                 >
                   <DollarSign className="h-5 w-5" />
                   Franchise Opportunity
@@ -120,7 +120,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                className="btn-secondary"
               >
                 Shop Now
                 <ArrowRight className="h-4 w-4" />
@@ -138,7 +138,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/wholesale"
-                className="inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-6 py-3 rounded-lg font-medium transition-colors"
+                className="btn-primary"
               >
                 Get Wholesale Pricing
                 <ArrowRight className="h-4 w-4" />
@@ -156,7 +156,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/franchise"
-                className="inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-6 py-3 rounded-lg font-bold transition-colors"
+                className="btn-primary"
               >
                 Learn More
                 <ArrowRight className="h-4 w-4" />
@@ -208,7 +208,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                className="btn-secondary"
               >
                 Start Your Order
                 <ArrowRight className="h-4 w-4" />
@@ -351,14 +351,14 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-4 mt-8">
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                  className="btn-secondary"
                 >
                   Our Full Story
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/products"
-                  className="inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-6 py-3 rounded-lg font-medium transition-colors"
+                  className="btn-primary"
                 >
                   Shop Now
                   <ArrowRight className="h-4 w-4" />
@@ -395,7 +395,7 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/contact?type=franchise"
-                  className="inline-flex items-center gap-2 border-2 border-white/30 text-white px-6 py-4 rounded-lg font-medium hover:bg-white/10 transition-colors"
+                  className="btn-outline-white px-6 py-4"
                 >
                   Contact Us
                 </Link>
@@ -469,14 +469,14 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`tel:${businessInfo.phone}`}
-              className="inline-flex items-center gap-2 bg-[#D0A246] text-[#3A2C2A] px-8 py-4 rounded-lg font-bold hover:bg-[#E0B256] transition-colors"
+              className="btn-primary px-8 py-4"
             >
               <Phone className="h-5 w-5" />
               Call Us
             </a>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 border-2 border-white/30 px-6 py-4 rounded-lg font-medium hover:bg-white/10 transition-colors"
+              className="btn-outline-white px-6 py-4"
             >
               Contact Form
             </Link>

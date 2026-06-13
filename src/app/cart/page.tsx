@@ -21,7 +21,7 @@ function CartContent() {
         <p className="text-[#6B5344] mb-8">Add some delicious products to get started!</p>
         <Link
           href="/products"
-          className="inline-flex items-center gap-2 bg-[#8B1E22] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors"
+          className="btn-secondary"
         >
           Browse Products
         </Link>
@@ -118,14 +118,14 @@ function CartContent() {
         <div className="space-y-3">
           <Link
             href="/checkout"
-            className="flex items-center justify-center gap-2 w-full bg-[#8B1E22] text-white py-3 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors"
+            className="btn-secondary w-full"
           >
             Proceed to Checkout
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             href="/products"
-            className="flex items-center justify-center gap-2 w-full border border-[#E8DDD0] text-[#6B5344] py-3 rounded-lg font-medium hover:bg-[#FDF8E8] transition-colors"
+            className="btn-outline-red w-full"
           >
             Continue Shopping
           </Link>

@@ -236,6 +236,57 @@ a:hover {
 }
 
 /* ------------------------------------------
+   Buttons - Heritage Bakery Theme
+   ------------------------------------------ */
+
+/* Primary Button - Gold (for main CTAs) */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-primary-sm {
+  @apply inline-flex items-center justify-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200;
+}
+
+/* Secondary Button - Red (for alternative CTAs) */
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-secondary-sm {
+  @apply inline-flex items-center justify-center gap-2 bg-[#8B1E22] hover:bg-[#9B2A32] text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200;
+}
+
+/* Outline Button - White (for dark backgrounds) */
+.btn-outline-white {
+  @apply inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition-colors;
+}
+
+/* Outline Button - Red (for light backgrounds) */
+.btn-outline-red {
+  @apply inline-flex items-center justify-center gap-2 border-2 border-[#8B1E22] text-[#8B1E22] px-6 py-3 rounded-lg font-medium hover:bg-[#8B1E22] hover:text-white transition-colors;
+}
+
+/* Outline Button - Gold (for light backgrounds) */
+.btn-outline-gold {
+  @apply inline-flex items-center justify-center gap-2 border-2 border-[#D0A246] text-[#D0A246] px-6 py-3 rounded-lg font-medium hover:bg-[#D0A246] hover:text-[#3A2C2A] transition-colors;
+}
+
+/* Link Style */
+.btn-link {
+  @apply inline-flex items-center gap-2 text-[#8B1E22] font-medium hover:text-[#D0A246] transition-colors;
+}
+
+/* Badge */
+.badge-gold {
+  @apply inline-flex items-center gap-1 bg-[#D0A246] text-[#3A2C2A] px-2 py-0.5 rounded text-xs font-bold;
+}
+
+.badge-red {
+  @apply inline-flex items-center gap-1 bg-[#8B1E22] text-white px-2 py-0.5 rounded text-xs font-bold;
+}
+
+/* ------------------------------------------
    Utilities
    ------------------------------------------ */
 

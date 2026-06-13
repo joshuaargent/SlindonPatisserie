@@ -128,7 +128,7 @@ export default function AdminDashboard() {
           className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4"
         >
           <div className="w-12 h-12 rounded-lg bg-[#D0A246] flex items-center justify-center">
-            <span className="text-2xl">🏷️</span>
+            <span className="text-2xl text-[#3A2C2A]">🏷️</span>
           </div>
           <div>
             <h3 className="font-semibold text-[#3A2C2A]">Manage Categories</h3>
