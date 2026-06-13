@@ -98,28 +98,28 @@ export default function MarketsPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
             <div className="text-center">
               <div className="h-12 w-12 rounded-full bg-[#8B1E22] mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">1</span>
+                <span className="text-[#F7F2E9] font-bold text-xl">1</span>
               </div>
               <h3 className="font-semibold text-[#3A2C2A] mb-2">Browse</h3>
               <p className="text-[#6B5344] text-sm">Explore our full range of fresh products</p>
             </div>
             <div className="text-center">
               <div className="h-12 w-12 rounded-full bg-[#8B1E22] mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">2</span>
+                <span className="text-[#F7F2E9] font-bold text-xl">2</span>
               </div>
               <h3 className="font-semibold text-[#3A2C2A] mb-2">Choose</h3>
               <p className="text-[#6B5344] text-sm">Select your favorites from our selection</p>
             </div>
             <div className="text-center">
               <div className="h-12 w-12 rounded-full bg-[#8B1E22] mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">3</span>
+                <span className="text-[#F7F2E9] font-bold text-xl">3</span>
               </div>
               <h3 className="font-semibold text-[#3A2C2A] mb-2">Pay</h3>
               <p className="text-[#6B5344] text-sm">Cash and card accepted at all markets</p>
             </div>
             <div className="text-center">
               <div className="h-12 w-12 rounded-full bg-[#8B1E22] mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">4</span>
+                <span className="text-[#F7F2E9] font-bold text-xl">4</span>
               </div>
               <h3 className="font-semibold text-[#3A2C2A] mb-2">Enjoy!</h3>
               <p className="text-[#6B5344] text-sm">Take your treats home and enjoy!</p>

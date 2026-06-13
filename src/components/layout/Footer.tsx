@@ -10,15 +10,15 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#8B1E22] text-white">
+    <footer className="bg-[#8B1E22] text-[#F7F2E9]">
       <div className="container py-12 md:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:gap-12">
           {/* Brand & About */}
           <div className="lg:col-span-1">
-            <Link href="/" className="text-xl font-bold text-[#D0A246] hover:text-white transition-colors font-serif">
+            <Link href="/" className="text-xl font-bold text-[#D0A246] hover:text-[#F7F2E9] transition-colors font-serif">
               {siteConfig.name}
             </Link>
-            <p className="mt-3 max-w-xs text-white/80 font-medium">
+            <p className="mt-3 max-w-xs text-[#F7F2E9]/80 font-medium">
               Slindon Patisserie
             </p>
             <Link
@@ -33,7 +33,7 @@ export function Footer() {
                 href={siteConfig.links.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#D0A246] hover:text-white p-2 transition-colors"
+                className="text-[#D0A246] hover:text-[#F7F2E9] p-2 transition-colors"
                 aria-label="YouTube"
               >
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ export function Footer() {
                 href={siteConfig.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#D0A246] hover:text-white p-2 transition-colors"
+                className="text-[#D0A246] hover:text-[#F7F2E9] p-2 transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-[#D0A246] hover:text-white transition-colors font-medium"
+                    className="text-[#D0A246] hover:text-[#F7F2E9] transition-colors font-medium"
                   >
                     {item.label}
                   </Link>
@@ -83,7 +83,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-[#D0A246] hover:text-white transition-colors font-medium"
+                    className="text-[#D0A246] hover:text-[#F7F2E9] transition-colors font-medium"
                   >
                     {item.label}
                   </Link>
@@ -100,7 +100,7 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-[#D0A246] shrink-0 mt-0.5" />
-                <span className="text-white">
+                <span className="text-[#F7F2E9]">
                   {siteConfig.address.line1}<br />
                   {siteConfig.address.line2}<br />
                   {siteConfig.address.line3}<br />
@@ -109,13 +109,13 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[#D0A246] shrink-0" />
-                <a href={`tel:${siteConfig.phone}`} className="text-[#D0A246] hover:text-white transition-colors font-medium">
+                <a href={`tel:${siteConfig.phone}`} className="text-[#D0A246] hover:text-[#F7F2E9] transition-colors font-medium">
                   {siteConfig.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-[#D0A246] shrink-0" />
-                <a href={siteConfig.links.email} className="text-[#D0A246] hover:text-white transition-colors font-medium">
+                <a href={siteConfig.links.email} className="text-[#D0A246] hover:text-[#F7F2E9] transition-colors font-medium">
                   Email Us
                 </a>
               </li>
@@ -126,10 +126,10 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 border-t border-[#D0A246]/30 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-white/80 text-sm font-medium">
+            <p className="text-[#F7F2E9]/80 text-sm font-medium">
               © {currentYear} {siteConfig.name}. All rights reserved.
             </p>
-            <p className="text-white/80 text-sm font-medium">
+            <p className="text-[#F7F2E9]/80 text-sm font-medium">
               Handmade with love in Camberley, Surrey
             </p>
           </div>

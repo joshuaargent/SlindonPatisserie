@@ -33,7 +33,7 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
-      <div className="bg-[#8B1E22] text-white py-4">
+      <div className="bg-[#8B1E22] text-[#F7F2E9] py-4">
         <div className="container mx-auto px-4">
           <Link
             href="/"

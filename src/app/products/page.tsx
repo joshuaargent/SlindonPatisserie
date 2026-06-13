@@ -124,7 +124,7 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
-      <div className="bg-[#8B1E22] text-white py-4">
+      <div className="bg-[#8B1E22] text-[#F7F2E9] py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link
             href="/"
@@ -164,7 +164,7 @@ export default function ProductsPage() {
               onClick={() => setShowRetailPrices(true)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                 showRetailPrices
-                  ? 'bg-[#8B1E22] text-white'
+                  ? 'bg-[#8B1E22] text-[#F7F2E9]'
                   : 'bg-[#F7F2E9] text-[#6B5344] hover:bg-[#E8DDD0]'
               }`}
             >
@@ -178,7 +178,7 @@ export default function ProductsPage() {
                 onClick={() => setShowRetailPrices(false)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   !showRetailPrices
-                    ? 'bg-[#8B1E22] text-white'
+                    ? 'bg-[#8B1E22] text-[#F7F2E9]'
                     : 'bg-[#F7F2E9] text-[#6B5344] hover:bg-[#E8DDD0]'
                 }`}
               >
@@ -225,7 +225,7 @@ export default function ProductsPage() {
             onClick={() => setSelectedCategory('all')}
             className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 ${
               selectedCategory === 'all'
-                ? 'bg-[#8B1E22] text-white'
+                ? 'bg-[#8B1E22] text-[#F7F2E9]'
                 : 'bg-white text-[#6B5344] hover:bg-[#E8DDD0]'
             }`}
           >
@@ -239,7 +239,7 @@ export default function ProductsPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 ${
                   selectedCategory === cat
-                    ? 'bg-[#8B1E22] text-white'
+                    ? 'bg-[#8B1E22] text-[#F7F2E9]'
                     : 'bg-white text-[#6B5344] hover:bg-[#E8DDD0]'
                 }`}
               >
@@ -322,7 +322,7 @@ export default function ProductsPage() {
                     )}
                     
                     {Number(savings) > 0 && !showRetailPrices && (
-                      <span className="absolute top-3 right-3 px-2 py-1 bg-[#8B1E22] text-white text-xs font-bold rounded">
+                      <span className="absolute top-3 right-3 px-2 py-1 bg-[#8B1E22] text-[#F7F2E9] text-xs font-bold rounded">
                         Save {savings}%
                       </span>
                     )}
@@ -384,9 +384,9 @@ export default function ProductsPage() {
         )}
 
         {/* Info Banner */}
-        <div className="mt-12 bg-[#8B1E22] text-white rounded-xl p-6">
+        <div className="mt-12 bg-[#8B1E22] text-[#F7F2E9] rounded-xl p-6">
           <h3 className="font-semibold text-lg mb-2">Production Time Notice</h3>
-          <p className="text-white/80">
+          <p className="text-[#F7F2E9]/80">
             All our products are made fresh to order. When selecting your pickup time at checkout, 
             please allow at least the production time shown for your items. Need it sooner? 
             <Link href="/contact" className="text-[#D0A246] hover:underline ml-1">Contact us</Link>.

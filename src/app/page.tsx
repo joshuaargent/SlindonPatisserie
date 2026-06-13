@@ -18,20 +18,20 @@ export default function HomePage() {
             {/* Hero Content - Left Side */}
             <div className="relative z-10">
               {/* Trust Badge */}
-              <div className="inline-flex items-center gap-2 bg-white/10 text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 bg-white/10 text-[#F7F2E9]/90 px-4 py-2 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">
                 <Star className="h-4 w-4 text-[#D0A246] fill-[#D0A246]" />
                 Trusted by 200+ customers • 40+ years of excellence
               </div>
               
               {/* Main Headline */}
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#F7F2E9] leading-tight mb-6">
                 Slindon Patisseries,
                 <br />
                 <span className="text-[#D0A246]">Baked Fresh Daily</span>
               </h1>
               
               {/* Subheadline */}
-              <p className="text-lg md:text-xl text-white/85 max-w-xl mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-[#F7F2E9]/85 max-w-xl mb-8 leading-relaxed">
                 Freshly baked patisserie for collection in Camberley. Order online, collect same-day. Also available for wholesale and franchise.
               </p>
               
@@ -54,7 +54,7 @@ export default function HomePage() {
               </div>
               
               {/* Quick Benefits */}
-              <div className="flex flex-wrap gap-6 text-white/80 text-sm">
+              <div className="flex flex-wrap gap-6 text-[#F7F2E9]/80 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-[#D0A246]" />
                   <span>Freshly Baked Daily</span>
@@ -146,12 +146,12 @@ export default function HomePage() {
             </div>
 
             {/* Franchise Card */}
-            <div className="bg-gradient-to-br from-[#8B1E22] to-[#9B2A32] rounded-2xl p-8 text-white shadow-lg">
+            <div className="bg-gradient-to-br from-[#8B1E22] to-[#9B2A32] rounded-2xl p-8 text-[#F7F2E9] shadow-lg">
               <div className="h-14 w-14 rounded-2xl bg-[#D0A246]/20 flex items-center justify-center mb-6">
                 <DollarSign className="h-7 w-7 text-[#D0A246]" />
               </div>
               <h3 className="font-serif text-2xl font-bold mb-3">Franchise</h3>
-              <p className="text-white/80 mb-6">
+              <p className="text-[#F7F2E9]/80 mb-6">
                 Own your own Slindon Patisserie. Full training, proven systems, big potential.
               </p>
               <Link
@@ -216,17 +216,17 @@ export default function HomePage() {
             </div>
 
             {/* Delivery Inquiry Card */}
-            <div className="bg-gradient-to-br from-[#8B1E22] to-[#9B2A32] rounded-3xl p-8 text-white">
+            <div className="bg-gradient-to-br from-[#8B1E22] to-[#9B2A32] rounded-3xl p-8 text-[#F7F2E9]">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-14 w-14 rounded-2xl bg-[#D0A246]/20 flex items-center justify-center">
                   <Truck className="h-7 w-7 text-[#D0A246]" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-2xl font-bold">Delivery Available</h3>
-                  <p className="text-white/70">By arrangement</p>
+                  <h3 className="font-serif text-2xl font-bold text-[#F7F2E9]">Delivery Available</h3>
+                  <p className="text-[#F7F2E9]/70">By arrangement</p>
                 </div>
               </div>
-              <p className="text-white/90 mb-6">
+              <p className="text-[#F7F2E9]/90 mb-6">
                 Need your order delivered? We offer delivery by arrangement for local orders. 
                 Contact us to discuss options.
               </p>
@@ -236,7 +236,7 @@ export default function HomePage() {
                   className="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-5 py-3 rounded-xl transition-colors"
                 >
                   <Phone className="h-5 w-5 text-[#D0A246]" />
-                  <span>{businessInfo.phone}</span>
+                  <span className="text-[#F7F2E9]">{businessInfo.phone}</span>
                 </a>
                 <Link
                   href="/contact?type=delivery"
@@ -317,12 +317,12 @@ export default function HomePage() {
                 />
               </div>
               {/* Stats Badge */}
-              <div className="absolute -bottom-4 -right-4 bg-[#8B1E22] text-white rounded-xl shadow-lg px-6 py-4">
+              <div className="absolute -bottom-4 -right-4 bg-[#8B1E22] text-[#F7F2E9] rounded-xl shadow-lg px-6 py-4">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-[#D0A246]" />
                   <div>
                     <p className="font-bold text-lg">40+ Years</p>
-                    <p className="text-white/80 text-sm">of Excellence</p>
+                    <p className="text-[#F7F2E9]/80 text-sm">of Excellence</p>
                   </div>
                 </div>
               </div>
@@ -378,11 +378,11 @@ export default function HomePage() {
                 <DollarSign className="h-4 w-4" />
                 Franchise Opportunity
               </div>
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-[#F7F2E9] mb-6">
                 Own Your Own<br />
                 <span className="text-[#D0A246]">Slindon Patisserie</span>
               </h2>
-              <p className="text-white/85 text-lg mb-8">
+              <p className="text-[#F7F2E9]/85 text-lg mb-8">
                 Join our proven business model with full training, ongoing support, and the power of a recognized heritage brand. This is a significant opportunity for the right partner.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -410,8 +410,8 @@ export default function HomePage() {
               ].map((item, index) => (
                 <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-5">
                   <item.icon className="h-8 w-8 text-[#D0A246] mb-3" />
-                  <h3 className="font-bold text-white mb-1">{item.label}</h3>
-                  <p className="text-white/70 text-sm">{item.desc}</p>
+                  <h3 className="font-bold text-[#F7F2E9] mb-1">{item.label}</h3>
+                  <p className="text-[#F7F2E9]/70 text-sm">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -531,12 +531,12 @@ export default function HomePage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="py-16 md:py-20 bg-[#3A2C2A] text-white">
+      <section className="py-16 md:py-20 bg-[#3A2C2A] text-[#F7F2E9]">
         <div className="container text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#F7F2E9] mb-4">
             Questions? We're Here to Help
           </h2>
-          <p className="text-white/80 max-w-2xl mx-auto mb-8">
+          <p className="text-[#F7F2E9]/80 max-w-2xl mx-auto mb-8">
             Whether you have a question about ordering, delivery, or our products, 
             we'd love to hear from you.
           </p>

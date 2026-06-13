@@ -62,11 +62,11 @@ export default function CheckoutSuccessPage() {
   return (
     <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
-      <div className="bg-[#8B1E22] text-white py-8">
+      <div className="bg-[#8B1E22] text-[#F7F2E9] py-8">
         <div className="container mx-auto px-4 text-center">
           <CheckCircle className="w-16 h-16 mx-auto mb-4 text-[#D0A246]" />
           <h1 className="text-3xl font-serif font-bold mb-2">Order Confirmed!</h1>
-          <p className="text-white/80">Thank you for your order, {order.customer.name}</p>
+          <p className="text-[#F7F2E9]/80">Thank you for your order, {order.customer.name}</p>
         </div>
       </div>
 
