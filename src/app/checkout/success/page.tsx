@@ -27,7 +27,7 @@ export default function CheckoutSuccessPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#FDF8F0] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F7F2E9] flex items-center justify-center">
         <div className="text-center">
           <p className="text-[#6B5B4F] mb-4">No order found</p>
           <Link
@@ -60,7 +60,7 @@ export default function CheckoutSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDF8F0]">
+    <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
       <div className="bg-[#8B1E22] text-white py-8">
         <div className="container mx-auto px-4 text-center">
@@ -80,7 +80,7 @@ export default function CheckoutSuccessPage() {
                 <p className="text-sm text-[#6B5B4F]">Order Number</p>
                 <p className="text-2xl font-bold text-[#3A2C2A]">{order.orderId}</p>
               </div>
-              <div className="px-4 py-2 bg-[#FFF9E6] rounded-lg">
+              <div className="px-4 py-2 bg-[#FDF8E8] rounded-lg">
                 <p className="text-sm text-[#6B5B4F]">Total</p>
                 <p className="text-xl font-bold text-[#8B1E22]">£{order.total.toFixed(2)}</p>
               </div>
@@ -174,7 +174,7 @@ export default function CheckoutSuccessPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/account/orders"
-              className="flex-1 py-3 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#5D4A3A] transition-colors text-center flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#9B2A32] transition-colors text-center flex items-center justify-center gap-2"
             >
               View Order History
               <ArrowRight className="w-4 h-4" />

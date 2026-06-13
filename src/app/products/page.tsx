@@ -122,7 +122,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDF8F0]">
+    <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
       <div className="bg-[#8B1E22] text-white py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -150,7 +150,7 @@ export default function ProductsPage() {
           <h1 className="text-4xl font-serif font-bold text-[#3A2C2A] mb-2">
             Our Products
           </h1>
-          <p className="text-[#5C4033]">
+          <p className="text-[#6B5344]">
             Fresh from our ovens every day. Order online and collect from our Camberley bakery.
           </p>
         </div>
@@ -158,14 +158,14 @@ export default function ProductsPage() {
         {/* Price Toggle - Retail vs Wholesale */}
         <div className="bg-white rounded-xl p-4 mb-8 shadow-sm">
           <div className="flex flex-wrap items-center gap-4">
-            <span className="text-[#5C4033] font-medium">Show prices:</span>
+            <span className="text-[#6B5344] font-medium">Show prices:</span>
             
             <button
               onClick={() => setShowRetailPrices(true)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                 showRetailPrices
                   ? 'bg-[#8B1E22] text-white'
-                  : 'bg-[#F7F2E9] text-[#5C4033] hover:bg-[#E8DDD0]'
+                  : 'bg-[#F7F2E9] text-[#6B5344] hover:bg-[#E8DDD0]'
               }`}
             >
               <ShoppingBag className="w-4 h-4" />
@@ -179,7 +179,7 @@ export default function ProductsPage() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   !showRetailPrices
                     ? 'bg-[#8B1E22] text-white'
-                    : 'bg-[#F7F2E9] text-[#5C4033] hover:bg-[#E8DDD0]'
+                    : 'bg-[#F7F2E9] text-[#6B5344] hover:bg-[#E8DDD0]'
                 }`}
               >
                 <Package className="w-4 h-4" />
@@ -206,7 +206,7 @@ export default function ProductsPage() {
                       <Lock className="h-5 w-5 text-[#D0A246] shrink-0 mt-0.5" />
                       <div>
                         <p className="font-medium text-[#3A2C2A] text-sm">Wholesale Login Required</p>
-                        <p className="text-xs text-[#5C4033] mt-1">
+                        <p className="text-xs text-[#6B5344] mt-1">
                           <Link href="/login" className="text-[#8B1E22] underline">Sign in</Link> or{' '}
                           <Link href="/wholesale" className="text-[#8B1E22] underline">apply for a wholesale account</Link> to see trade pricing.
                         </p>
@@ -226,7 +226,7 @@ export default function ProductsPage() {
             className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 ${
               selectedCategory === 'all'
                 ? 'bg-[#8B1E22] text-white'
-                : 'bg-white text-[#5C4033] hover:bg-[#E8DDD0]'
+                : 'bg-white text-[#6B5344] hover:bg-[#E8DDD0]'
             }`}
           >
             🧁 All Products
@@ -240,7 +240,7 @@ export default function ProductsPage() {
                 className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 ${
                   selectedCategory === cat
                     ? 'bg-[#8B1E22] text-white'
-                    : 'bg-white text-[#5C4033] hover:bg-[#E8DDD0]'
+                    : 'bg-white text-[#6B5344] hover:bg-[#E8DDD0]'
                 }`}
               >
                 <span>{info.emoji}</span>
@@ -254,7 +254,7 @@ export default function ProductsPage() {
         {loading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-[#8B1E22] animate-spin" />
-            <span className="ml-3 text-[#5C4033]">Loading products...</span>
+            <span className="ml-3 text-[#6B5344]">Loading products...</span>
           </div>
         )}
 
@@ -310,7 +310,7 @@ export default function ProductsPage() {
                   className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
                   {/* Product Image */}
-                  <div className="aspect-square bg-[#FDF8F0] relative flex items-center justify-center">
+                  <div className="aspect-square bg-[#F7F2E9] relative flex items-center justify-center">
                     {product.image ? (
                       <img 
                         src={product.image} 
@@ -336,12 +336,12 @@ export default function ProductsPage() {
 
                   {/* Product Info */}
                   <div className="p-4">
-                    <span className="inline-block px-2 py-1 text-xs bg-[#FDF8F0] text-[#5C4033] rounded mb-2 uppercase tracking-wide">
+                    <span className="inline-block px-2 py-1 text-xs bg-[#F7F2E9] text-[#6B5344] rounded mb-2 uppercase tracking-wide">
                       {categoryInfo.label}
                     </span>
                     
                     <h3 className="font-semibold text-[#3A2C2A] text-lg">{product.name}</h3>
-                    <p className="text-sm text-[#5C4033] mt-1 line-clamp-2">{product.description}</p>
+                    <p className="text-sm text-[#6B5344] mt-1 line-clamp-2">{product.description}</p>
                     
                     {product.productionTimeHours > 0 && (
                       <p className="text-xs text-[#8B7D6B] mt-2">
@@ -356,7 +356,7 @@ export default function ProductsPage() {
                           £{displayPrice.toFixed(2)}
                         </span>
                         {hasWholesale && showRetailPrices && (
-                          <span className="text-sm text-[#5C4033] ml-2 line-through">
+                          <span className="text-sm text-[#6B5344] ml-2 line-through">
                             £{product.retailPrice.toFixed(2)}
                           </span>
                         )}
@@ -389,7 +389,7 @@ export default function ProductsPage() {
           <p className="text-white/80">
             All our products are made fresh to order. When selecting your pickup time at checkout, 
             please allow at least the production time shown for your items. Need it sooner? 
-            <Link href="/contact" className="text-[#F5C518] hover:underline ml-1">Contact us</Link>.
+            <Link href="/contact" className="text-[#D0A246] hover:underline ml-1">Contact us</Link>.
           </p>
         </div>
       </div>

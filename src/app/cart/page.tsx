@@ -14,11 +14,11 @@ function CartContent() {
   if (items.length === 0) {
     return (
       <div className="text-center py-16">
-        <div className="h-24 w-24 rounded-full bg-[#F5C518]/20 flex items-center justify-center mx-auto mb-6">
+        <div className="h-24 w-24 rounded-full bg-[#D0A246]/20 flex items-center justify-center mx-auto mb-6">
           <ShoppingCart className="h-12 w-12 text-[#8B1E22]" />
         </div>
         <h2 className="font-serif text-2xl font-bold text-[#3A2C2A] mb-4">Your cart is empty</h2>
-        <p className="text-[#5C4033] mb-8">Add some delicious products to get started!</p>
+        <p className="text-[#6B5344] mb-8">Add some delicious products to get started!</p>
         <Link
           href="/products"
           className="inline-flex items-center gap-2 bg-[#8B1E22] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors"
@@ -46,11 +46,11 @@ function CartContent() {
       
       {/* Wait Time Notice */}
       {maxProductionTime > 0 && (
-        <div className="bg-[#FFF9E6] border border-[#F5C518] rounded-lg p-4 flex items-start gap-3">
+        <div className="bg-[#FDF8E8] border border-[#D0A246] rounded-lg p-4 flex items-start gap-3">
           <Clock className="h-5 w-5 text-[#8B1E22] shrink-0 mt-0.5" />
           <div>
             <p className="font-medium text-[#3A2C2A]">Minimum wait time: {maxProductionTime} hours</p>
-            <p className="text-sm text-[#5C4033]">Some products in your cart require {maxProductionTime} hours production time. You'll select a pickup slot at checkout.</p>
+            <p className="text-sm text-[#6B5344]">Some products in your cart require {maxProductionTime} hours production time. You'll select a pickup slot at checkout.</p>
           </div>
         </div>
       )}
@@ -61,14 +61,14 @@ function CartContent() {
           {items.map((item) => (
             <div key={item.id} className="p-4 flex items-center gap-4">
               {/* Product Image Placeholder */}
-              <div className="h-20 w-20 rounded-lg bg-[#F5C518]/10 flex items-center justify-center shrink-0">
+              <div className="h-20 w-20 rounded-lg bg-[#D0A246]/10 flex items-center justify-center shrink-0">
                 <span className="text-2xl">🥐</span>
               </div>
               
               {/* Product Info */}
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-[#3A2C2A] truncate">{item.name}</h3>
-                <p className="text-sm text-[#5C4033]">{item.category}</p>
+                <p className="text-sm text-[#6B5344]">{item.category}</p>
                 <p className="text-sm text-[#6B5B4F]">Wait: {item.productionTime}h</p>
               </div>
               
@@ -76,16 +76,16 @@ function CartContent() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                  className="p-2 rounded-lg border border-[#E8DDD0] hover:bg-[#FFF9E6] transition-colors"
+                  className="p-2 rounded-lg border border-[#E8DDD0] hover:bg-[#FDF8E8] transition-colors"
                 >
-                  <Minus className="h-4 w-4 text-[#5C4033]" />
+                  <Minus className="h-4 w-4 text-[#6B5344]" />
                 </button>
                 <span className="w-8 text-center font-medium">{item.quantity}</span>
                 <button
                   onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                  className="p-2 rounded-lg border border-[#E8DDD0] hover:bg-[#FFF9E6] transition-colors"
+                  className="p-2 rounded-lg border border-[#E8DDD0] hover:bg-[#FDF8E8] transition-colors"
                 >
-                  <Plus className="h-4 w-4 text-[#5C4033]" />
+                  <Plus className="h-4 w-4 text-[#6B5344]" />
                 </button>
               </div>
               
@@ -113,7 +113,7 @@ function CartContent() {
           <span>Subtotal</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
-        <p className="text-sm text-[#5C4033] mb-6">Delivery fee calculated at checkout</p>
+        <p className="text-sm text-[#6B5344] mb-6">Delivery fee calculated at checkout</p>
         
         <div className="space-y-3">
           <Link
@@ -125,7 +125,7 @@ function CartContent() {
           </Link>
           <Link
             href="/products"
-            className="flex items-center justify-center gap-2 w-full border border-[#E8DDD0] text-[#5C4033] py-3 rounded-lg font-medium hover:bg-[#FFF9E6] transition-colors"
+            className="flex items-center justify-center gap-2 w-full border border-[#E8DDD0] text-[#6B5344] py-3 rounded-lg font-medium hover:bg-[#FDF8E8] transition-colors"
           >
             Continue Shopping
           </Link>

@@ -32,9 +32,9 @@ export default function AdminLayout({
   const pathname = usePathname()
 
   return (
-    <div className="min-h-screen bg-[#FDF8F0] flex">
+    <div className="min-h-screen bg-[#F7F2E9] flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#2D1810] text-white flex flex-col">
+      <aside className="w-64 bg-[#3A2C2A] text-white flex flex-col">
         {/* Logo */}
         <div className="p-6 border-b border-white/10">
           <Link href="/" className="flex items-center gap-2">

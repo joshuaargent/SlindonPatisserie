@@ -199,12 +199,12 @@ export default function AdminProductsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-[#2D1810]">Products</h1>
-          <p className="text-[#5C4033] mt-1">Manage your product catalog</p>
+          <h1 className="text-3xl font-serif font-bold text-[#3A2C2A]">Products</h1>
+          <p className="text-[#6B5344] mt-1">Manage your product catalog</p>
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 bg-[#D42426] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#B81E20] transition-colors"
+          className="flex items-center gap-2 bg-[#8B1E22] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors"
         >
           <Plus className="w-5 h-5" />
           Add Product
@@ -214,20 +214,20 @@ export default function AdminProductsPage() {
       {/* Filters */}
       <div className="bg-white rounded-xl p-4 shadow-sm mb-6 flex flex-wrap gap-4">
         <div className="flex-1 min-w-[200px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#5C4033]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
           <input
             type="text"
             placeholder="Search products..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+            className="w-full pl-10 pr-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
           />
         </div>
         
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+          className="px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
         >
           <option value="all">All Categories</option>
           {categories.map(cat => (
@@ -240,7 +240,7 @@ export default function AdminProductsPage() {
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-[#D42426] animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#8B1E22] animate-spin" />
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
@@ -250,34 +250,34 @@ export default function AdminProductsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#FDF8F0]">
+              <thead className="bg-[#F7F2E9]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Retail Price
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Wholesale
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#5C4033] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E8DDD0]">
                 {filteredProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-[#FDF8F0]/50">
+                  <tr key={product.id} className="hover:bg-[#F7F2E9]/50">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#FDF8F0] rounded-lg flex items-center justify-center text-2xl">
+                        <div className="w-12 h-12 bg-[#F7F2E9] rounded-lg flex items-center justify-center text-2xl">
                           {product.category === 'bakery' && '🥐'}
                           {product.category === 'bread' && '🍞'}
                           {product.category === 'catering' && '🥪'}
@@ -286,22 +286,22 @@ export default function AdminProductsPage() {
                           {!['bakery', 'bread', 'catering', 'wholesale', 'sundries'].includes(product.category) && '🧁'}
                         </div>
                         <div>
-                          <p className="font-medium text-[#2D1810]">{product.name}</p>
-                          <p className="text-sm text-[#5C4033] truncate max-w-[200px]">{product.description}</p>
+                          <p className="font-medium text-[#3A2C2A]">{product.name}</p>
+                          <p className="text-sm text-[#6B5344] truncate max-w-[200px]">{product.description}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs bg-[#FDF8F0] text-[#5C4033] rounded">
+                      <span className="px-2 py-1 text-xs bg-[#F7F2E9] text-[#6B5344] rounded">
                         {categoryLabels[product.category] || product.category}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-medium text-[#2D1810]">£{product.retailPrice.toFixed(2)}</span>
+                      <span className="font-medium text-[#3A2C2A]">£{product.retailPrice.toFixed(2)}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {product.wholesalePrice ? (
-                        <span className="text-[#5C4033]">£{product.wholesalePrice.toFixed(2)}</span>
+                        <span className="text-[#6B5344]">£{product.wholesalePrice.toFixed(2)}</span>
                       ) : (
                         <span className="text-[#8B7D6B]">-</span>
                       )}
@@ -319,13 +319,13 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openModal(product)}
-                          className="p-2 text-[#5C4033] hover:text-[#D42426] transition-colors"
+                          className="p-2 text-[#6B5344] hover:text-[#8B1E22] transition-colors"
                         >
                           <Edit className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="p-2 text-[#5C4033] hover:text-red-500 transition-colors"
+                          className="p-2 text-[#6B5344] hover:text-red-500 transition-colors"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -340,7 +340,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Product Count */}
-      <div className="mt-4 text-sm text-[#5C4033]">
+      <div className="mt-4 text-sm text-[#6B5344]">
         Showing {filteredProducts.length} of {products.length} products
       </div>
 
@@ -350,10 +350,10 @@ export default function AdminProductsPage() {
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="p-6 border-b border-[#E8DDD0] flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-[#2D1810]">
+              <h2 className="text-xl font-semibold text-[#3A2C2A]">
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h2>
-              <button onClick={closeModal} className="text-[#5C4033] hover:text-[#2D1810]">
+              <button onClick={closeModal} className="text-[#6B5344] hover:text-[#3A2C2A]">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -362,7 +362,7 @@ export default function AdminProductsPage() {
             <div className="p-6 space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                   Product Name *
                 </label>
                 <input
@@ -371,14 +371,14 @@ export default function AdminProductsPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                   placeholder="e.g., Butter Croissant"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                   Description *
                 </label>
                 <textarea
@@ -387,21 +387,21 @@ export default function AdminProductsPage() {
                   onChange={handleInputChange}
                   required
                   rows={3}
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426] resize-none"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] resize-none"
                   placeholder="Describe the product..."
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                   Category *
                 </label>
                 <select
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                 >
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{categoryLabels[cat]}</option>
@@ -412,7 +412,7 @@ export default function AdminProductsPage() {
               {/* Prices */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                  <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                     Retail Price (£) *
                   </label>
                   <input
@@ -423,12 +423,12 @@ export default function AdminProductsPage() {
                     required
                     step="0.01"
                     min="0"
-                    className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                    className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                     placeholder="2.50"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                  <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                     Wholesale Price (£)
                   </label>
                   <input
@@ -438,7 +438,7 @@ export default function AdminProductsPage() {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                    className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                     placeholder="1.25"
                   />
                 </div>
@@ -446,7 +446,7 @@ export default function AdminProductsPage() {
 
               {/* Production Time */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                   Production Time (hours)
                 </label>
                 <input
@@ -455,14 +455,14 @@ export default function AdminProductsPage() {
                   value={formData.productionTimeHours}
                   onChange={handleInputChange}
                   min="0"
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                   placeholder="24"
                 />
               </div>
 
               {/* Image URL */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1810] mb-1">
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
                   Image URL
                 </label>
                 <input
@@ -470,14 +470,14 @@ export default function AdminProductsPage() {
                   name="image"
                   value={formData.image}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                   placeholder="https://..."
                 />
               </div>
 
               {/* Factory Routing */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1810] mb-2">
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
                   Made At
                 </label>
                 <div className="flex gap-4">
@@ -487,9 +487,9 @@ export default function AdminProductsPage() {
                       name="madeAtFactoryA"
                       checked={formData.madeAtFactoryA}
                       onChange={handleInputChange}
-                      className="w-5 h-5 rounded border-[#E8DDD0] text-[#D42426] focus:ring-[#D42426]"
+                      className="w-5 h-5 rounded border-[#E8DDD0] text-[#8B1E22] focus:ring-[#8B1E22]"
                     />
-                    <span className="text-[#5C4033]">Factory A</span>
+                    <span className="text-[#6B5344]">Factory A</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -497,9 +497,9 @@ export default function AdminProductsPage() {
                       name="madeAtFactoryB"
                       checked={formData.madeAtFactoryB}
                       onChange={handleInputChange}
-                      className="w-5 h-5 rounded border-[#E8DDD0] text-[#D42426] focus:ring-[#D42426]"
+                      className="w-5 h-5 rounded border-[#E8DDD0] text-[#8B1E22] focus:ring-[#8B1E22]"
                     />
-                    <span className="text-[#5C4033]">Factory B</span>
+                    <span className="text-[#6B5344]">Factory B</span>
                   </label>
                 </div>
               </div>
@@ -512,9 +512,9 @@ export default function AdminProductsPage() {
                     name="available"
                     checked={formData.available}
                     onChange={handleInputChange}
-                    className="w-5 h-5 rounded border-[#E8DDD0] text-[#D42426] focus:ring-[#D42426]"
+                    className="w-5 h-5 rounded border-[#E8DDD0] text-[#8B1E22] focus:ring-[#8B1E22]"
                   />
-                  <span className="text-[#2D1810] font-medium">Product is available for sale</span>
+                  <span className="text-[#3A2C2A] font-medium">Product is available for sale</span>
                 </label>
               </div>
             </div>
@@ -523,14 +523,14 @@ export default function AdminProductsPage() {
             <div className="p-6 border-t border-[#E8DDD0] flex justify-end gap-3">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 border border-[#E8DDD0] rounded-lg text-[#5C4033] hover:bg-[#FDF8F0] transition-colors"
+                className="px-4 py-2 border border-[#E8DDD0] rounded-lg text-[#6B5344] hover:bg-[#F7F2E9] transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving || !formData.name || !formData.retailPrice}
-                className="flex items-center gap-2 bg-[#D42426] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#B81E20] transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 bg-[#8B1E22] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#9B2A32] transition-colors disabled:opacity-50"
               >
                 {saving ? (
                   <>

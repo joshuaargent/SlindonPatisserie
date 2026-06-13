@@ -95,7 +95,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDF8F0]">
+    <div className="min-h-screen bg-[#F7F2E9]">
       {/* Header */}
       <div className="bg-[#8B1E22] text-white py-4">
         <div className="container mx-auto px-4">
@@ -177,7 +177,7 @@ export default function CheckoutPage() {
                 
                 {/* Delivery note */}
                 {deliveryMethod === 'delivery' && (
-                  <div className="mt-4 p-4 bg-[#FFF9E6] rounded-lg border border-[#D0A246]">
+                  <div className="mt-4 p-4 bg-[#FDF8E8] rounded-lg border border-[#D0A246]">
                     <p className="text-sm text-[#6B5B4F]">
                       <strong>Delivery is by arrangement.</strong> Please note that delivery requires 
                       advance arrangement. We'll contact you after placing your order to confirm 
@@ -293,7 +293,7 @@ export default function CheckoutPage() {
                   Payment
                 </h2>
 
-                <div className="p-4 bg-[#FFF9E6] rounded-lg mb-4">
+                <div className="p-4 bg-[#FDF8E8] rounded-lg mb-4">
                   <p className="text-sm text-[#6B5B4F]">
                     <strong>Payment is collected at collection/delivery.</strong> You can pay by card, 
                     cash, or contactless when you pick up your order.
