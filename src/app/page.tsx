@@ -1,18 +1,44 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, ShoppingBag, Phone, Users, DollarSign, TrendingUp, Clock, MapPin, CheckCircle, Star, Heart, Award, Truck, Quote } from 'lucide-react';
-import { businessInfo, marketSchedule } from '@/data/site';
+'use client'
+
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowRight, ShoppingBag, Phone, Users, DollarSign, TrendingUp, Clock, MapPin, CheckCircle, Star, Heart, Award, Truck, Quote } from 'lucide-react'
+import { businessInfo, marketSchedule } from '@/data/site'
 
 // ============================================
 // Homepage - Slindon Patisserie
 // Conversion-Focused: Products, Wholesale, Franchise
 // ============================================
 
+interface Review {
+  id: string
+  user: { name: string | null }
+  rating: number
+  title: string | null
+  comment: string
+}
+
 export default function HomePage() {
+  const [reviews, setReviews] = useState<Review[]>([])
+
+  useEffect(() => {
+    fetch('/api/reviews?limit=3')
+      .then(res => res.json())
+      .then(data => {
+        if (data.reviews && data.reviews.length > 0) {
+          setReviews(data.reviews)
+        }
+      })
+      .catch(() => {
+        // Silently fail - show nothing if API unavailable
+      })
+  }, [])
+
   return (
     <>
       {/* Hero Section - Clean, Conversion Focused */}
-      <section className="relative bg-[#8B1E22] overflow-hidden -mt-16 pt-16">
+      <section className="relative bg-[#8B1E22] overflow-hidden">
         <div className="container py-16 md:py-24 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Hero Content - Left Side */}
@@ -476,47 +502,40 @@ export default function HomePage() {
           </div>
           
           {/* Review Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Sarah M.',
-                rating: 5,
-                text: 'Absolutely divine croissants! The best I\'ve had outside of Paris. Will definitely be ordering again.',
-                location: 'Camberley'
-              },
-              {
-                name: 'James P.',
-                rating: 5,
-                text: 'The wedding cake exceeded all expectations. Beautiful design and even better taste. Our guests loved it!',
-                location: 'Windsor'
-              },
-              {
-                name: 'Emma L.',
-                rating: 5,
-                text: 'So glad I found this gem. Every item is made with such care and the customer service is exceptional.',
-                location: 'Guildford'
-              },
-            ].map((review, index) => (
-              <div key={index} className="bg-[#F7F2E9] rounded-xl p-6 relative">
-                <Quote className="absolute top-4 right-4 h-8 w-8 text-[#D0A246]/20" />
-                <div className="flex gap-1 mb-4">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-[#D0A246] text-[#D0A246]" />
-                  ))}
-                </div>
-                <p className="text-[#3A2C2A] leading-relaxed mb-4">{review.text}</p>
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-[#D0A246]/20 flex items-center justify-center">
-                    <span className="text-[#8B1E22] font-bold text-sm">{review.name.charAt(0)}</span>
+          {reviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {reviews.map((review) => (
+                <div key={review.id} className="bg-[#F7F2E9] rounded-xl p-6 relative">
+                  <Quote className="absolute top-4 right-4 h-8 w-8 text-[#D0A246]/20" />
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-[#D0A246] text-[#D0A246]" />
+                    ))}
                   </div>
-                  <div>
-                    <p className="font-semibold text-[#3A2C2A] text-sm">{review.name}</p>
-                    <p className="text-[#6B5344] text-xs">{review.location}</p>
+                  {review.title && (
+                    <h3 className="font-semibold text-[#3A2C2A] mb-2">{review.title}</h3>
+                  )}
+                  <p className="text-[#3A2C2A] leading-relaxed mb-4">{review.comment}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-[#D0A246]/20 flex items-center justify-center">
+                      <span className="text-[#8B1E22] font-bold text-sm">
+                        {review.user.name?.charAt(0) || 'A'}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-[#3A2C2A] text-sm">
+                        {review.user.name || 'Verified Customer'}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-[#6B5344]">
+              <p>No reviews yet. Be the first to share your experience!</p>
+            </div>
+          )}
           
           <div className="text-center mt-8">
             <Link

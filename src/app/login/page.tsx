@@ -122,15 +122,15 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Demo Accounts */}
-            <div className="mt-6 p-4 bg-[#F7F2E9] rounded-lg">
-              <p className="text-sm text-[#6B5344] font-semibold mb-2">Demo Accounts:</p>
-              <div className="text-xs text-[#6B5344] space-y-1">
-                <p>Customer: customer@slindon.co.uk / customer123</p>
-                <p>Wholesale: wholesale@slindon.co.uk / wholesale123</p>
-                <p>Admin: admin@slindon.co.uk / admin123</p>
+                        {/* Demo Accounts */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-6 p-4 bg-[#F7F2E9] rounded-lg">
+                <p className="text-sm text-[#6B5344] font-semibold mb-2">Development Only:</p>
+                <div className="text-xs text-[#6B5344] space-y-1">
+                  <p>Admin: admin@slindon.co.uk / admin123</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Register Link */}
             <p className="mt-6 text-center text-sm text-[#6B5344]">

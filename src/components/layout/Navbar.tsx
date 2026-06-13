@@ -232,9 +232,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Spacer for fixed navbar */}
-      <div className="h-16" />
     </>
   );
 }

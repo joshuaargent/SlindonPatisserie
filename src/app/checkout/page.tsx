@@ -4,17 +4,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle } from 'lucide-react'
+import { useCartStore, formatPrice } from '@/lib/stores/cart'
 import { createTeyaPaymentSession, isTeyaConfigured } from '@/lib/teya'
-
-// Sample cart items for demo
-const sampleCartItems = [
-  { id: '1', name: 'Butter Croissant', price: 2.50, quantity: 2 },
-  { id: '2', name: 'Pain au Chocolat', price: 2.80, quantity: 1 },
-  { id: '3', name: 'Sourdough Boule', price: 4.50, quantity: 1 },
-]
 
 export default function CheckoutPage() {
   const router = useRouter()
+  const { items, getSubtotal, clearCart } = useCartStore()
   const [deliveryMethod, setDeliveryMethod] = useState<'collection' | 'delivery'>('collection')
   const [pickupDate, setPickupDate] = useState('')
   const [pickupTime, setPickupTime] = useState('')
@@ -29,7 +24,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState('')
 
   // Calculate totals
-  const subtotal = sampleCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = getSubtotal()
   const deliveryFee = deliveryMethod === 'delivery' ? 3.50 : 0
   const total = subtotal + deliveryFee
 
@@ -66,7 +61,7 @@ export default function CheckoutPage() {
           orderId,
           customerEmail: customerInfo.email,
           customerName: customerInfo.name,
-          description: `Slindon Patisserie Order - ${sampleCartItems.length} items`,
+          description: `Slindon Patisserie Order - ${items.length} items`,
         })
 
         // In production, redirect to Teya payment page
@@ -79,7 +74,7 @@ export default function CheckoutPage() {
       // Store order in session for demo
       sessionStorage.setItem('lastOrder', JSON.stringify({
         orderId,
-        items: sampleCartItems,
+        items: items,
         total,
         pickupDate,
         pickupTime,
@@ -319,7 +314,7 @@ export default function CheckoutPage() {
 
                 {/* Items */}
                 <div className="space-y-3 mb-6">
-                  {sampleCartItems.map((item) => (
+                  {items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span className="text-[#6B5344]">
                         {item.name} x {item.quantity}

@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, Phone, Mail, MapPin } from 'lucide-react';
 import { businessInfo } from '@/data/site';
+import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -107,88 +108,7 @@ export default function ContactPage() {
                 Send Us a Message
               </h2>
               
-              <form className="space-y-6" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-[#6B5344] mb-2">
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    className="w-full rounded-lg border border-[#E8DDD0] px-4 py-3 text-[#3A2C2A] focus:border-[#8B1E22] focus:outline-none focus:ring-2 focus:ring-[#8B1E22]/20"
-                    placeholder="John Smith"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-[#6B5344] mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    className="w-full rounded-lg border border-[#E8DDD0] px-4 py-3 text-[#3A2C2A] focus:border-[#8B1E22] focus:outline-none focus:ring-2 focus:ring-[#8B1E22]/20"
-                    placeholder="john@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-[#6B5344] mb-2">
-                    Phone (optional)
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    className="w-full rounded-lg border border-[#E8DDD0] px-4 py-3 text-[#3A2C2A] focus:border-[#8B1E22] focus:outline-none focus:ring-2 focus:ring-[#8B1E22]/20"
-                    placeholder="07700 900000"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-[#6B5344] mb-2">
-                    Subject
-                  </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    required
-                    className="w-full rounded-lg border border-[#E8DDD0] px-4 py-3 text-[#3A2C2A] focus:border-[#8B1E22] focus:outline-none focus:ring-2 focus:ring-[#8B1E22]/20"
-                  >
-                    <option value="">Select a topic</option>
-                    <option value="general">General Enquiry</option>
-                    <option value="wholesale">Wholesale</option>
-                    <option value="franchise">Franchise</option>
-                    <option value="feedback">Feedback</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-[#6B5344] mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={5}
-                    required
-                    className="w-full rounded-lg border border-[#E8DDD0] px-4 py-3 text-[#3A2C2A] focus:border-[#8B1E22] focus:outline-none focus:ring-2 focus:ring-[#8B1E22]/20"
-                    placeholder="How can we help you?"
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn-primary text-lg px-8 py-4 w-full"
-                >
-                  Send Message
-                </button>
-              </form>
+              <ContactForm />
             </div>
           </div>
         </div>
