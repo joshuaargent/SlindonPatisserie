@@ -62,19 +62,19 @@ export default function MarketsPage() {
                 </div>
                 <div className="mt-6 space-y-3">
                   <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-[#6B5B4F] shrink-0 mt-0.5" />
+                    <Clock className="h-5 w-5 text-[#6B5344] shrink-0 mt-0.5" />
                     <div>
                       <p className="text-[#6B5344]">{market.time}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-[#6B5B4F] shrink-0 mt-0.5" />
+                    <MapPin className="h-5 w-5 text-[#6B5344] shrink-0 mt-0.5" />
                     <div>
                       <p className="text-[#6B5344]">{market.location}</p>
                     </div>
                   </div>
                 </div>
-                <p className="mt-4 text-[#6B5B4F] text-sm">{market.description}</p>
+                <p className="mt-4 text-[#6B5344] text-sm">{market.description}</p>
               </div>
             ))}
           </div>

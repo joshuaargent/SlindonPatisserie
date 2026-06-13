@@ -28,12 +28,12 @@ const defaultCategories: Category[] = [
   { id: '2', name: 'bread', label: 'Artisan Bread', emoji: '🍞', color: '#8B1E22', productCount: 0 },
   { id: '3', name: 'catering', label: 'Catering', emoji: '🥪', color: '#D0A246', productCount: 0 },
   { id: '4', name: 'wholesale', label: 'Wholesale', emoji: '📦', color: '#8B1E22', productCount: 0 },
-  { id: '5', name: 'pos', label: 'POS & Supplies', emoji: '🛍️', color: '#6B5B4F', productCount: 0 },
+  { id: '5', name: 'pos', label: 'POS & Supplies', emoji: '🛍️', color: '#6B5344', productCount: 0 },
   { id: '6', name: 'sundries', label: 'Sundries', emoji: '🛒', color: '#3A2C2A', productCount: 0 },
 ]
 
 const colorOptions = [
-  '#8B1E22', '#8B1E22', '#D0A246', '#8B1E22', '#6B5B4F', '#3A2C2A',
+  '#8B1E22', '#8B1E22', '#D0A246', '#8B1E22', '#6B5344', '#3A2C2A',
   '#2563EB', '#059669', '#7C3AED', '#DB2777', '#EA580C', '#0891B2',
 ]
 

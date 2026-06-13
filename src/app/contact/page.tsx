@@ -51,7 +51,7 @@ export default function ContactPage() {
                     <a href={`tel:${businessInfo.phone}`} className="text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                       {businessInfo.phone}
                     </a>
-                    <p className="text-[#6B5B4F] text-sm mt-1">Mon-Fri 9am-5pm</p>
+                    <p className="text-[#6B5344] text-sm mt-1">Mon-Fri 9am-5pm</p>
                   </div>
                 </div>
 
@@ -64,7 +64,7 @@ export default function ContactPage() {
                     <a href={`mailto:${businessInfo.email}`} className="text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                       {businessInfo.email}
                     </a>
-                    <p className="text-[#6B5B4F] text-sm mt-1">We respond within 24 hours</p>
+                    <p className="text-[#6B5344] text-sm mt-1">We respond within 24 hours</p>
                   </div>
                 </div>
 

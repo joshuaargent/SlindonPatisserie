@@ -23,7 +23,7 @@ export function Footer() {
             </p>
             <Link
               href="/products"
-              className="mt-4 inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="mt-4 inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               <ShoppingBag className="h-4 w-4" />
               Order Online

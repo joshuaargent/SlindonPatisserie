@@ -143,7 +143,7 @@ export default function WholesalePage() {
             ].map((category, index) => (
               <div key={index} className="bg-white rounded-xl p-6 border border-[#E8DDD0]">
                 <h3 className="font-semibold text-[#3A2C2A] mb-2">{category.name}</h3>
-                <p className="text-[#6B5B4F] text-sm">{category.items}</p>
+                <p className="text-[#6B5344] text-sm">{category.items}</p>
               </div>
             ))}
           </div>

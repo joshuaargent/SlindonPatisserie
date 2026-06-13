@@ -140,7 +140,7 @@ export default function CheckoutPage() {
                   >
                     <MapPin className="w-8 h-8 text-[#8B1E22] mb-2" />
                     <h3 className="font-semibold text-[#3A2C2A]">Collection</h3>
-                    <p className="text-sm text-[#6B5B4F]">Pick up from our Camberley bakery</p>
+                    <p className="text-sm text-[#6B5344]">Pick up from our Camberley bakery</p>
                   </button>
 
                   <button
@@ -154,7 +154,7 @@ export default function CheckoutPage() {
                   >
                     <ShoppingBag className="w-8 h-8 text-[#8B1E22] mb-2" />
                     <h3 className="font-semibold text-[#3A2C2A]">Delivery</h3>
-                    <p className="text-sm text-[#6B5B4F]">Contact us to arrange</p>
+                    <p className="text-sm text-[#6B5344]">Contact us to arrange</p>
                   </button>
                 </div>
 
@@ -168,7 +168,7 @@ export default function CheckoutPage() {
                         onChange={(e) => setDeliveryInterest(e.target.checked)}
                         className="w-5 h-5 rounded border-[#E8DDD0] text-[#8B1E22] focus:ring-[#8B1E22]"
                       />
-                      <span className="text-[#6B5B4F]">
+                      <span className="text-[#6B5344]">
                         I'd like delivery for future orders (we'll contact you)
                       </span>
                     </label>
@@ -178,7 +178,7 @@ export default function CheckoutPage() {
                 {/* Delivery note */}
                 {deliveryMethod === 'delivery' && (
                   <div className="mt-4 p-4 bg-[#FDF8E8] rounded-lg border border-[#D0A246]">
-                    <p className="text-sm text-[#6B5B4F]">
+                    <p className="text-sm text-[#6B5344]">
                       <strong>Delivery is by arrangement.</strong> Please note that delivery requires 
                       advance arrangement. We'll contact you after placing your order to confirm 
                       delivery availability and any additional fees.
@@ -233,7 +233,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm text-[#6B5B4F]">
+                <p className="mt-4 text-sm text-[#6B5344]">
                   All products are made fresh to order. Please allow at least 24 hours for preparation.
                 </p>
               </div>
@@ -294,18 +294,18 @@ export default function CheckoutPage() {
                 </h2>
 
                 <div className="p-4 bg-[#FDF8E8] rounded-lg mb-4">
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="text-sm text-[#6B5344]">
                     <strong>Payment is collected at collection/delivery.</strong> You can pay by card, 
                     cash, or contactless when you pick up your order.
                   </p>
                 </div>
 
                 {isTeyaConfigured() ? (
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="text-sm text-[#6B5344]">
                     Your payment will be processed securely via Teya when you collect your order.
                   </p>
                 ) : (
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="text-sm text-[#6B5344]">
                     Teya payment integration is being set up. You'll pay when you collect.
                   </p>
                 )}
@@ -321,7 +321,7 @@ export default function CheckoutPage() {
                 <div className="space-y-3 mb-6">
                   {sampleCartItems.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-[#6B5B4F]">
+                      <span className="text-[#6B5344]">
                         {item.name} x {item.quantity}
                       </span>
                       <span className="text-[#3A2C2A] font-medium">
@@ -333,12 +333,12 @@ export default function CheckoutPage() {
 
                 <div className="border-t border-[#E8DDD0] pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-[#6B5B4F]">Subtotal</span>
+                    <span className="text-[#6B5344]">Subtotal</span>
                     <span className="text-[#3A2C2A]">£{subtotal.toFixed(2)}</span>
                   </div>
                   {deliveryFee > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-[#6B5B4F]">Delivery</span>
+                      <span className="text-[#6B5344]">Delivery</span>
                       <span className="text-[#3A2C2A]">£{deliveryFee.toFixed(2)}</span>
                     </div>
                   )}
@@ -366,7 +366,7 @@ export default function CheckoutPage() {
                   )}
                 </button>
 
-                <p className="mt-4 text-xs text-center text-[#6B5B4F]">
+                <p className="mt-4 text-xs text-center text-[#6B5344]">
                   By confirming, you agree to our{' '}
                   <Link href="/terms" className="text-[#8B1E22] hover:underline">Terms of Service</Link>
                   {' '}and{' '}

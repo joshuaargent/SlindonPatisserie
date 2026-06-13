@@ -29,7 +29,7 @@ export default function CheckoutSuccessPage() {
     return (
       <div className="min-h-screen bg-[#F7F2E9] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[#6B5B4F] mb-4">No order found</p>
+          <p className="text-[#6B5344] mb-4">No order found</p>
           <Link
             href="/"
             className="text-[#8B1E22] font-semibold hover:underline"
@@ -77,11 +77,11 @@ export default function CheckoutSuccessPage() {
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#6B5B4F]">Order Number</p>
+                <p className="text-sm text-[#6B5344]">Order Number</p>
                 <p className="text-2xl font-bold text-[#3A2C2A]">{order.orderId}</p>
               </div>
               <div className="px-4 py-2 bg-[#FDF8E8] rounded-lg">
-                <p className="text-sm text-[#6B5B4F]">Total</p>
+                <p className="text-sm text-[#6B5344]">Total</p>
                 <p className="text-xl font-bold text-[#8B1E22]">£{order.total.toFixed(2)}</p>
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function CheckoutSuccessPage() {
                   <p className="font-medium text-[#3A2C2A]">
                     {order.deliveryMethod === 'delivery' ? 'Delivery Address' : 'Collection Point'}
                   </p>
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="text-sm text-[#6B5344]">
                     {order.deliveryMethod === 'delivery' 
                       ? 'Your order will be delivered to you. We will contact you to arrange.' 
                       : 'Camberley, Surrey\n(Full address in confirmation email)'}
@@ -114,7 +114,7 @@ export default function CheckoutSuccessPage() {
                   <p className="font-medium text-[#3A2C2A]">
                     {order.deliveryMethod === 'delivery' ? 'Delivery Time' : 'Pickup Time'}
                   </p>
-                  <p className="text-sm text-[#6B5B4F]">
+                  <p className="text-sm text-[#6B5344]">
                     {formatDate(order.pickupDate)}
                     <br />
                     {formatTime(order.pickupTime)}
@@ -125,7 +125,7 @@ export default function CheckoutSuccessPage() {
             
             {order.deliveryMethod === 'collection' && (
               <div className="mt-4 p-4 bg-[#F7F2E9] rounded-lg">
-                <p className="text-sm text-[#6B5B4F]">
+                <p className="text-sm text-[#6B5344]">
                   <strong>Important:</strong> Your full collection address is included in the confirmation 
                   email sent to {order.customer.email}. Please bring your order confirmation when collecting.
                 </p>
@@ -142,7 +142,7 @@ export default function CheckoutSuccessPage() {
                 <div key={item.id} className="flex justify-between items-center py-2 border-b border-[#E8DDD0] last:border-0">
                   <div>
                     <p className="font-medium text-[#3A2C2A]">{item.name}</p>
-                    <p className="text-sm text-[#6B5B4F]">Qty: {item.quantity}</p>
+                    <p className="text-sm text-[#6B5344]">Qty: {item.quantity}</p>
                   </div>
                   <p className="font-medium text-[#3A2C2A]">
                     £{(item.price * item.quantity).toFixed(2)}
@@ -163,7 +163,7 @@ export default function CheckoutSuccessPage() {
               <Mail className="w-5 h-5 text-[#8B1E22] mt-1" />
               <div>
                 <p className="font-medium text-[#3A2C2A]">Confirmation Email</p>
-                <p className="text-sm text-[#6B5B4F]">
+                <p className="text-sm text-[#6B5344]">
                   We've sent a confirmation to <strong>{order.customer.email}</strong>
                 </p>
               </div>
@@ -188,7 +188,7 @@ export default function CheckoutSuccessPage() {
           </div>
 
           {/* Payment Note */}
-          <p className="mt-6 text-center text-sm text-[#6B5B4F]">
+          <p className="mt-6 text-center text-sm text-[#6B5344]">
             Payment will be collected when you pick up your order. You can pay by card, cash, or contactless.
           </p>
         </div>

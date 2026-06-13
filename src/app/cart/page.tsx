@@ -69,7 +69,7 @@ function CartContent() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-[#3A2C2A] truncate">{item.name}</h3>
                 <p className="text-sm text-[#6B5344]">{item.category}</p>
-                <p className="text-sm text-[#6B5B4F]">Wait: {item.productionTime}h</p>
+                <p className="text-sm text-[#6B5344]">Wait: {item.productionTime}h</p>
               </div>
               
               {/* Quantity Controls */}
@@ -92,7 +92,7 @@ function CartContent() {
               {/* Price */}
               <div className="text-right shrink-0 min-w-[80px]">
                 <p className="font-bold text-[#3A2C2A]">{formatPrice(item.price * item.quantity)}</p>
-                <p className="text-sm text-[#6B5B4F]">{formatPrice(item.price)} each</p>
+                <p className="text-sm text-[#6B5344]">{formatPrice(item.price)} each</p>
               </div>
               
               {/* Remove Button */}
@@ -133,7 +133,7 @@ function CartContent() {
       </div>
       
       {/* Info */}
-      <div className="text-center text-sm text-[#6B5B4F]">
+      <div className="text-center text-sm text-[#6B5344]">
         <p>Pay when you collect your order. No online payment required.</p>
       </div>
     </div>

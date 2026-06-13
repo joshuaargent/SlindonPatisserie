@@ -120,7 +120,7 @@ export function Navbar() {
               {/* Phone CTA */}
               <a
                 href={`tel:${siteConfig.phone}`}
-                className="ml-2 inline-flex items-center gap-2 rounded-lg bg-[#D0A246] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#8B1E22]"
+                className="ml-2 inline-flex items-center gap-2 rounded-lg bg-[#D0A246] px-4 py-2 text-sm font-medium text-[#3A2C2A] transition-colors hover:bg-[#E0B256]"
               >
                 <Phone className="h-4 w-4" />
                 <span className="hidden lg:inline">{siteConfig.phone}</span>
@@ -197,7 +197,7 @@ export function Navbar() {
                 {/* Phone CTA */}
                 <a
                   href={`tel:${siteConfig.phone}`}
-                  className="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#D0A246] px-4 py-3 text-lg font-medium text-white transition-colors hover:bg-[#8B1E22]"
+                  className="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#D0A246] px-4 py-3 text-lg font-medium text-[#3A2C2A] transition-colors hover:bg-[#E0B256]"
                 >
                   <Phone className="h-5 w-5" />
                   <span>Call Us: {siteConfig.phone}</span>
