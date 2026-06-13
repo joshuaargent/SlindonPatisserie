@@ -14,13 +14,15 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronDown
+  ChevronDown,
+  Boxes
 } from 'lucide-react'
 import { useState } from 'react'
 
 const adminNav = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Products', href: '/admin/products', icon: Package },
+  { name: 'Stock', href: '/admin/stock', icon: Boxes },
   { name: 'Categories', href: '/admin/categories', icon: Tag },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },

@@ -73,9 +73,11 @@ export async function GET(request: NextRequest) {
       deliveryFee: order.deliveryFee,
       total: order.total,
       deliveryMethod: order.deliveryMethod.toLowerCase(),
+      deliveryAddress: order.deliveryAddress,
       pickupDate: order.pickupDate.toISOString().split('T')[0],
       pickupTime: order.pickupTime,
       status: order.status.toLowerCase(),
+      paymentStatus: order.paymentStatus.toLowerCase(),
       createdAt: order.createdAt.toISOString(),
     }));
 
