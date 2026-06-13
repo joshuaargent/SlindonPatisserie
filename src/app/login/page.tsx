@@ -59,7 +59,7 @@ export default function LoginPage() {
           {/* Logo / Brand */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-serif font-bold text-[#8B1E22]">Slindon Patisserie</h1>
-            <p className="text-[#8B7D6B] mt-2">Welcome back</p>
+            <p className="text-[#6B5344] mt-2">Welcome back</p>
           </div>
 
           {/* Login Form */}
@@ -80,14 +80,14 @@ export default function LoginPage() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="email"
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -99,14 +99,14 @@ export default function LoginPage() {
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="password"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Your password"
                   />
                 </div>
@@ -124,8 +124,8 @@ export default function LoginPage() {
 
             {/* Demo Accounts */}
             <div className="mt-6 p-4 bg-[#F7F2E9] rounded-lg">
-              <p className="text-sm text-[#8B7D6B] font-semibold mb-2">Demo Accounts:</p>
-              <div className="text-xs text-[#8B7D6B] space-y-1">
+              <p className="text-sm text-[#6B5344] font-semibold mb-2">Demo Accounts:</p>
+              <div className="text-xs text-[#6B5344] space-y-1">
                 <p>Customer: customer@slindon.co.uk / customer123</p>
                 <p>Wholesale: wholesale@slindon.co.uk / wholesale123</p>
                 <p>Admin: admin@slindon.co.uk / admin123</p>
@@ -133,7 +133,7 @@ export default function LoginPage() {
             </div>
 
             {/* Register Link */}
-            <p className="mt-6 text-center text-sm text-[#8B7D6B]">
+            <p className="mt-6 text-center text-sm text-[#6B5344]">
               Don't have an account?{' '}
               <Link href="/register" className="text-[#8B1E22] font-semibold hover:underline">
                 Create one

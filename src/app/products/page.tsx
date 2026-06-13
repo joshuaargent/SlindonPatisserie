@@ -184,7 +184,7 @@ export default function ProductsPage() {
               >
                 <Package className="w-4 h-4" />
                 Wholesale
-                <span className="text-xs bg-[#D0A246] text-white px-2 py-0.5 rounded font-bold">
+                <span className="text-xs bg-[#D0A246] text-[#3A2C2A] px-2 py-0.5 rounded font-bold">
                   50% OFF
                 </span>
               </button>
@@ -275,8 +275,8 @@ export default function ProductsPage() {
         {/* Products Grid */}
         {!loading && !error && products.length === 0 && (
           <div className="text-center py-16 bg-white rounded-xl">
-            <ShoppingBagIcon className="w-16 h-16 mx-auto text-[#8B7D6B] mb-4" />
-            <p className="text-[#8B7D6B] text-lg">
+            <ShoppingBagIcon className="w-16 h-16 mx-auto text-[#6B5344] mb-4" />
+            <p className="text-[#6B5344] text-lg">
               {selectedCategory === 'all' 
                 ? 'No products available yet. Check back soon!' 
                 : 'No products in this category.'}
@@ -344,7 +344,7 @@ export default function ProductsPage() {
                     <p className="text-sm text-[#6B5344] mt-1 line-clamp-2">{product.description}</p>
                     
                     {product.productionTimeHours > 0 && (
-                      <p className="text-xs text-[#8B7D6B] mt-2">
+                      <p className="text-xs text-[#6B5344] mt-2">
                         Ready in ~{product.productionTimeHours}h
                       </p>
                     )}

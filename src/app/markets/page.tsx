@@ -163,7 +163,7 @@ export default function MarketsPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`tel:${businessInfo.phone}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#6B3410]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#9B2A32]"
             >
               Call Us
             </a>

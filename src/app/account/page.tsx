@@ -50,7 +50,7 @@ export default function AccountPage() {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold text-[#8B1E22] mb-2">My Account</h1>
-          <p className="text-[#8B7D6B]">
+          <p className="text-[#6B5344]">
             Welcome back, {user.name}
           </p>
         </div>
@@ -63,8 +63,8 @@ export default function AccountPage() {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-[#8B1E22]">{user.name}</h2>
-              <p className="text-[#8B7D6B]">{user.email}</p>
-              <span className="inline-block mt-1 px-2 py-1 text-xs bg-[#D0A246] text-white rounded">
+              <p className="text-[#6B5344]">{user.email}</p>
+              <span className="inline-block mt-1 px-2 py-1 text-xs bg-[#D0A246] text-[#3A2C2A] rounded">
                 {user.role === 'wholesale' ? 'Wholesale Account' : user.role === 'admin' ? 'Admin' : 'Customer'}
               </span>
             </div>
@@ -85,10 +85,10 @@ export default function AccountPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-[#8B1E22]">My Orders</h3>
-                  <p className="text-sm text-[#8B7D6B]">View your order history</p>
+                  <p className="text-sm text-[#6B5344]">View your order history</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#8B7D6B]" />
+              <ChevronRight className="w-5 h-5 text-[#6B5344]" />
             </div>
           </Link>
 
@@ -104,10 +104,10 @@ export default function AccountPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-[#8B1E22]">Account Settings</h3>
-                  <p className="text-sm text-[#8B7D6B]">Update your profile and preferences</p>
+                  <p className="text-sm text-[#6B5344]">Update your profile and preferences</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#8B7D6B]" />
+              <ChevronRight className="w-5 h-5 text-[#6B5344]" />
             </div>
           </Link>
 
@@ -126,10 +126,10 @@ export default function AccountPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#8B1E22]">Wholesale Portal</h3>
-                    <p className="text-sm text-[#8B7D6B]">Access wholesale pricing and bulk orders</p>
+                    <p className="text-sm text-[#6B5344]">Access wholesale pricing and bulk orders</p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-[#8B7D6B]" />
+                <ChevronRight className="w-5 h-5 text-[#6B5344]" />
               </div>
             </Link>
           )}
@@ -145,7 +145,7 @@ export default function AccountPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-red-600">Sign Out</h3>
-                <p className="text-sm text-[#8B7D6B]">Log out of your account</p>
+                <p className="text-sm text-[#6B5344]">Log out of your account</p>
               </div>
             </div>
           </button>

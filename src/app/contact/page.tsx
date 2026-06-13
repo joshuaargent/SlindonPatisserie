@@ -48,7 +48,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#3A2C2A]">Phone</h3>
-                    <a href={`tel:${businessInfo.phone}`} className="text-[#8B1E22] hover:text-[#6B3410] transition-colors">
+                    <a href={`tel:${businessInfo.phone}`} className="text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                       {businessInfo.phone}
                     </a>
                     <p className="text-[#6B5B4F] text-sm mt-1">Mon-Fri 9am-5pm</p>
@@ -61,7 +61,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#3A2C2A]">Email</h3>
-                    <a href={`mailto:${businessInfo.email}`} className="text-[#8B1E22] hover:text-[#6B3410] transition-colors">
+                    <a href={`mailto:${businessInfo.email}`} className="text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                       {businessInfo.email}
                     </a>
                     <p className="text-[#6B5B4F] text-sm mt-1">We respond within 24 hours</p>
@@ -85,16 +85,16 @@ export default function ContactPage() {
               <div className="mt-12 p-6 bg-white rounded-2xl border border-[#E8DDD0]">
                 <h3 className="font-semibold text-[#3A2C2A] mb-4">Quick Links</h3>
                 <div className="space-y-3">
-                  <Link href="/markets" className="block text-[#8B1E22] hover:text-[#6B3410] transition-colors">
+                  <Link href="/markets" className="block text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                     → Find us at markets
                   </Link>
-                  <Link href="/wholesale" className="block text-[#8B1E22] hover:text-[#6B3410] transition-colors">
+                  <Link href="/wholesale" className="block text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                     → Wholesale enquiries
                   </Link>
-                  <Link href="/franchise" className="block text-[#8B1E22] hover:text-[#6B3410] transition-colors">
+                  <Link href="/franchise" className="block text-[#8B1E22] hover:text-[#9B2A32] transition-colors">
                     → Franchise opportunities
                   </Link>
-                  <Link href="/contact?type=delivery" className="block text-[#8B1E22] hover:text-[#6B3410] transition-colors font-medium">
+                  <Link href="/contact?type=delivery" className="block text-[#8B1E22] hover:text-[#9B2A32] transition-colors font-medium">
                     → Enquire about delivery →
                   </Link>
                 </div>
@@ -184,7 +184,7 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#6B3410]"
+                  className="w-full rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#9B2A32]"
                 >
                   Send Message
                 </button>

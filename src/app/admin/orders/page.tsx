@@ -167,8 +167,8 @@ export default function AdminOrdersPage() {
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {filteredOrders.length === 0 ? (
           <div className="text-center py-20">
-            <Package className="w-16 h-16 mx-auto text-[#8B7D6B] mb-4" />
-            <p className="text-[#8B7D6B] text-lg">No orders found</p>
+            <Package className="w-16 h-16 mx-auto text-[#6B5344] mb-4" />
+            <p className="text-[#6B5344] text-lg">No orders found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

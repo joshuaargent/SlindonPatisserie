@@ -244,8 +244,8 @@ export default function AdminProductsPage() {
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
-            <Package className="w-16 h-16 mx-auto text-[#8B7D6B] mb-4" />
-            <p className="text-[#8B7D6B] text-lg">No products found</p>
+            <Package className="w-16 h-16 mx-auto text-[#6B5344] mb-4" />
+            <p className="text-[#6B5344] text-lg">No products found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -303,7 +303,7 @@ export default function AdminProductsPage() {
                       {product.wholesalePrice ? (
                         <span className="text-[#6B5344]">£{product.wholesalePrice.toFixed(2)}</span>
                       ) : (
-                        <span className="text-[#8B7D6B]">-</span>
+                        <span className="text-[#6B5344]">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

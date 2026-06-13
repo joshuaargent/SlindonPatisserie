@@ -73,7 +73,7 @@ export default function RegisterPage() {
           <div className="text-center">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-[#8B1E22] mb-2">Account Created!</h2>
-            <p className="text-[#8B7D6B]">Redirecting you to login...</p>
+            <p className="text-[#6B5344]">Redirecting you to login...</p>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function RegisterPage() {
           {/* Logo / Brand */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-serif font-bold text-[#8B1E22]">Slindon Patisserie</h1>
-            <p className="text-[#8B7D6B] mt-2">Create your account</p>
+            <p className="text-[#6B5344] mt-2">Create your account</p>
           </div>
 
           {/* Register Form */}
@@ -122,7 +122,7 @@ export default function RegisterPage() {
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="text"
                     id="name"
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Your full name"
                   />
                 </div>
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="email"
                     id="email"
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -162,14 +162,14 @@ export default function RegisterPage() {
                   Phone Number (Optional)
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="01234 567890"
                   />
                 </div>
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="password"
                     id="password"
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="At least 6 characters"
                   />
                 </div>
@@ -201,7 +201,7 @@ export default function RegisterPage() {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B7D6B]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B5344]" />
                   <input
                     type="password"
                     id="confirmPassword"
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Confirm your password"
                   />
                 </div>
@@ -226,12 +226,12 @@ export default function RegisterPage() {
             </form>
 
             {/* Info */}
-            <p className="mt-4 text-sm text-[#8B7D6B] text-center">
+            <p className="mt-4 text-sm text-[#6B5344] text-center">
               For wholesale accounts, please contact us after registration.
             </p>
 
             {/* Login Link */}
-            <p className="mt-6 text-center text-sm text-[#8B7D6B]">
+            <p className="mt-6 text-center text-sm text-[#6B5344]">
               Already have an account?{' '}
               <Link href="/login" className="text-[#8B1E22] font-semibold hover:underline">
                 Sign in

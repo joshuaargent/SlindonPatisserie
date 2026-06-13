@@ -50,7 +50,7 @@ export default function CareersPage() {
           <div className="max-w-md mx-auto text-center">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-[#8B1E22] mb-2">Application Received!</h2>
-            <p className="text-[#8B7D6B] mb-6">
+            <p className="text-[#6B5344] mb-6">
               Thank you for your interest in joining the Slindon Patisserie team. We'll be in touch soon.
             </p>
             <Link
@@ -85,7 +85,7 @@ export default function CareersPage() {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold text-[#8B1E22] mb-4">Join Our Team</h1>
-          <p className="text-[#8B7D6B] text-lg max-w-2xl">
+          <p className="text-[#6B5344] text-lg max-w-2xl">
             We're always looking for passionate people to join our bakery family. If you love baking 
             and want to be part of a great team, we'd love to hear from you.
           </p>
@@ -96,7 +96,7 @@ export default function CareersPage() {
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <Briefcase className="w-8 h-8 text-[#D0A246] mb-4" />
             <h3 className="font-semibold text-[#8B1E22] mb-2">Part-Time Positions</h3>
-            <p className="text-sm text-[#8B7D6B]">
+            <p className="text-sm text-[#6B5344]">
               We primarily offer weekday part-time positions. Flexible hours available.
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function CareersPage() {
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <Clock className="w-8 h-8 text-[#D0A246] mb-4" />
             <h3 className="font-semibold text-[#8B1E22] mb-2">Weekday Hours</h3>
-            <p className="text-sm text-[#8B7D6B]">
+            <p className="text-sm text-[#6B5344]">
               Shifts typically between 6am and 6pm, Monday to Friday. Some flexibility required.
             </p>
           </div>
@@ -112,7 +112,7 @@ export default function CareersPage() {
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <MapPin className="w-8 h-8 text-[#D0A246] mb-4" />
             <h3 className="font-semibold text-[#8B1E22] mb-2">Based in Camberley</h3>
-            <p className="text-sm text-[#8B7D6B]">
+            <p className="text-sm text-[#6B5344]">
               Our bakery is located in Camberley, Surrey. Easy parking and good transport links.
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function CareersPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                   placeholder="Your full name"
                 />
               </div>
@@ -160,7 +160,7 @@ export default function CareersPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                   placeholder="you@example.com"
                 />
               </div>
@@ -176,7 +176,7 @@ export default function CareersPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                   placeholder="01234 567890"
                 />
               </div>
@@ -193,7 +193,7 @@ export default function CareersPage() {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="w-full px-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-[#6B5344] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent resize-none"
                   placeholder="Tell us about your experience, availability, and why you'd like to join our team..."
                 />
               </div>
@@ -208,7 +208,7 @@ export default function CareersPage() {
               </button>
             </form>
 
-            <p className="mt-4 text-sm text-[#8B7D6B] text-center">
+            <p className="mt-4 text-sm text-[#6B5344] text-center">
               Or email us directly at <span className="text-[#8B1E22]">careers@slindonpatisserie.co.uk</span>
             </p>
           </div>

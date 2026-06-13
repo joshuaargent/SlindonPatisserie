@@ -213,7 +213,7 @@ export default function HomePage() {
                 </a>
                 <Link
                   href="/contact?type=delivery"
-                  className="flex items-center gap-3 bg-[#D0A246] hover:bg-[#E0B256] px-5 py-3 rounded-xl transition-colors"
+                  className="flex items-center gap-3 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-5 py-3 rounded-xl transition-colors"
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span className="font-medium">Enquire About Delivery</span>
@@ -268,7 +268,7 @@ export default function HomePage() {
                 <h3 className="font-semibold text-[#3A2C2A] group-hover:text-[#8B1E22] transition-colors">
                   {category.name}
                 </h3>
-                <p className="text-sm text-[#8B7D6B] mt-1">{category.desc}</p>
+                <p className="text-sm text-[#6B5344] mt-1">{category.desc}</p>
               </Link>
             ))}
           </div>
@@ -306,7 +306,7 @@ export default function HomePage() {
                 <h3 className="font-serif text-lg font-bold text-[#3A2C2A]">{market.name}</h3>
                 <p className="text-[#D0A246] text-sm font-medium mt-1">{market.day}</p>
                 <p className="text-[#8B1E22] text-sm mt-2">{market.location}</p>
-                <p className="text-[#8B7D6B] text-sm mt-1">{market.time}</p>
+                <p className="text-[#6B5344] text-sm mt-1">{market.time}</p>
               </div>
             ))}
           </div>
@@ -327,7 +327,7 @@ export default function HomePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/wholesale"
-                className="inline-flex items-center gap-2 bg-[#D0A246] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#E0B256] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#D0A246] text-[#3A2C2A] px-8 py-4 rounded-lg font-semibold hover:bg-[#E0B256] transition-colors"
               >
                 Wholesale Enquiry
               </Link>
@@ -380,7 +380,7 @@ export default function HomePage() {
               <div className="text-center p-8">
                 <div className="text-6xl mb-4">🥐</div>
                 <h3 className="font-serif text-xl font-bold text-[#8B1E22]">Slindon Patisserie</h3>
-                <p className="text-[#8B7D6B] mt-2">40+ Years of Excellence</p>
+                <p className="text-[#6B5344] mt-2">40+ Years of Excellence</p>
               </div>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`tel:${businessInfo.phone}`}
-              className="inline-flex items-center gap-2 bg-[#D0A246] text-white px-8 py-4 rounded-lg font-bold hover:bg-[#E0B256] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#D0A246] text-[#3A2C2A] px-8 py-4 rounded-lg font-bold hover:bg-[#E0B256] transition-colors"
             >
               <Phone className="h-5 w-5" />
               Call Us
