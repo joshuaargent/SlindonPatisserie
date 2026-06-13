@@ -97,11 +97,11 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
       {/* Header */}
-      <div className="bg-[#D42426] text-white py-4">
+      <div className="bg-[#8B1E22] text-white py-4">
         <div className="container mx-auto px-4">
           <Link
             href="/cart"
-            className="inline-flex items-center text-sm hover:text-[#F5C518] transition-colors"
+            className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Cart
@@ -111,7 +111,7 @@ export default function CheckoutPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-serif font-bold text-[#2D1810] mb-8">Checkout</h1>
+        <h1 className="text-4xl font-serif font-bold text-[#3A2C2A] mb-8">Checkout</h1>
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
             <div className="lg:col-span-2 space-y-6">
               {/* Delivery Method */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-[#2D1810] mb-4">Collection or Delivery</h2>
+                <h2 className="text-xl font-semibold text-[#3A2C2A] mb-4">Collection or Delivery</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
@@ -134,12 +134,12 @@ export default function CheckoutPage() {
                     onClick={() => setDeliveryMethod('collection')}
                     className={`p-4 rounded-lg border-2 transition-colors ${
                       deliveryMethod === 'collection'
-                        ? 'border-[#D42426] bg-red-50'
-                        : 'border-[#E8DDD0] hover:border-[#D42426]'
+                        ? 'border-[#8B1E22] bg-[#F7F2E9]'
+                        : 'border-[#E8DDD0] hover:border-[#8B1E22]'
                     }`}
                   >
-                    <MapPin className="w-8 h-8 text-[#D42426] mb-2" />
-                    <h3 className="font-semibold text-[#2D1810]">Collection</h3>
+                    <MapPin className="w-8 h-8 text-[#8B1E22] mb-2" />
+                    <h3 className="font-semibold text-[#3A2C2A]">Collection</h3>
                     <p className="text-sm text-[#6B5B4F]">Pick up from our Camberley bakery</p>
                   </button>
 
@@ -148,44 +148,55 @@ export default function CheckoutPage() {
                     onClick={() => setDeliveryMethod('delivery')}
                     className={`p-4 rounded-lg border-2 transition-colors ${
                       deliveryMethod === 'delivery'
-                        ? 'border-[#D42426] bg-red-50'
-                        : 'border-[#E8DDD0] hover:border-[#D42426]'
+                        ? 'border-[#8B1E22] bg-[#F7F2E9]'
+                        : 'border-[#E8DDD0] hover:border-[#8B1E22]'
                     }`}
                   >
-                    <ShoppingBag className="w-8 h-8 text-[#D42426] mb-2" />
-                    <h3 className="font-semibold text-[#2D1810]">Delivery</h3>
-                    <p className="text-sm text-[#6B5B4F]">Have your order delivered</p>
+                    <ShoppingBag className="w-8 h-8 text-[#8B1E22] mb-2" />
+                    <h3 className="font-semibold text-[#3A2C2A]">Delivery</h3>
+                    <p className="text-sm text-[#6B5B4F]">Contact us to arrange</p>
                   </button>
                 </div>
 
                 {/* Delivery Interest Button */}
                 {deliveryMethod === 'collection' && (
-                  <div className="mt-4 p-4 bg-[#FFF9E6] rounded-lg">
+                  <div className="mt-4 p-4 bg-[#F7F2E9] rounded-lg">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={deliveryInterest}
                         onChange={(e) => setDeliveryInterest(e.target.checked)}
-                        className="w-5 h-5 rounded border-[#E8DDD0] text-[#D42426] focus:ring-[#D42426]"
+                        className="w-5 h-5 rounded border-[#E8DDD0] text-[#8B1E22] focus:ring-[#8B1E22]"
                       />
                       <span className="text-[#6B5B4F]">
-                        I'm interested in delivery for future orders
+                        I'd like delivery for future orders (we'll contact you)
                       </span>
                     </label>
+                  </div>
+                )}
+                
+                {/* Delivery note */}
+                {deliveryMethod === 'delivery' && (
+                  <div className="mt-4 p-4 bg-[#FFF9E6] rounded-lg border border-[#D0A246]">
+                    <p className="text-sm text-[#6B5B4F]">
+                      <strong>Delivery is by arrangement.</strong> Please note that delivery requires 
+                      advance arrangement. We'll contact you after placing your order to confirm 
+                      delivery availability and any additional fees.
+                    </p>
                   </div>
                 )}
               </div>
 
               {/* Pickup Time */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-[#2D1810] mb-4 flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-[#3A2C2A] mb-4 flex items-center gap-2">
                   <Clock className="w-5 h-5" />
                   Select Pickup Time
                 </h2>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#2D1810] mb-2">
+                    <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
                       Pickup Date
                     </label>
                     <input
@@ -194,19 +205,19 @@ export default function CheckoutPage() {
                       onChange={(e) => setPickupDate(e.target.value)}
                       min={minDate}
                       required
-                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#2D1810] mb-2">
+                    <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
                       Pickup Time
                     </label>
                     <select
                       value={pickupTime}
                       onChange={(e) => setPickupTime(e.target.value)}
                       required
-                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                     >
                       <option value="">Select a time</option>
                       <option value="09:00">9:00 AM</option>
@@ -229,11 +240,11 @@ export default function CheckoutPage() {
 
               {/* Customer Information */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-[#2D1810] mb-4">Your Information</h2>
+                <h2 className="text-xl font-semibold text-[#3A2C2A] mb-4">Your Information</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#2D1810] mb-2">
+                    <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
                       Full Name *
                     </label>
                     <input
@@ -241,13 +252,13 @@ export default function CheckoutPage() {
                       value={customerInfo.name}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                       placeholder="Your full name"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#2D1810] mb-2">
+                    <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
                       Email Address *
                     </label>
                     <input
@@ -255,20 +266,20 @@ export default function CheckoutPage() {
                       value={customerInfo.email}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                       placeholder="you@example.com"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-[#2D1810] mb-2">
+                    <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
                       Phone Number
                     </label>
                     <input
                       type="tel"
                       value={customerInfo.phone}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                       placeholder="01234 567890"
                     />
                   </div>
@@ -277,7 +288,7 @@ export default function CheckoutPage() {
 
               {/* Payment */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-[#2D1810] mb-4 flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-[#3A2C2A] mb-4 flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
                   Payment
                 </h2>
@@ -304,7 +315,7 @@ export default function CheckoutPage() {
             {/* Right Column - Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-                <h2 className="text-xl font-semibold text-[#2D1810] mb-4">Order Summary</h2>
+                <h2 className="text-xl font-semibold text-[#3A2C2A] mb-4">Order Summary</h2>
 
                 {/* Items */}
                 <div className="space-y-3 mb-6">
@@ -313,7 +324,7 @@ export default function CheckoutPage() {
                       <span className="text-[#6B5B4F]">
                         {item.name} x {item.quantity}
                       </span>
-                      <span className="text-[#2D1810] font-medium">
+                      <span className="text-[#3A2C2A] font-medium">
                         £{(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
@@ -323,24 +334,24 @@ export default function CheckoutPage() {
                 <div className="border-t border-[#E8DDD0] pt-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-[#6B5B4F]">Subtotal</span>
-                    <span className="text-[#2D1810]">£{subtotal.toFixed(2)}</span>
+                    <span className="text-[#3A2C2A]">£{subtotal.toFixed(2)}</span>
                   </div>
                   {deliveryFee > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-[#6B5B4F]">Delivery</span>
-                      <span className="text-[#2D1810]">£{deliveryFee.toFixed(2)}</span>
+                      <span className="text-[#3A2C2A]">£{deliveryFee.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-lg font-semibold pt-2 border-t border-[#E8DDD0]">
-                    <span className="text-[#2D1810]">Total</span>
-                    <span className="text-[#D42426]">£{total.toFixed(2)}</span>
+                    <span className="text-[#3A2C2A]">Total</span>
+                    <span className="text-[#8B1E22]">£{total.toFixed(2)}</span>
                   </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={processing}
-                  className="w-full mt-6 py-4 bg-[#D42426] text-white rounded-lg font-semibold hover:bg-[#B81E20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full mt-6 py-4 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#9B2A32] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {processing ? (
                     <>
@@ -357,9 +368,9 @@ export default function CheckoutPage() {
 
                 <p className="mt-4 text-xs text-center text-[#6B5B4F]">
                   By confirming, you agree to our{' '}
-                  <Link href="/terms" className="text-[#D42426] hover:underline">Terms of Service</Link>
+                  <Link href="/terms" className="text-[#8B1E22] hover:underline">Terms of Service</Link>
                   {' '}and{' '}
-                  <Link href="/privacy" className="text-[#D42426] hover:underline">Privacy Policy</Link>
+                  <Link href="/privacy" className="text-[#8B1E22] hover:underline">Privacy Policy</Link>
                 </p>
               </div>
             </div>

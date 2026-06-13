@@ -37,7 +37,7 @@ export default function AccountPage() {
         <div className="container mx-auto px-4">
           <Link
             href="/"
-            className="inline-flex items-center text-sm hover:text-[#C4A35A] transition-colors"
+            className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
@@ -64,7 +64,7 @@ export default function AccountPage() {
             <div>
               <h2 className="text-xl font-semibold text-[#4A3728]">{user.name}</h2>
               <p className="text-[#8B7D6B]">{user.email}</p>
-              <span className="inline-block mt-1 px-2 py-1 text-xs bg-[#C4A35A] text-white rounded">
+              <span className="inline-block mt-1 px-2 py-1 text-xs bg-[#D0A246] text-white rounded">
                 {user.role === 'wholesale' ? 'Wholesale Account' : user.role === 'admin' ? 'Admin' : 'Customer'}
               </span>
             </div>

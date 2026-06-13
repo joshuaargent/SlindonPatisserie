@@ -94,6 +94,9 @@ export default function ContactPage() {
                   <Link href="/franchise" className="block text-[#8B4513] hover:text-[#6B3410] transition-colors">
                     → Franchise opportunities
                   </Link>
+                  <Link href="/contact?type=delivery" className="block text-[#8B4513] hover:text-[#6B3410] transition-colors font-medium">
+                    → Enquire about delivery →
+                  </Link>
                 </div>
               </div>
             </div>

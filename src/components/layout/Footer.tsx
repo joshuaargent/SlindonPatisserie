@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { siteConfig, footerNav } from '@/lib/constants';
-import { MapPin, Phone, Mail } from 'lucide-react';
+import { MapPin, Phone, Mail, ShoppingBag } from 'lucide-react';
 
 // ============================================
 // Footer Component - Slindon Patisserie
@@ -10,23 +10,30 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#4A3728] text-white">
+    <footer className="bg-[#8B1E22] text-white">
       <div className="container py-12 md:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:gap-12">
           {/* Brand & About */}
           <div className="lg:col-span-1">
-            <Link href="/" className="text-xl font-semibold text-[#C4A35A] hover:text-white transition-colors font-serif">
+            <Link href="/" className="text-xl font-semibold text-[#D0A246] hover:text-white transition-colors font-serif">
               {siteConfig.name}
             </Link>
             <p className="mt-3 max-w-xs text-sm text-white/80">
-              Handmade patisserie since 1740. Traditional recipes crafted with love in the heart of West Sussex.
+              Handmade patisserie crafted fresh daily. Order online for collection from our Camberley bakery.
             </p>
+            <Link
+              href="/products"
+              className="mt-4 inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              Order Online
+            </Link>
             <div className="mt-4 flex items-center gap-3">
               <a
                 href={siteConfig.links.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/60 hover:text-[#C4A35A] p-2 transition-colors"
+                className="text-white/60 hover:text-[#D0A246] p-2 transition-colors"
                 aria-label="YouTube"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -37,7 +44,7 @@ export function Footer() {
                 href={siteConfig.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/60 hover:text-[#C4A35A] p-2 transition-colors"
+                className="text-white/60 hover:text-[#D0A246] p-2 transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -49,7 +56,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#C4A35A]">
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#D0A246]">
               Quick Links
             </h3>
             <ul className="mt-4 space-y-2">
@@ -57,7 +64,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-white/80 hover:text-[#C4A35A] text-sm transition-colors"
+                    className="text-white/80 hover:text-[#D0A246] text-sm transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -68,7 +75,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#C4A35A]">
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#D0A246]">
               Legal
             </h3>
             <ul className="mt-4 space-y-2">
@@ -76,7 +83,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-white/80 hover:text-[#C4A35A] text-sm transition-colors"
+                    className="text-white/80 hover:text-[#D0A246] text-sm transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -87,12 +94,12 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#C4A35A]">
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#D0A246]">
               Contact Us
             </h3>
             <ul className="mt-4 space-y-3">
               <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-[#C4A35A] shrink-0 mt-0.5" />
+                <MapPin className="h-5 w-5 text-[#D0A246] shrink-0 mt-0.5" />
                 <span className="text-sm text-white/80">
                   {siteConfig.address.line1}<br />
                   {siteConfig.address.line2}<br />
@@ -101,14 +108,14 @@ export function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-[#C4A35A] shrink-0" />
-                <a href={`tel:${siteConfig.phone}`} className="text-sm text-white/80 hover:text-[#C4A35A] transition-colors">
+                <Phone className="h-5 w-5 text-[#D0A246] shrink-0" />
+                <a href={`tel:${siteConfig.phone}`} className="text-sm text-white/80 hover:text-[#D0A246] transition-colors">
                   {siteConfig.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-[#C4A35A] shrink-0" />
-                <a href={siteConfig.links.email} className="text-sm text-white/80 hover:text-[#C4A35A] transition-colors">
+                <Mail className="h-5 w-5 text-[#D0A246] shrink-0" />
+                <a href={siteConfig.links.email} className="text-sm text-white/80 hover:text-[#D0A246] transition-colors">
                   Email Us
                 </a>
               </li>

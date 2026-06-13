@@ -75,20 +75,21 @@ export const footerNav = {
 };
 
 // ============================================
-// Design Tokens - Bakery Theme
+// Design Tokens - Bakery Theme (Heritage Brand)
 // ============================================
 
 export const colors = {
-  primary: '#D42426', // Deep Red - main brand color
-  primaryHover: '#B81E20', // Darker red
-  accent: '#F5C518', // Golden Yellow - secondary/highlights
-  background: '#FDF8F0', // Warm cream
+  primary: '#8B1E22', // Heritage Deep Red - main brand color
+  primaryHover: '#9B2A32', // Lighter red for hover
+  accent: '#D0A246', // Antique Gold - secondary/highlights
+  accentHover: '#E0B256', // Lighter gold for hover
+  background: '#F7F2E9', // Soft Cream
   surface: '#FFFFFF', // White cards
-  text: '#2D1810', // Dark chocolate
-  textMuted: '#5C4033', // Warm brown
+  text: '#3A2C2A', // Dark brown
+  textMuted: '#6B5344', // Warm brown muted
   border: '#E8DDD0', // Light warm border
-  gold: '#C9A962', // Antique gold
-  brown: '#4A3728', // Rich brown for secondary elements
+  gold: '#D0A246', // Antique Gold
+  red: '#8B1E22', // Heritage Red
 } as const;
 
 // ============================================

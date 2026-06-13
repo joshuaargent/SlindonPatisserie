@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { mainNav } from '@/lib/constants';
 import { siteConfig } from '@/lib/constants';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, ShoppingCart, User } from 'lucide-react';
+import { useCartStore } from '@/lib/stores/cart';
 
 // ============================================
 // Navbar Component - Slindon Patisserie
@@ -17,6 +18,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const itemCount = useCartStore((state) => state.getItemCount());
 
   // Handle scroll effect
   useEffect(() => {
@@ -51,8 +53,8 @@ export function Navbar() {
         className={cn(
           'fixed top-0 right-0 left-0 z-[50] transition-all duration-200',
           isScrolled 
-            ? 'bg-[#F5F0E6]/95 border-b border-[#E8DDD0] backdrop-blur-md shadow-sm' 
-            : 'bg-[#F5F0E6]'
+            ? 'bg-[#F7F2E9]/95 border-b border-[#E8DDD0] backdrop-blur-md shadow-sm' 
+            : 'bg-[#F7F2E9]'
         )}
         style={{ transform: 'translateZ(0)' }}
       >
@@ -60,7 +62,7 @@ export function Navbar() {
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-[#4A3728] text-xl md:text-2xl font-serif font-semibold">
+              <span className="text-[#8B1E22] text-xl md:text-2xl font-serif font-semibold">
                 {siteConfig.name}
               </span>
             </Link>
@@ -74,18 +76,51 @@ export function Navbar() {
                   className={cn(
                     'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     pathname === item.href
-                      ? 'text-white bg-[#4A3728]'
-                      : 'text-[#4A3728] hover:text-white hover:bg-[#4A3728]'
+                      ? 'text-white bg-[#8B1E22]'
+                      : 'text-[#8B1E22] hover:text-white hover:bg-[#8B1E22]'
                   )}
                 >
                   {item.label}
                 </Link>
               ))}
               
+              {/* Cart Icon */}
+              <Link
+                href="/cart"
+                className={cn(
+                  'relative ml-2 rounded-lg p-2 transition-colors',
+                  pathname === '/cart'
+                    ? 'bg-[#8B1E22] text-white'
+                    : 'text-[#8B1E22] hover:bg-[#8B1E22]/10'
+                )}
+                aria-label="View cart"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#D0A246] text-white text-xs font-bold flex items-center justify-center">
+                    {itemCount > 9 ? '9+' : itemCount}
+                  </span>
+                )}
+              </Link>
+              
+              {/* Account Icon */}
+              <Link
+                href="/login"
+                className={cn(
+                  'rounded-lg p-2 transition-colors',
+                  pathname === '/account' || pathname === '/login' || pathname === '/register'
+                    ? 'bg-[#8B1E22] text-white'
+                    : 'text-[#8B1E22] hover:bg-[#8B1E22]/10'
+                )}
+                aria-label="Account"
+              >
+                <User className="h-5 w-5" />
+              </Link>
+              
               {/* Phone CTA */}
               <a
                 href={`tel:${siteConfig.phone}`}
-                className="ml-2 inline-flex items-center gap-2 rounded-lg bg-[#C4A35A] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#4A3728]"
+                className="ml-2 inline-flex items-center gap-2 rounded-lg bg-[#D0A246] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#8B1E22]"
               >
                 <Phone className="h-4 w-4" />
                 <span className="hidden lg:inline">{siteConfig.phone}</span>
@@ -94,7 +129,7 @@ export function Navbar() {
 
             {/* Mobile Menu Button */}
             <button
-              className="rounded-lg p-2 text-[#4A3728] transition-colors hover:bg-[#4A3728]/10 md:hidden"
+              className="rounded-lg p-2 text-[#8B1E22] transition-colors hover:bg-[#8B1E22]/10 md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
@@ -112,7 +147,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="bg-[#F5F0E6] fixed inset-0 z-[45] pt-16 md:hidden"
+            className="bg-[#F7F2E9] fixed inset-0 z-[45] pt-16 md:hidden"
             style={{ transform: 'translateZ(0)' }}
           >
             <nav className="container py-6">
@@ -129,14 +164,32 @@ export function Navbar() {
                       className={cn(
                         'flex items-center rounded-lg px-4 py-3 text-base font-medium transition-colors',
                         pathname === item.href
-                          ? 'text-white bg-[#4A3728]'
-                          : 'text-[#4A3728] hover:text-white hover:bg-[#4A3728]'
+                          ? 'text-white bg-[#8B1E22]'
+                          : 'text-[#8B1E22] hover:text-white hover:bg-[#8B1E22]'
                       )}
                     >
                       {item.label}
                     </Link>
                   </motion.div>
                 ))}
+                
+                {/* Mobile Cart & Account */}
+                <div className="flex gap-2 mt-4 pt-4 border-t border-[#E8DDD0]">
+                  <Link
+                    href="/cart"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-3 bg-[#8B1E22] text-white font-medium"
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    Cart {itemCount > 0 && `(${itemCount})`}
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-3 border border-[#8B1E22] text-[#8B1E22] font-medium"
+                  >
+                    <User className="h-5 w-5" />
+                    Account
+                  </Link>
+                </div>
               </div>
 
               {/* Mobile Menu Footer */}
@@ -144,7 +197,7 @@ export function Navbar() {
                 {/* Phone CTA */}
                 <a
                   href={`tel:${siteConfig.phone}`}
-                  className="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#C4A35A] px-4 py-3 text-lg font-medium text-white transition-colors hover:bg-[#4A3728]"
+                  className="mb-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#D0A246] px-4 py-3 text-lg font-medium text-white transition-colors hover:bg-[#8B1E22]"
                 >
                   <Phone className="h-5 w-5" />
                   <span>Call Us: {siteConfig.phone}</span>
@@ -155,7 +208,7 @@ export function Navbar() {
                     href={siteConfig.links.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#4A3728] hover:text-[#C4A35A] p-2 transition-colors"
+                    className="text-[#8B1E22] hover:text-[#D0A246] p-2 transition-colors"
                     aria-label="YouTube"
                   >
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
@@ -166,7 +219,7 @@ export function Navbar() {
                     href={siteConfig.links.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#4A3728] hover:text-[#C4A35A] p-2 transition-colors"
+                    className="text-[#8B1E22] hover:text-[#D0A246] p-2 transition-colors"
                     aria-label="Instagram"
                   >
                     <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">

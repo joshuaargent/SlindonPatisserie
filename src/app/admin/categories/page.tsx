@@ -24,16 +24,16 @@ interface Category {
 
 // Predefined categories
 const defaultCategories: Category[] = [
-  { id: '1', name: 'bakery', label: 'Patisserie', emoji: '🥐', color: '#D42426', productCount: 0 },
+  { id: '1', name: 'bakery', label: 'Patisserie', emoji: '🥐', color: '#8B1E22', productCount: 0 },
   { id: '2', name: 'bread', label: 'Artisan Bread', emoji: '🍞', color: '#8B5A2B', productCount: 0 },
-  { id: '3', name: 'catering', label: 'Catering', emoji: '🥪', color: '#F5C518', productCount: 0 },
+  { id: '3', name: 'catering', label: 'Catering', emoji: '🥪', color: '#D0A246', productCount: 0 },
   { id: '4', name: 'wholesale', label: 'Wholesale', emoji: '📦', color: '#4A3728', productCount: 0 },
   { id: '5', name: 'pos', label: 'POS & Supplies', emoji: '🛍️', color: '#6B5B4F', productCount: 0 },
   { id: '6', name: 'sundries', label: 'Sundries', emoji: '🛒', color: '#2D1810', productCount: 0 },
 ]
 
 const colorOptions = [
-  '#D42426', '#8B5A2B', '#F5C518', '#4A3728', '#6B5B4F', '#2D1810',
+  '#8B1E22', '#8B5A2B', '#D0A246', '#4A3728', '#6B5B4F', '#2D1810',
   '#2563EB', '#059669', '#7C3AED', '#DB2777', '#EA580C', '#0891B2',
 ]
 
@@ -48,7 +48,7 @@ export default function AdminCategoriesPage() {
     name: '',
     label: '',
     emoji: '🥐',
-    color: '#D42426',
+    color: '#8B1E22',
   })
   const [saving, setSaving] = useState(false)
 
@@ -91,7 +91,7 @@ export default function AdminCategoriesPage() {
         name: '',
         label: '',
         emoji: '🥐',
-        color: '#D42426',
+        color: '#8B1E22',
       })
     }
     setShowModal(true)
@@ -157,7 +157,7 @@ export default function AdminCategoriesPage() {
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 bg-[#D42426] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#B81E20] transition-colors"
+          className="flex items-center gap-2 bg-[#8B1E22] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#B81E20] transition-colors"
         >
           <Plus className="w-5 h-5" />
           Add Category
@@ -194,7 +194,7 @@ export default function AdminCategoriesPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => openModal(category)}
-                  className="p-2 text-[#5C4033] hover:text-[#D42426] transition-colors"
+                  className="p-2 text-[#5C4033] hover:text-[#8B1E22] transition-colors"
                 >
                   <Edit className="w-5 h-5" />
                 </button>
@@ -251,7 +251,7 @@ export default function AdminCategoriesPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                   placeholder="e.g., bakery, bread, catering"
                 />
                 <p className="text-xs text-[#5C4033] mt-1">Used in URL: /products?category=your-name</p>
@@ -268,7 +268,7 @@ export default function AdminCategoriesPage() {
                   value={formData.label}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                   placeholder="e.g., Patisserie, Artisan Bread"
                 />
               </div>
@@ -286,7 +286,7 @@ export default function AdminCategoriesPage() {
                       onClick={() => setFormData(prev => ({ ...prev, emoji }))}
                       className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl transition-colors ${
                         formData.emoji === emoji
-                          ? 'bg-[#D42426] text-white'
+                          ? 'bg-[#8B1E22] text-white'
                           : 'bg-[#FDF8F0] hover:bg-[#E8DDD0]'
                       }`}
                     >
@@ -308,7 +308,7 @@ export default function AdminCategoriesPage() {
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, color }))}
                       className={`w-8 h-8 rounded-full transition-transform ${
-                        formData.color === color ? 'ring-2 ring-offset-2 ring-[#D42426] scale-110' : 'hover:scale-110'
+                        formData.color === color ? 'ring-2 ring-offset-2 ring-[#8B1E22] scale-110' : 'hover:scale-110'
                       }`}
                       style={{ backgroundColor: color }}
                     />
@@ -328,7 +328,7 @@ export default function AdminCategoriesPage() {
               <button
                 onClick={handleSave}
                 disabled={saving || !formData.name || !formData.label}
-                className="flex items-center gap-2 bg-[#D42426] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#B81E20] transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 bg-[#8B1E22] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#B81E20] transition-colors disabled:opacity-50"
               >
                 {saving ? (
                   <>

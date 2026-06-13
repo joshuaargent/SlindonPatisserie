@@ -147,14 +147,14 @@ export default function AdminOrdersPage() {
             placeholder="Search by order ID, customer name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+            className="w-full pl-10 pr-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
           />
         </div>
         
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D42426]"
+          className="px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
         >
           <option value="all">All Statuses</option>
           {Object.entries(statusConfig).map(([key, config]) => (
@@ -234,7 +234,7 @@ export default function AdminOrdersPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="flex items-center gap-1 text-[#D42426] font-medium hover:underline"
+                          className="flex items-center gap-1 text-[#8B1E22] font-medium hover:underline"
                         >
                           <Eye className="w-4 h-4" />
                           View
@@ -366,7 +366,7 @@ export default function AdminOrdersPage() {
                       )}
                       <tr>
                         <td colSpan={3} className="px-4 py-2 text-right font-bold text-[#2D1810]">Total</td>
-                        <td className="px-4 py-2 text-right font-bold text-[#D42426]">£{selectedOrder.total.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-right font-bold text-[#8B1E22]">£{selectedOrder.total.toFixed(2)}</td>
                       </tr>
                     </tfoot>
                   </table>

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, ShoppingBag, Package, Loader2, ShoppingBagIcon } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { ArrowLeft, ShoppingCart, ShoppingBag, Package, Loader2, ShoppingBagIcon, Lock } from 'lucide-react'
 import { useCartStore } from '@/lib/stores/cart'
 
 // Product type matching database schema
@@ -45,7 +46,21 @@ export default function ProductsPage() {
   const [error, setError] = useState<string | null>(null)
   const [addedToCart, setAddedToCart] = useState<string | null>(null)
   
+  const { data: session, status } = useSession()
   const addItem = useCartStore((state) => state.addItem)
+
+  // Determine if user can see wholesale pricing
+  const canSeeWholesale = status === 'authenticated' && session?.user?.role === 'wholesale'
+  
+  // If not logged in, default to retail prices
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      setShowRetailPrices(true)
+    } else if (canSeeWholesale) {
+      // Wholesale users can see wholesale by default
+      setShowRetailPrices(false)
+    }
+  }, [status, canSeeWholesale])
 
   // Fetch products from API
   const fetchProducts = useCallback(async () => {
@@ -109,18 +124,18 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
       {/* Header */}
-      <div className="bg-[#D42426] text-white py-4">
+      <div className="bg-[#8B1E22] text-white py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center text-sm hover:text-[#F5C518] transition-colors"
+            className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Link>
           <Link
             href="/cart"
-            className="flex items-center gap-2 text-sm hover:text-[#F5C518] transition-colors"
+            className="flex items-center gap-2 text-sm hover:text-[#D0A246] transition-colors"
           >
             <ShoppingCart className="w-5 h-5" />
             View Cart
@@ -132,11 +147,11 @@ export default function ProductsPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-serif font-bold text-[#2D1810] mb-2">
+          <h1 className="text-4xl font-serif font-bold text-[#3A2C2A] mb-2">
             Our Products
           </h1>
           <p className="text-[#5C4033]">
-            Fresh from our ovens every day. Same products, better prices for wholesale.
+            Fresh from our ovens every day. Order online and collect from our Camberley bakery.
           </p>
         </div>
 
@@ -149,33 +164,57 @@ export default function ProductsPage() {
               onClick={() => setShowRetailPrices(true)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                 showRetailPrices
-                  ? 'bg-[#D42426] text-white'
-                  : 'bg-[#FDF8F0] text-[#5C4033] hover:bg-[#E8DDD0]'
+                  ? 'bg-[#8B1E22] text-white'
+                  : 'bg-[#F7F2E9] text-[#5C4033] hover:bg-[#E8DDD0]'
               }`}
             >
               <ShoppingBag className="w-4 h-4" />
               Retail
             </button>
             
-            <button
-              onClick={() => setShowRetailPrices(false)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                !showRetailPrices
-                  ? 'bg-[#D42426] text-white'
-                  : 'bg-[#FDF8F0] text-[#5C4033] hover:bg-[#E8DDD0]'
-              }`}
-            >
-              <Package className="w-4 h-4" />
-              Wholesale
-              <span className="text-xs bg-[#F5C518] text-[#2D1810] px-2 py-0.5 rounded font-bold">
-                50% OFF
-              </span>
-            </button>
-            
-            {!showRetailPrices && (
-              <span className="text-sm text-[#5C4033]">
-                Log in or apply for wholesale account to see these prices
-              </span>
+            {/* Wholesale toggle - only enabled for wholesale users */}
+            {canSeeWholesale ? (
+              <button
+                onClick={() => setShowRetailPrices(false)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  !showRetailPrices
+                    ? 'bg-[#8B1E22] text-white'
+                    : 'bg-[#F7F2E9] text-[#5C4033] hover:bg-[#E8DDD0]'
+                }`}
+              >
+                <Package className="w-4 h-4" />
+                Wholesale
+                <span className="text-xs bg-[#D0A246] text-white px-2 py-0.5 rounded font-bold">
+                  50% OFF
+                </span>
+              </button>
+            ) : (
+              <div className="relative">
+                <button
+                  disabled
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-500 cursor-not-allowed"
+                >
+                  <Package className="w-4 h-4" />
+                  Wholesale
+                  <span className="text-xs bg-gray-400 text-white px-2 py-0.5 rounded font-bold">
+                    50% OFF
+                  </span>
+                </button>
+                {status === 'unauthenticated' && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-[#E8DDD0] p-4 z-10">
+                    <div className="flex items-start gap-3">
+                      <Lock className="h-5 w-5 text-[#D0A246] shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-[#3A2C2A] text-sm">Wholesale Login Required</p>
+                        <p className="text-xs text-[#5C4033] mt-1">
+                          <Link href="/login" className="text-[#8B1E22] underline">Sign in</Link> or{' '}
+                          <Link href="/wholesale" className="text-[#8B1E22] underline">apply for a wholesale account</Link> to see trade pricing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -186,7 +225,7 @@ export default function ProductsPage() {
             onClick={() => setSelectedCategory('all')}
             className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 ${
               selectedCategory === 'all'
-                ? 'bg-[#D42426] text-white'
+                ? 'bg-[#8B1E22] text-white'
                 : 'bg-white text-[#5C4033] hover:bg-[#E8DDD0]'
             }`}
           >
@@ -200,7 +239,7 @@ export default function ProductsPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-full transition-colors flex items-center gap-2 ${
                   selectedCategory === cat
-                    ? 'bg-[#D42426] text-white'
+                    ? 'bg-[#8B1E22] text-white'
                     : 'bg-white text-[#5C4033] hover:bg-[#E8DDD0]'
                 }`}
               >
@@ -214,7 +253,7 @@ export default function ProductsPage() {
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-[#D42426] animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#8B1E22] animate-spin" />
             <span className="ml-3 text-[#5C4033]">Loading products...</span>
           </div>
         )}
@@ -226,7 +265,7 @@ export default function ProductsPage() {
             <p className="text-red-500 text-lg mb-4">{error}</p>
             <button
               onClick={fetchProducts}
-              className="px-6 py-2 bg-[#D42426] text-white rounded-lg hover:bg-[#B81E20]"
+              className="px-6 py-2 bg-[#8B1E22] text-white rounded-lg hover:bg-[#9B2A32]"
             >
               Try Again
             </button>
@@ -245,7 +284,7 @@ export default function ProductsPage() {
             {selectedCategory !== 'all' && (
               <button
                 onClick={() => setSelectedCategory('all')}
-                className="mt-4 text-[#D42426] font-medium hover:underline"
+                className="mt-4 text-[#8B1E22] font-medium hover:underline"
               >
                 View all products
               </button>
@@ -283,7 +322,7 @@ export default function ProductsPage() {
                     )}
                     
                     {Number(savings) > 0 && !showRetailPrices && (
-                      <span className="absolute top-3 right-3 px-2 py-1 bg-[#4A3728] text-white text-xs font-bold rounded">
+                      <span className="absolute top-3 right-3 px-2 py-1 bg-[#8B1E22] text-white text-xs font-bold rounded">
                         Save {savings}%
                       </span>
                     )}
@@ -301,7 +340,7 @@ export default function ProductsPage() {
                       {categoryInfo.label}
                     </span>
                     
-                    <h3 className="font-semibold text-[#2D1810] text-lg">{product.name}</h3>
+                    <h3 className="font-semibold text-[#3A2C2A] text-lg">{product.name}</h3>
                     <p className="text-sm text-[#5C4033] mt-1 line-clamp-2">{product.description}</p>
                     
                     {product.productionTimeHours > 0 && (
@@ -313,7 +352,7 @@ export default function ProductsPage() {
                     {/* Pricing */}
                     <div className="mt-4 flex items-center justify-between">
                       <div>
-                        <span className="text-2xl font-bold text-[#D42426]">
+                        <span className="text-2xl font-bold text-[#8B1E22]">
                           £{displayPrice.toFixed(2)}
                         </span>
                         {hasWholesale && showRetailPrices && (
@@ -331,7 +370,7 @@ export default function ProductsPage() {
                             ? 'bg-green-500 text-white'
                             : !product.available
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-[#D42426] text-white hover:bg-[#B81E20]'
+                            : 'bg-[#8B1E22] text-white hover:bg-[#9B2A32]'
                         }`}
                       >
                         {addedToCart === product.id ? '✓ Added' : 'Add'}
@@ -345,7 +384,7 @@ export default function ProductsPage() {
         )}
 
         {/* Info Banner */}
-        <div className="mt-12 bg-[#4A3728] text-white rounded-xl p-6">
+        <div className="mt-12 bg-[#8B1E22] text-white rounded-xl p-6">
           <h3 className="font-semibold text-lg mb-2">Production Time Notice</h3>
           <p className="text-white/80">
             All our products are made fresh to order. When selecting your pickup time at checkout, 

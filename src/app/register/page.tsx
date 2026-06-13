@@ -61,7 +61,7 @@ export default function RegisterPage() {
           <div className="container mx-auto px-4">
             <Link
               href="/"
-              className="inline-flex items-center text-sm hover:text-[#C4A35A] transition-colors"
+              className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
@@ -87,7 +87,7 @@ export default function RegisterPage() {
         <div className="container mx-auto px-4">
           <Link
             href="/"
-            className="inline-flex items-center text-sm hover:text-[#C4A35A] transition-colors"
+            className="inline-flex items-center text-sm hover:text-[#D0A246] transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Your full name"
                   />
                 </div>
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -169,7 +169,7 @@ export default function RegisterPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="01234 567890"
                   />
                 </div>
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="At least 6 characters"
                   />
                 </div>
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A35A] focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-[#8B7D6B] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D0A246] focus:border-transparent"
                     placeholder="Confirm your password"
                   />
                 </div>
