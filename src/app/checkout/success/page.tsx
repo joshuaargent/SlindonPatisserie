@@ -174,14 +174,14 @@ export default function CheckoutSuccessPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/account/orders"
-              className="flex-1 py-3 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#9B2A32] transition-colors text-center flex items-center justify-center gap-2"
+              className="btn-primary text-lg px-6 py-4 flex-1"
             >
               View Order History
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/"
-              className="flex-1 py-3 bg-white text-[#8B1E22] border-2 border-[#8B1E22] rounded-lg font-semibold hover:bg-[#F7F2E9] transition-colors text-center"
+              className="btn-outline-white text-lg px-6 py-4 flex-1"
             >
               Continue Shopping
             </Link>

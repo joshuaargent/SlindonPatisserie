@@ -351,7 +351,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={processing}
-                  className="w-full mt-6 py-4 bg-[#8B1E22] text-white rounded-lg font-semibold hover:bg-[#9B2A32] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="btn-primary text-lg px-8 py-4 w-full mt-6"
                 >
                   {processing ? (
                     <>

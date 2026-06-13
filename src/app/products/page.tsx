@@ -265,7 +265,7 @@ export default function ProductsPage() {
             <p className="text-red-500 text-lg mb-4">{error}</p>
             <button
               onClick={fetchProducts}
-              className="px-6 py-2 bg-[#8B1E22] text-white rounded-lg hover:bg-[#9B2A32]"
+              className="btn-secondary px-6 py-2"
             >
               Try Again
             </button>
@@ -365,12 +365,12 @@ export default function ProductsPage() {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={addedToCart === product.id || !product.available}
-                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        className={`btn-secondary-sm px-4 py-2 ${
                           addedToCart === product.id
-                            ? 'bg-green-500 text-white'
+                            ? 'bg-green-500 hover:bg-green-600'
                             : !product.available
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-[#8B1E22] text-white hover:bg-[#9B2A32]'
+                            ? 'opacity-50 cursor-not-allowed'
+                            : ''
                         }`}
                       >
                         {addedToCart === product.id ? '✓ Added' : 'Add'}
