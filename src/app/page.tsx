@@ -388,7 +388,7 @@ export default function HomePage() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/franchise"
-                  className="inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-8 py-4 rounded-lg font-bold transition-colors"
+                  className="btn-primary px-8 py-4"
                 >
                   Learn About Franchising
                   <ArrowRight className="h-5 w-5" />

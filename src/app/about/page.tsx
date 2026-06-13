@@ -168,7 +168,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/markets"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#9B2A32]"
+            className="btn-secondary"
           >
             View Market Schedule
           </Link>

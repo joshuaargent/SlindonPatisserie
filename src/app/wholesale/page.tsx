@@ -164,14 +164,14 @@ export default function WholesalePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href={`tel:${businessInfo.phone}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#9B2A32]"
+                className="btn-secondary"
               >
                 <Phone className="h-5 w-5" />
                 Call to Discuss
               </a>
               <Link
                 href="/contact?type=wholesale"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#8B1E22] px-6 py-3 text-base font-medium text-[#8B1E22] transition-colors hover:bg-[#8B1E22] hover:text-white"
+                className="btn-outline-red"
               >
                 <Mail className="h-5 w-5" />
                 Send Enquiry

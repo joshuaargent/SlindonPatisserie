@@ -163,13 +163,13 @@ export default function MarketsPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`tel:${businessInfo.phone}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#8B1E22] px-6 py-3 text-base font-medium text-white transition-colors hover:bg-[#9B2A32]"
+              className="btn-secondary"
             >
               Call Us
             </a>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-lg border border-[#D0A246] px-6 py-3 text-base font-medium text-[#D0A246] transition-colors hover:bg-[#D0A246] hover:text-[#3A2C2A]"
+              className="btn-outline-gold"
             >
               Contact Form
             </Link>

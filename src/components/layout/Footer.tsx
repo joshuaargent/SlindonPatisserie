@@ -15,15 +15,15 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:gap-12">
           {/* Brand & About */}
           <div className="lg:col-span-1">
-            <Link href="/" className="text-xl font-semibold text-[#D0A246] hover:text-white transition-colors font-serif">
+            <Link href="/" className="text-xl font-semibold text-white hover:text-[#D0A246] transition-colors font-serif">
               {siteConfig.name}
             </Link>
-            <p className="mt-3 max-w-xs text-sm text-white/80">
+            <p className="mt-3 max-w-xs text-white/90">
               Handmade patisserie crafted fresh daily. Order online for collection from our Camberley bakery.
             </p>
             <Link
               href="/products"
-              className="mt-4 inline-flex items-center gap-2 bg-[#D0A246] hover:bg-[#E0B256] text-[#3A2C2A] px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="btn-primary mt-4 text-sm"
             >
               <ShoppingBag className="h-4 w-4" />
               Order Online
@@ -33,7 +33,7 @@ export function Footer() {
                 href={siteConfig.links.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/60 hover:text-[#D0A246] p-2 transition-colors"
+                className="text-white/80 hover:text-[#D0A246] p-2 transition-colors"
                 aria-label="YouTube"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ export function Footer() {
                 href={siteConfig.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/60 hover:text-[#D0A246] p-2 transition-colors"
+                className="text-white/80 hover:text-[#D0A246] p-2 transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -59,12 +59,12 @@ export function Footer() {
             <h3 className="text-sm font-semibold tracking-wider uppercase text-[#D0A246]">
               Quick Links
             </h3>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-4 space-y-3">
               {footerNav.main.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-white/80 hover:text-[#D0A246] text-sm transition-colors"
+                    className="text-white hover:text-[#D0A246] transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -78,12 +78,12 @@ export function Footer() {
             <h3 className="text-sm font-semibold tracking-wider uppercase text-[#D0A246]">
               Legal
             </h3>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-4 space-y-3">
               {footerNav.content.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-white/80 hover:text-[#D0A246] text-sm transition-colors"
+                    className="text-white hover:text-[#D0A246] transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -100,7 +100,7 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-[#D0A246] shrink-0 mt-0.5" />
-                <span className="text-sm text-white/80">
+                <span className="text-white">
                   {siteConfig.address.line1}<br />
                   {siteConfig.address.line2}<br />
                   {siteConfig.address.line3}<br />
@@ -109,13 +109,13 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[#D0A246] shrink-0" />
-                <a href={`tel:${siteConfig.phone}`} className="text-sm text-white/80 hover:text-[#D0A246] transition-colors">
+                <a href={`tel:${siteConfig.phone}`} className="text-white hover:text-[#D0A246] transition-colors">
                   {siteConfig.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-[#D0A246] shrink-0" />
-                <a href={siteConfig.links.email} className="text-sm text-white/80 hover:text-[#D0A246] transition-colors">
+                <a href={siteConfig.links.email} className="text-white hover:text-[#D0A246] transition-colors">
                   Email Us
                 </a>
               </li>
@@ -126,10 +126,10 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 border-t border-white/20 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-white/60 text-sm">
+            <p className="text-white/80 text-sm">
               © {currentYear} {siteConfig.name}. All rights reserved.
             </p>
-            <p className="text-white/60 text-sm">
+            <p className="text-white/80 text-sm">
               Handmade with love in Slindon, West Sussex
             </p>
           </div>
