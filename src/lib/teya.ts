@@ -1,8 +1,14 @@
 // ============================================
 // Teya Payment Integration
 // ============================================
+// 
+// Required environment variables:
+// - NEXT_PUBLIC_TEYA_API_URL: Teya API endpoint
+// - NEXT_PUBLIC_TEYA_MERCHANT_ID: Your merchant ID
+// - TEYA_API_KEY: API key for server-side requests
+//
+// Contact Teya to obtain credentials: https://www.teya.io
 
-// Teya API Configuration (placeholder - needs actual credentials from Joby)
 export const teyaConfig = {
   apiUrl: process.env.NEXT_PUBLIC_TEYA_API_URL || 'https://api.teya.io',
   merchantId: process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID || '',

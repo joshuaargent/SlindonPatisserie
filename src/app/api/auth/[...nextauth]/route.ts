@@ -1,30 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-
-// For demo purposes - in production use Prisma
-const demoUsers = [
-  {
-    id: '1',
-    email: 'customer@slindon.co.uk',
-    password: 'customer123',
-    name: 'Demo Customer',
-    role: 'customer',
-  },
-  {
-    id: '2',
-    email: 'wholesale@slindon.co.uk',
-    password: 'wholesale123',
-    name: 'Demo Wholesale',
-    role: 'wholesale',
-  },
-  {
-    id: '3',
-    email: 'admin@slindon.co.uk',
-    password: 'admin123',
-    name: 'Admin User',
-    role: 'admin',
-  },
-]
+import prisma from '@/lib/prisma'
+import bcrypt from 'bcryptjs'
 
 const handler = NextAuth({
   providers: [
@@ -39,19 +16,29 @@ const handler = NextAuth({
           return null
         }
 
-        // Find user - in production this would be a database query
-        const user = demoUsers.find((u) => u.email === credentials.email)
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email.toLowerCase() },
+        })
 
-        if (user && user.password === credentials.password) {
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-          }
+        if (!user || !user.isActive) {
+          return null
         }
 
-        return null
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        )
+
+        if (!isPasswordValid) {
+          return null
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        }
       },
     }),
   ],
@@ -79,7 +66,7 @@ const handler = NextAuth({
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
   },
-  secret: process.env.NEXTAUTH_SECRET || 'development-secret-change-in-production',
+  secret: process.env.NEXTAUTH_SECRET,
 })
 
 export { handler as GET, handler as POST }

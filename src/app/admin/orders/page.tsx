@@ -1,102 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   Search, 
   Eye, 
   Package,
-  Truck,
   CheckCircle,
   XCircle,
   Clock,
-  Filter
+  Loader2
 } from 'lucide-react'
 
-// Sample orders - in production these come from database
-const sampleOrders = [
-  {
-    id: 'ORD-001',
-    customer: { name: 'Sarah Mitchell', email: 'sarah@example.com', phone: '07700 123456' },
-    items: [
-      { name: 'Butter Croissant', quantity: 2, price: 2.50 },
-      { name: 'Pain au Chocolat', quantity: 1, price: 2.80 },
-    ],
-    subtotal: 7.80,
-    deliveryFee: 0,
-    total: 7.80,
-    deliveryMethod: 'collection',
-    pickupDate: '2026-06-12',
-    pickupTime: '10:00',
-    status: 'pending',
-    createdAt: '2026-06-10T09:30:00Z',
-  },
-  {
-    id: 'ORD-002',
-    customer: { name: 'James Wilson', email: 'james@example.com', phone: '07700 654321' },
-    items: [
-      { name: 'Sourdough Boule', quantity: 2, price: 4.50 },
-      { name: 'French Baguette', quantity: 3, price: 2.20 },
-      { name: 'Butter Croissant', quantity: 5, price: 2.50 },
-    ],
-    subtotal: 24.80,
-    deliveryFee: 0,
-    total: 24.80,
-    deliveryMethod: 'collection',
-    pickupDate: '2026-06-12',
-    pickupTime: '11:00',
-    status: 'confirmed',
-    createdAt: '2026-06-10T10:15:00Z',
-  },
-  {
-    id: 'ORD-003',
-    customer: { name: 'Emma Thompson', email: 'emma@example.com', phone: '07700 987654' },
-    items: [
-      { name: 'Mini Sandwich Selection', quantity: 1, price: 15.00 },
-      { name: 'Cream Tea for Two', quantity: 2, price: 12.00 },
-    ],
-    subtotal: 39.00,
-    deliveryFee: 0,
-    total: 39.00,
-    deliveryMethod: 'collection',
-    pickupDate: '2026-06-13',
-    pickupTime: '14:00',
-    status: 'preparing',
-    createdAt: '2026-06-09T16:00:00Z',
-  },
-  {
-    id: 'ORD-004',
-    customer: { name: 'Robert Brown', email: 'robert@example.com', phone: '07700 111222' },
-    items: [
-      { name: 'Croissant Box (30)', quantity: 2, price: 45.00 },
-      { name: 'Baguette Box (20)', quantity: 1, price: 32.00 },
-    ],
-    subtotal: 122.00,
-    deliveryFee: 0,
-    total: 122.00,
-    deliveryMethod: 'delivery',
-    deliveryAddress: '45 High Street, Camberley, GU15 3RB',
-    pickupDate: '2026-06-14',
-    pickupTime: '09:00',
-    status: 'ready',
-    createdAt: '2026-06-08T11:00:00Z',
-  },
-  {
-    id: 'ORD-005',
-    customer: { name: 'Lisa Anderson', email: 'lisa@example.com', phone: '07700 333444' },
-    items: [
-      { name: 'Almond Croissant', quantity: 4, price: 3.20 },
-      { name: 'Pain aux Raisins', quantity: 4, price: 2.70 },
-    ],
-    subtotal: 23.60,
-    deliveryFee: 0,
-    total: 23.60,
-    deliveryMethod: 'collection',
-    pickupDate: '2026-06-12',
-    pickupTime: '15:00',
-    status: 'completed',
-    createdAt: '2026-06-07T14:30:00Z',
-  },
-]
+interface OrderItem {
+  name: string
+  quantity: number
+  price: number
+}
+
+interface Order {
+  id: string
+  internalId: string
+  customer: {
+    id: string
+    name: string
+    email: string
+    phone: string | null
+  }
+  items: OrderItem[]
+  subtotal: number
+  deliveryFee: number
+  total: number
+  deliveryMethod: string
+  deliveryAddress?: string
+  pickupDate: string
+  pickupTime: string
+  status: string
+  createdAt: string
+}
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
@@ -108,26 +48,62 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
 }
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState(sampleOrders)
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
-  const [selectedOrder, setSelectedOrder] = useState<typeof sampleOrders[0] | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
-  // Filter orders
+  // Fetch orders from API
+  const fetchOrders = useCallback(async () => {
+    try {
+      const params = new URLSearchParams()
+      if (filterStatus !== 'all') params.set('status', filterStatus)
+      if (search) params.set('search', search)
+      
+      const response = await fetch(`/api/admin/orders?${params}`)
+      if (response.ok) {
+        const data = await response.json()
+        setOrders(data.orders)
+      }
+    } catch (error) {
+      console.error('Failed to fetch orders:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [filterStatus, search])
+
+  useEffect(() => {
+    fetchOrders()
+  }, [fetchOrders])
+
+  // Filter orders (client-side for search feedback)
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
       order.id.toLowerCase().includes(search.toLowerCase()) ||
       order.customer.name.toLowerCase().includes(search.toLowerCase()) ||
       order.customer.email.toLowerCase().includes(search.toLowerCase())
-    const matchesStatus = filterStatus === 'all' || order.status === filterStatus
-    return matchesSearch && matchesStatus
+    return matchesSearch
   })
 
   // Update order status
-  const updateStatus = (orderId: string, newStatus: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ))
+  const updateStatus = async (orderId: string, newStatus: string) => {
+    try {
+      const response = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status: newStatus }),
+      })
+      
+      if (response.ok) {
+        fetchOrders()
+        if (selectedOrder) {
+          setSelectedOrder({ ...selectedOrder, status: newStatus })
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update order:', error)
+    }
   }
 
   return (
@@ -165,7 +141,12 @@ export default function AdminOrdersPage() {
 
       {/* Orders Table */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        {filteredOrders.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <Loader2 className="w-12 h-12 mx-auto text-[#8B1E22] animate-spin mb-4" />
+            <p className="text-[#6B5344]">Loading orders...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
           <div className="text-center py-20">
             <Package className="w-16 h-16 mx-auto text-[#6B5344] mb-4" />
             <p className="text-[#6B5344] text-lg">No orders found</p>
