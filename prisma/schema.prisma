@@ -1,5 +1,5 @@
 // Prisma schema for Slindon Patisserie
-// Production-ready database schema
+// Production-ready database schema (SQLite compatible)
 
 generator client {
   provider = "prisma-client-js"
@@ -20,7 +20,7 @@ model User {
   password  String
   name      String
   phone     String?
-  role      UserRole @default(CUSTOMER)
+  role      String   @default("CUSTOMER") // CUSTOMER | WHOLESALE | ADMIN
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -28,12 +28,6 @@ model User {
   orders  Order[]
   cart    Cart?
   reviews Review[]
-}
-
-enum UserRole {
-  CUSTOMER
-  WHOLESALE
-  ADMIN
 }
 
 // ============================================
@@ -144,24 +138,24 @@ model CartItem {
 // ============================================
 
 model Order {
-  id              String        @id @default(cuid())
-  orderNumber     String        @unique
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
   userId          String
-  user            User          @relation(fields: [userId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
   subtotal        Float
-  deliveryFee     Float         @default(0)
+  deliveryFee     Float    @default(0)
   total           Float
-  deliveryMethod  DeliveryMethod
+  deliveryMethod  String   // COLLECTION | DELIVERY
   deliveryAddress String?
   pickupDate      DateTime
   pickupTime      String
-  status          OrderStatus   @default(PENDING)
-  paymentStatus   PaymentStatus @default(PENDING)
+  status          String   @default("PENDING") // PENDING | CONFIRMED | PREPARING | READY | COMPLETED | CANCELLED
+  paymentStatus   String   @default("PENDING") // PENDING | PAID | REFUNDED | FAILED
   paymentMethod   String?
   teyaOrderId     String?
   notes           String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   items   OrderItem[]
   history OrderStatusHistory[]
@@ -180,33 +174,12 @@ model OrderItem {
 }
 
 model OrderStatusHistory {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   orderId   String
-  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  status    OrderStatus
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    String
   note      String?
-  createdAt DateTime    @default(now())
-}
-
-enum DeliveryMethod {
-  COLLECTION
-  DELIVERY
-}
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PREPARING
-  READY
-  COMPLETED
-  CANCELLED
-}
-
-enum PaymentStatus {
-  PENDING
-  PAID
-  REFUNDED
-  FAILED
+  createdAt DateTime @default(now())
 }
 
 // ============================================
@@ -214,26 +187,20 @@ enum PaymentStatus {
 // ============================================
 
 model Review {
-  id        String       @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
-  user      User         @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   rating    Int
   title     String?
   comment   String
-  status    ReviewStatus @default(PENDING)
+  status    String   @default("PENDING") // PENDING | APPROVED | REJECTED
   reply     String?
   repliedAt DateTime?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([userId])
-}
-
-enum ReviewStatus {
-  PENDING
-  APPROVED
-  REJECTED
 }
 
 // ============================================
@@ -241,62 +208,55 @@ enum ReviewStatus {
 // ============================================
 
 model FranchiseEnquiry {
-  id        String        @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
   message   String
-  status    EnquiryStatus @default(NEW)
+  status    String   @default("NEW") // NEW | IN_PROGRESS | COMPLETED | CLOSED
   note      String?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model WholesaleEnquiry {
-  id           String        @id @default(cuid())
+  id           String   @id @default(cuid())
   businessName String
   name         String
   email        String
   phone        String?
   message      String
-  status       EnquiryStatus @default(NEW)
+  status       String   @default("NEW")
   note         String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model CareerApplication {
-  id        String        @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
   position  String?
   message   String
   cvData    String?
-  status    EnquiryStatus @default(NEW)
+  status    String   @default("NEW")
   note      String?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ContactEnquiry {
-  id        String        @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
   subject   String?
   message   String
-  status    EnquiryStatus @default(NEW)
+  status    String   @default("NEW")
   note      String?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
-enum EnquiryStatus {
-  NEW
-  IN_PROGRESS
-  COMPLETED
-  CLOSED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ============================================
