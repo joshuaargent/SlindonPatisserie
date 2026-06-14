@@ -62,19 +62,19 @@ export default function HomePage() {
               </p>
               
               {/* Primary CTAs */}
-              <div className="flex flex-wrap gap-4 mb-10">
+              <div className="flex flex-wrap gap-3 mb-8">
                 <Link
                   href="/products"
-                  className="btn-primary text-base md:text-lg px-4 md:px-8 py-3 md:py-4 hover:-translate-y-0.5"
+                  className="btn-primary text-sm md:text-lg px-3 md:px-8 py-2.5 md:py-4 hover:-translate-y-0.5"
                 >
-                  <ShoppingBag className="h-5 w-5" />
+                  <ShoppingBag className="h-4 md:h-5 w-4 md:w-5" />
                   Order Online Now
                 </Link>
                 <Link
                   href="#franchise"
-                  className="btn-outline-white text-base md:text-lg px-4 md:px-6 py-3 md:py-4"
+                  className="btn-outline-white text-sm md:text-lg px-3 md:px-6 py-2.5 md:py-4"
                 >
-                  <DollarSign className="h-5 w-5" />
+                  <DollarSign className="h-4 md:h-5 w-4 md:w-5" />
                   Franchise Opportunity
                 </Link>
               </div>
