@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/Toaster';
 import { NextAuthProvider } from '@/components/providers/NextAuthProvider';
+import { ContentWrapper } from '@/components/layout/ContentWrapper';
 import './globals.css';
 
 // ============================================
@@ -91,7 +92,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-screen flex-col antialiased">
         <NextAuthProvider>
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <ContentWrapper>
+            {children}
+          </ContentWrapper>
           <Footer />
           <Toaster />
         </NextAuthProvider>
