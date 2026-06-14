@@ -370,7 +370,7 @@ export default function HomePage() {
                   and now online customers with freshly baked goods every single day.
                 </p>
                 <p>
-                  Our commitment to quality means we use only the finest ingredients - from locally 
+                  Our commitment to quality means we use only the finest ingredients, from locally 
                   sourced flour to free-range eggs and European butter.
                 </p>
               </div>

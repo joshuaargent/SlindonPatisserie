@@ -205,7 +205,7 @@ export default function FranchisePage() {
             <p className="text-[#F7F2E9]/80 mb-8">
               Every franchise journey starts with a conversation. Whether you have 
               questions about the opportunity, want to understand the investment, 
-              or are ready to take the next step - we're here to help.
+              or are ready to take the next step, we're here to help.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a

@@ -27,7 +27,7 @@ export default function ContactPage() {
           </h1>
           <p className="mt-4 text-[#F7F2E9]/80 max-w-2xl text-lg">
             We'd love to hear from you. Whether you have a question about our 
-            products, wholesale opportunities, or franchise - we're here to help.
+            products, wholesale opportunities, or franchise, we're here to help.
           </p>
         </div>
       </section>

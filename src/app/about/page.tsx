@@ -117,7 +117,7 @@ export default function AboutPage() {
                 Community First
               </h3>
               <p className="text-[#6B5344]">
-                We're more than a bakery - we're part of the community. We believe 
+                We're more than a bakery, we're part of the community. We believe 
                 in building relationships that last.
               </p>
             </div>
