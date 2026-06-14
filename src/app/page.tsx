@@ -80,17 +80,17 @@ export default function HomePage() {
               </div>
               
               {/* Quick Benefits */}
-              <div className="flex flex-wrap gap-6 text-[#F7F2E9]/80 text-xs md:text-sm">
+              <div className="flex flex-wrap gap-6 text-[#F7F2E9]/80 text-sm md:text-base">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="h-3.5 md:h-4 w-3.5 md:w-4 text-[#D0A246]" />
+                  <CheckCircle className="h-4 md:h-5 w-4 md:w-5 text-[#D0A246]" />
                   <span>Freshly Baked Daily</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="h-3.5 md:h-4 w-3.5 md:w-4 text-[#D0A246]" />
+                  <Clock className="h-4 md:h-5 w-4 md:w-5 text-[#D0A246]" />
                   <span>Same-day Pickup</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-3.5 md:h-4 w-3.5 md:w-4 text-[#D0A246]" />
+                  <MapPin className="h-4 md:h-5 w-4 md:w-5 text-[#D0A246]" />
                   <span>Camberley Collection</span>
                 </div>
               </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
             
             {/* Owner Photo - Right Side */}
             <div className="relative">
-              <div className="relative aspect-[4/3] lg:aspect-[4/3] xl:aspect-[3/2] rounded-2xl overflow-hidden shadow-2xl shadow-black/30">
+              <div className="relative aspect-[4/3] lg:aspect-[5/4] xl:aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl shadow-black/30">
                 <Image
                   src="/images/bakery-owner.jpg"
                   alt="Slindon Patisserie owner serving a happy customer"
