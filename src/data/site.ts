@@ -7,7 +7,7 @@ import { siteConfig } from '@/lib/constants';
 export const businessInfo = {
   name: 'Slindon Patisserie',
   tagline: 'Handmade Patisserie, Traditional Quality',
-  description: `Slindon Patisserie is a family-run bakery. We craft handmade patisserie products using traditional recipes and the finest ingredients. Order online for collection from our Camberley bakery or find us at local farmers markets.`,
+  description: `Slindon Patisserie is a family run bakery. We craft handmade patisserie products using traditional recipes and the finest ingredients. Order online for collection from our Camberley bakery or find us at local farmers markets.`,
   history: `For over 40 years, Slindon Patisserie has been crafting handmade bakery products using recipes passed down through generations. Led by Master Baker Andrew Turner-Cross, we continue the traditions that have made us a beloved fixture in the community. Every product that leaves our bakery carries the same dedication to quality.`,
   // Main bakery location (Slindon)
   location: 'Slindon, Arundel, West Sussex',

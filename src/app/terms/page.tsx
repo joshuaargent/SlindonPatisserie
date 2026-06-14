@@ -41,7 +41,7 @@ export default function TermsPage() {
 
             <h2 className="font-serif text-2xl font-bold text-[#3A2C2A] mt-8 mb-4">1. General</h2>
             <p className="text-[#6B5344]">
-              {businessInfo.name} is a family-run bakery business based in Slindon, West Sussex. 
+              {businessInfo.name} is a family run bakery business based in Slindon, West Sussex. 
               These terms apply to your use of our website and any services we provide.
             </p>
 

@@ -5,7 +5,7 @@ import { businessInfo } from '@/data/site';
 
 export const metadata: Metadata = {
   title: 'Wholesale',
-  description: 'Partner with Slindon Patisserie for wholesale bakery products. Supply your cafe, shop, or business with our award-winning patisserie.',
+  description: 'Partner with Slindon Patisserie for wholesale bakery products. Supply your cafe, shop, or business with our award winning patisserie.',
 };
 
 export default function WholesalePage() {
@@ -25,7 +25,7 @@ export default function WholesalePage() {
             Wholesale Partnership
           </h1>
           <p className="mt-4 text-[#F7F2E9]/80 max-w-2xl text-lg">
-            Stock your business with our award-winning handmade patisserie products. 
+            Stock your business with our award winning handmade patisserie products. 
             Fresh daily delivery available.
           </p>
         </div>

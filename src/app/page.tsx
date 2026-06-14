@@ -58,7 +58,7 @@ export default function HomePage() {
               
               {/* Subheadline */}
               <p className="text-lg md:text-xl text-[#F7F2E9]/85 max-w-xl mb-8 leading-relaxed">
-                Freshly baked patisserie for collection in Camberley. Order online, collect same-day. Also available for wholesale and franchise.
+                Freshly baked patisserie for collection in Camberley. Order online, collect same day. Also available for wholesale and franchise.
               </p>
               
               {/* Primary CTAs */}
@@ -87,7 +87,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-3.5 md:h-4 w-3.5 md:w-4 text-[#D0A246]" />
-                  <span>Same-day Pickup</span>
+                  <span>Same day Pickup</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3.5 md:h-4 w-3.5 md:w-4 text-[#D0A246]" />
@@ -160,7 +160,7 @@ export default function HomePage() {
               </div>
               <h3 className="font-serif text-2xl font-bold text-[#3A2C2A] mb-3">Wholesale</h3>
               <p className="text-[#6B5344] mb-6">
-                Supply your cafe, shop, or restaurant with our award-winning patisserie.
+                Supply your cafe, shop, or restaurant with our award winning patisserie.
               </p>
               <Link
                 href="/wholesale"
@@ -371,7 +371,7 @@ export default function HomePage() {
                 </p>
                 <p>
                   Our commitment to quality means we use only the finest ingredients, from locally 
-                  sourced flour to free-range eggs and European butter.
+                  sourced flour to free range eggs and European butter.
                 </p>
               </div>
               <div className="flex flex-wrap gap-4 mt-8">
