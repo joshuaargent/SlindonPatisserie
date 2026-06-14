@@ -39,10 +39,10 @@ export default function HomePage() {
     <>
       {/* Hero Section - Clean, Conversion Focused */}
       <section className="relative bg-[#8B1E22] overflow-hidden">
-        <div className="container py-20 md:py-20 lg:pt-8 lg:pb-24">
+        <div className="container py-20 md:py-20 lg:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Hero Content - Left Side */}
-            <div className="relative z-10">
+            <div className="relative z-10 lg:pt-8">
               {/* Trust Badge */}
               <div className="inline-flex items-center gap-2 bg-white/10 text-[#F7F2E9]/90 px-4 py-2 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">
                 <Star className="h-4 w-4 text-[#D0A246] fill-[#D0A246]" />
