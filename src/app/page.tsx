@@ -62,36 +62,36 @@ export default function HomePage() {
               </p>
               
               {/* Primary CTAs */}
-              <div className="flex flex-wrap gap-3 mb-8">
+              <div className="flex flex-wrap gap-4 mb-10">
                 <Link
                   href="/products"
-                  className="btn-primary text-base sm:text-lg px-4 sm:px-6 py-2.5 sm:py-3 hover:-translate-y-0.5"
+                  className="btn-primary text-base md:text-lg px-4 md:px-8 py-3 md:py-4 hover:-translate-y-0.5"
                 >
-                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Order Online
+                  <ShoppingBag className="h-5 w-5" />
+                  Order Online Now
                 </Link>
                 <Link
                   href="#franchise"
-                  className="btn-outline-white text-base sm:text-lg px-3 sm:px-4 py-2.5 sm:py-3"
+                  className="btn-outline-white text-base md:text-lg px-4 md:px-6 py-3 md:py-4"
                 >
-                  <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Franchise
+                  <DollarSign className="h-5 w-5" />
+                  Franchise Opportunity
                 </Link>
               </div>
               
               {/* Quick Benefits */}
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[#F7F2E9]/80 text-sm">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle className="h-3.5 w-3.5 text-[#D0A246]" />
-                  <span>Freshly Baked</span>
+              <div className="flex flex-wrap gap-6 text-[#F7F2E9]/80 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#D0A246]" />
+                  <span>Freshly Baked Daily</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5 text-[#D0A246]" />
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-[#D0A246]" />
                   <span>Same-day Pickup</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-[#D0A246]" />
-                  <span>Camberley</span>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-[#D0A246]" />
+                  <span>Camberley Collection</span>
                 </div>
               </div>
             </div>
