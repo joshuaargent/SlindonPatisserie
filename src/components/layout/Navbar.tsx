@@ -20,6 +20,11 @@ export function Navbar() {
   const pathname = usePathname();
   const itemCount = useCartStore((state) => state.getItemCount());
 
+  // Don't show navbar on admin pages (admin has its own header)
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
