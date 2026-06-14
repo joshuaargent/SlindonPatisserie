@@ -23,23 +23,44 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  stockStatus: Record<string, {
+    inStock: boolean;
+    stockQuantity: number;
+    productionTime: number;
+  }>;
   
   // Actions
   addItem: (item: Omit<CartItem, 'id'>) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  checkStockAvailability: () => Promise<{
+    canFulfillToday: boolean;
+    minWaitHours: number;
+    earliestDate: string;
+    earliestTime: string;
+    products: Array<{
+      productId: string;
+      name: string;
+      inStock: boolean;
+      stockQuantity: number;
+      productionTime: number;
+      availableQuantity: number;
+    }>;
+  }>;
   
   // Computed
   getItemCount: () => number;
   getSubtotal: () => number;
-  getMaxProductionTime: () => number; // longest production time in hours
+  getMaxProductionTime: () => number;
+  getAllInStock: () => boolean;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      stockStatus: {},
 
       addItem: (item) => {
         const existingItem = get().items.find(i => i.productId === item.productId);
@@ -63,7 +84,10 @@ export const useCartStore = create<CartState>()(
 
       removeItem: (productId) => {
         set((state) => ({
-          items: state.items.filter(i => i.productId !== productId)
+          items: state.items.filter(i => i.productId !== productId),
+          stockStatus: Object.fromEntries(
+            Object.entries(state.stockStatus).filter(([key]) => key !== productId)
+          )
         }));
       },
 
@@ -83,7 +107,79 @@ export const useCartStore = create<CartState>()(
       },
 
       clearCart: () => {
-        set({ items: [] });
+        set({ items: [], stockStatus: {} });
+      },
+
+      checkStockAvailability: async () => {
+        const items = get().items;
+        
+        if (items.length === 0) {
+          return {
+            canFulfillToday: true,
+            minWaitHours: 0,
+            earliestDate: new Date().toISOString().split('T')[0],
+            earliestTime: '09:00',
+            products: [],
+          };
+        }
+
+        try {
+          const itemsParam = JSON.stringify(
+            items.map(item => ({ productId: item.productId, quantity: item.quantity }))
+          );
+          
+          const response = await fetch(`/api/availability?items=${encodeURIComponent(itemsParam)}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to check availability');
+          }
+          
+          const data = await response.json();
+          
+          // Update stock status in store
+          const newStockStatus: CartState['stockStatus'] = {};
+          for (const product of data.products) {
+            newStockStatus[product.productId] = {
+              inStock: product.availableToday,
+              stockQuantity: product.stockQuantity,
+              productionTime: product.productionTimeHours,
+            };
+          }
+          set({ stockStatus: newStockStatus });
+          
+          return {
+            canFulfillToday: data.canFulfillToday,
+            minWaitHours: data.minWaitHours,
+            earliestDate: data.earliestPickupDate,
+            earliestTime: data.earliestPickupTime,
+            products: data.products.map((p: { 
+                productId: string; 
+                name: string; 
+                stockQuantity: number; 
+                productionTimeHours: number; 
+                availableToday: boolean;
+                availableTodayQuantity?: number;
+              }) => ({
+              productId: p.productId,
+              name: p.name,
+              inStock: p.availableToday,
+              stockQuantity: p.stockQuantity,
+              productionTime: p.productionTimeHours,
+              availableQuantity: p.availableTodayQuantity || 0,
+            })),
+          };
+        } catch (error) {
+          console.error('Error checking stock:', error);
+          // Fallback - assume we need max production time
+          const maxProdTime = get().getMaxProductionTime();
+          return {
+            canFulfillToday: false,
+            minWaitHours: maxProdTime,
+            earliestDate: new Date(Date.now() + maxProdTime * 60 * 60 * 1000).toISOString().split('T')[0],
+            earliestTime: '09:00',
+            products: [],
+          };
+        }
       },
 
       getItemCount: () => {
@@ -101,9 +197,25 @@ export const useCartStore = create<CartState>()(
         // Get the maximum production time (wait longest for any product)
         return Math.max(...items.map(item => item.productionTime));
       },
+
+      getAllInStock: () => {
+        const { items, stockStatus } = get();
+        if (items.length === 0) return true;
+        
+        // If we haven't checked stock yet, use production time as fallback
+        return items.every(item => {
+          const status = stockStatus[item.productId];
+          if (!status) {
+            // Not checked yet - use production time (assume not in stock if > 0)
+            return item.productionTime === 0;
+          }
+          return status.inStock;
+        });
+      },
     }),
     {
       name: 'slindon-cart', // localStorage key
+      partialize: (state) => ({ items: state.items }), // Don't persist stock status
     }
   )
 );

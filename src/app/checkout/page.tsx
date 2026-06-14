@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar, Zap } from 'lucide-react'
 import { useCartStore, formatPrice } from '@/lib/stores/cart'
 import { createTeyaPaymentSession, isTeyaConfigured } from '@/lib/teya'
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, getSubtotal, clearCart } = useCartStore()
+  const { items, getSubtotal, clearCart, checkStockAvailability } = useCartStore()
   const [deliveryMethod, setDeliveryMethod] = useState<'collection' | 'delivery'>('collection')
   const [pickupDate, setPickupDate] = useState('')
   const [pickupTime, setPickupTime] = useState('')
@@ -22,16 +22,67 @@ export default function CheckoutPage() {
   const [deliveryAddress, setDeliveryAddress] = useState('')
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
+  
+  // Stock availability
+  const [stockInfo, setStockInfo] = useState<{
+    canFulfillToday: boolean
+    minWaitHours: number
+    earliestDate: string
+    earliestTime: string
+  } | null>(null)
+  const [availableSlots, setAvailableSlots] = useState<string[]>([])
 
   // Calculate totals
   const subtotal = getSubtotal()
   const deliveryFee = deliveryMethod === 'delivery' ? 3.50 : 0
   const total = subtotal + deliveryFee
 
-  // Get minimum date (tomorrow)
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const minDate = tomorrow.toISOString().split('T')[0]
+  // Check stock and set minimum date
+  useEffect(() => {
+    if (items.length > 0) {
+      checkStockAvailability().then(result => {
+        setStockInfo(result)
+        setPickupDate(result.earliestDate)
+        setPickupTime(result.earliestTime)
+        
+        // Generate available slots
+        const slots = generateTimeSlots(result.earliestDate, result.canFulfillToday)
+        setAvailableSlots(slots)
+      })
+    }
+  }, [items])
+
+  // Update slots when date changes
+  useEffect(() => {
+    if (pickupDate && stockInfo) {
+      const isToday = pickupDate === new Date().toISOString().split('T')[0]
+      const slots = generateTimeSlots(pickupDate, stockInfo.canFulfillToday && isToday)
+      setAvailableSlots(slots)
+      
+      // If current time slot is not available, select the first available
+      if (!slots.includes(pickupTime)) {
+        setPickupTime(slots[0] || '')
+      }
+    }
+  }, [pickupDate, stockInfo])
+
+  // Generate available time slots
+  const generateTimeSlots = (date: string, canFulfillToday: boolean): string[] => {
+    const allSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
+    const today = new Date().toISOString().split('T')[0]
+    
+    if (date === today) {
+      const currentHour = new Date().getHours()
+      return allSlots.filter(slot => {
+        const slotHour = parseInt(slot.split(':')[0], 10)
+        // If we can fulfill today, show future slots
+        // If not, we can still show slots if it's early enough in the day
+        return slotHour > currentHour
+      })
+    }
+    
+    return allSlots
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -185,9 +236,32 @@ export default function CheckoutPage() {
               {/* Pickup Time */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold text-[#3A2C2A] mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
+                  <Calendar className="w-5 h-5" />
                   Select Pickup Time
                 </h2>
+
+                {/* Availability Banner */}
+                {stockInfo && (
+                  <div className={`mb-4 p-4 rounded-lg ${
+                    stockInfo.canFulfillToday 
+                      ? 'bg-green-50 border border-green-200' 
+                      : 'bg-blue-50 border border-blue-200'
+                  }`}>
+                    {stockInfo.canFulfillToday ? (
+                      <div className="flex items-center gap-2 text-green-800">
+                        <Zap className="w-5 h-5" />
+                        <span className="font-medium">Available today!</span>
+                        <span className="text-green-700">All items in stock at Camberley bakery.</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <Clock className="w-5 h-5" />
+                        <span className="font-medium">Fresh production required</span>
+                        <span className="text-blue-700">Earliest pickup: {new Date(stockInfo.earliestDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })} at {stockInfo.earliestTime}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -198,7 +272,7 @@ export default function CheckoutPage() {
                       type="date"
                       value={pickupDate}
                       onChange={(e) => setPickupDate(e.target.value)}
-                      min={minDate}
+                      min={stockInfo?.earliestDate || new Date().toISOString().split('T')[0]}
                       required
                       className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                     />
@@ -212,25 +286,38 @@ export default function CheckoutPage() {
                       value={pickupTime}
                       onChange={(e) => setPickupTime(e.target.value)}
                       required
-                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
+                      disabled={availableSlots.length === 0}
+                      className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent disabled:bg-gray-100"
                     >
                       <option value="">Select a time</option>
-                      <option value="09:00">9:00 AM</option>
-                      <option value="10:00">10:00 AM</option>
-                      <option value="11:00">11:00 AM</option>
-                      <option value="12:00">12:00 PM</option>
-                      <option value="13:00">1:00 PM</option>
-                      <option value="14:00">2:00 PM</option>
-                      <option value="15:00">3:00 PM</option>
-                      <option value="16:00">4:00 PM</option>
-                      <option value="17:00">5:00 PM</option>
+                      {availableSlots.map(slot => (
+                        <option key={slot} value={slot}>
+                          {slot === '09:00' ? '9:00 AM' : 
+                           slot === '10:00' ? '10:00 AM' :
+                           slot === '11:00' ? '11:00 AM' :
+                           slot === '12:00' ? '12:00 PM' :
+                           slot === '13:00' ? '1:00 PM' :
+                           slot === '14:00' ? '2:00 PM' :
+                           slot === '15:00' ? '3:00 PM' :
+                           slot === '16:00' ? '4:00 PM' : '5:00 PM'}
+                        </option>
+                      ))}
                     </select>
+                    {availableSlots.length === 0 && (
+                      <p className="text-xs text-red-600 mt-1">No slots available for this date</p>
+                    )}
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm text-[#6B5344]">
-                  All products are made fresh to order. Please allow at least 24 hours for preparation.
-                </p>
+                {stockInfo?.canFulfillToday ? (
+                  <p className="mt-4 text-sm text-green-700">
+                    Great news! All items are ready for immediate pickup. Select a time that works for you.
+                  </p>
+                ) : (
+                  <p className="mt-4 text-sm text-[#6B5344]">
+                    Your order will be prepared fresh. We'll have it ready for pickup at your selected time.
+                  </p>
+                )}
               </div>
 
               {/* Customer Information */}

@@ -1,15 +1,41 @@
 'use client'
 
-import Link from 'next/link';
-import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, Clock, ArrowRight } from 'lucide-react';
-import { useCartStore, formatPrice } from '@/lib/stores/cart';
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, Clock, ArrowRight, CheckCircle, AlertTriangle } from 'lucide-react'
+import { useCartStore, formatPrice } from '@/lib/stores/cart'
 
 // Client component for cart content
 function CartContent() {
-  const { items, updateQuantity, removeItem, clearCart, getSubtotal, getMaxProductionTime } = useCartStore();
+  const { items, updateQuantity, removeItem, clearCart, getSubtotal, checkStockAvailability } = useCartStore()
+  const [stockInfo, setStockInfo] = useState<{
+    canFulfillToday: boolean
+    minWaitHours: number
+    products: Array<{ productId: string; name: string; inStock: boolean; availableQuantity: number }>
+  } | null>(null)
+  const [loadingStock, setLoadingStock] = useState(false)
   
-  const subtotal = getSubtotal();
-  const maxProductionTime = getMaxProductionTime();
+  const subtotal = getSubtotal()
+  
+  // Check stock availability when cart changes
+  useEffect(() => {
+    if (items.length > 0) {
+      setLoadingStock(true)
+      checkStockAvailability().then(result => {
+        setStockInfo(result)
+        setLoadingStock(false)
+      }).catch(() => {
+        setLoadingStock(false)
+      })
+    } else {
+      setStockInfo(null)
+    }
+  }, [items, checkStockAvailability])
+  
+  // Get stock status for a specific item
+  const getItemStockStatus = (productId: string) => {
+    return stockInfo?.products.find(p => p.productId === productId)
+  }
   
   if (items.length === 0) {
     return (
@@ -26,7 +52,7 @@ function CartContent() {
           Browse Products
         </Link>
       </div>
-    );
+    )
   }
   
   return (
@@ -44,33 +70,81 @@ function CartContent() {
         </button>
       </div>
       
-      {/* Wait Time Notice */}
-      {maxProductionTime > 0 && (
-        <div className="bg-[#FDF8E8] border border-[#D0A246] rounded-lg p-4 flex items-start gap-3">
-          <Clock className="h-5 w-5 text-[#8B1E22] shrink-0 mt-0.5" />
-          <div>
-            <p className="font-medium text-[#3A2C2A]">Minimum wait time: {maxProductionTime} hours</p>
-            <p className="text-sm text-[#6B5344]">Some products in your cart require {maxProductionTime} hours production time. You'll select a pickup slot at checkout.</p>
-          </div>
+      {/* Stock Availability Banner */}
+      {loadingStock ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="animate-spin h-5 w-5 border-2 border-[#8B1E22] border-t-transparent rounded-full" />
+          <p className="text-[#6B5344]">Checking availability...</p>
+        </div>
+      ) : stockInfo && (
+        <div className={`rounded-lg p-4 flex items-start gap-3 ${
+          stockInfo.canFulfillToday 
+            ? 'bg-green-50 border border-green-200' 
+            : 'bg-[#FDF8E8] border border-[#D0A246]'
+        }`}>
+          {stockInfo.canFulfillToday ? (
+            <>
+              <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-green-800">Available for pickup today!</p>
+                <p className="text-sm text-green-700">All items are in stock at our Camberley bakery. You can pick up your order today.</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <Clock className="h-5 w-5 text-[#8B1E22] shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-[#3A2C2A]">
+                  {stockInfo.minWaitHours > 0 
+                    ? `Some items need ${stockInfo.minWaitHours} hours production time`
+                    : 'Some items need to be made fresh'
+                  }
+                </p>
+                <p className="text-sm text-[#6B5344]">
+                  {stockInfo.products.filter(p => !p.inStock).map(p => p.name).join(', ')} 
+                  {' '}will be prepared fresh for your order. Select a pickup slot at checkout.
+                </p>
+              </div>
+            </>
+          )}
         </div>
       )}
       
       {/* Cart Items */}
       <div className="bg-white rounded-xl border border-[#E8DDD0] overflow-hidden">
         <div className="divide-y divide-[#E8DDD0]">
-          {items.map((item) => (
-            <div key={item.id} className="p-4 flex items-center gap-4">
-              {/* Product Image Placeholder */}
-              <div className="h-20 w-20 rounded-lg bg-[#D0A246]/10 flex items-center justify-center shrink-0">
-                <span className="text-2xl">🥐</span>
-              </div>
-              
-              {/* Product Info */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-[#3A2C2A] truncate">{item.name}</h3>
-                <p className="text-sm text-[#6B5344]">{item.category}</p>
-                <p className="text-sm text-[#6B5344]">Wait: {item.productionTime}h</p>
-              </div>
+          {items.map((item) => {
+            const itemStock = getItemStockStatus(item.productId)
+            return (
+              <div key={item.id} className="p-4 flex items-center gap-4">
+                {/* Product Image Placeholder */}
+                <div className="h-20 w-20 rounded-lg bg-[#D0A246]/10 flex items-center justify-center shrink-0">
+                  <span className="text-2xl">🥐</span>
+                </div>
+                
+                {/* Product Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-[#3A2C2A] truncate">{item.name}</h3>
+                    {itemStock && (
+                      itemStock.inStock ? (
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" /> In Stock
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {item.productionTime}h wait
+                        </span>
+                      )
+                    )}
+                  </div>
+                  <p className="text-sm text-[#6B5344]">{item.category}</p>
+                  {itemStock && !itemStock.inStock && (
+                    <p className="text-xs text-orange-600">
+                      {itemStock.availableQuantity} available, {item.quantity - itemStock.availableQuantity} need production
+                    </p>
+                  )}
+                </div>
               
               {/* Quantity Controls */}
               <div className="flex items-center gap-2">
@@ -103,7 +177,8 @@ function CartContent() {
                 <Trash2 className="h-5 w-5" />
               </button>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
       
