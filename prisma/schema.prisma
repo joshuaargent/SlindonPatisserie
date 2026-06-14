@@ -52,6 +52,9 @@ model Category {
 // Products
 // ============================================
 
+// Availability types: RETAIL, WHOLESALE, BOTH
+// Use String field since SQLite doesn't support enums
+
 model Product {
   id                     String   @id @default(cuid())
   name                   String
@@ -63,12 +66,12 @@ model Product {
   wholesalePrice         Float?
   image                  String?
   available              Boolean  @default(true)
-  productionTimeHours    Int      @default(24)
-  madeAtFactoryA         Boolean  @default(true)
-  madeAtFactoryB         Boolean  @default(false)
-  featured               Boolean  @default(false)
-  isWholesaleOnly        Boolean  @default(false)
-  stockQuantity          Int      @default(100)
+  leadTimeDays           Int      @default(1)  // Lead time in business days: 1 or 2
+  availability           String   @default("RETAIL")  // RETAIL, WHOLESALE, or BOTH
+  madeAtFactoryA            Boolean  @default(true)
+  madeAtFactoryB            Boolean  @default(false)
+  featured                  Boolean  @default(false)
+  stockQuantity             Int      @default(100)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 

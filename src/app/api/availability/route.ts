@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-
-interface AvailabilityResult {
-  productId: string
-  name: string
-  stockQuantity: number
-  productionTimeHours: number
-  availableToday: boolean
-  availableTodayQuantity: number
-  reason?: string
-}
+import { getNextBusinessDay, getEarliestPickupDate, getEarliestTimeSlot, formatLeadTime, isBusinessDay } from '@/lib/utils';
 
 interface CartItem {
   productId: string
@@ -59,82 +50,58 @@ export async function GET(request: NextRequest) {
         id: true,
         name: true,
         stockQuantity: true,
-        productionTimeHours: true,
+        leadTimeDays: true,
       },
     });
 
-    // Create a map for quick lookup
     const productMap = new Map(products.map(p => [p.id, p]));
-
-    // Calculate availability for each item
-    const results: AvailabilityResult[] = [];
+    const now = new Date();
     let canFulfillToday = true;
-    let minWaitHours = 0;
+    let maxLeadTime = 0;
 
-    for (const item of items) {
+    const results = items.map(item => {
       const product = productMap.get(item.productId);
       
       if (!product) {
-        results.push({
+        return {
           productId: item.productId,
           name: 'Unknown Product',
-          stockQuantity: 0,
-          productionTimeHours: 24,
-          availableToday: false,
-          availableTodayQuantity: 0,
-          reason: 'Product not found or unavailable',
-        });
-        canFulfillToday = false;
-        continue;
+          inStock: false,
+          leadTimeDays: 1,
+          leadTimeDisplay: '1 day',
+        };
       }
 
-      const availableTodayQuantity = Math.min(product.stockQuantity, item.quantity);
       const hasStock = product.stockQuantity >= item.quantity;
       
-      results.push({
-        productId: product.id,
-        name: product.name,
-        stockQuantity: product.stockQuantity,
-        productionTimeHours: product.productionTimeHours,
-        availableToday: hasStock,
-        availableTodayQuantity,
-        reason: hasStock 
-          ? 'In stock at Camberley' 
-          : `Needs ${product.productionTimeHours}h production (${product.stockQuantity} in stock, need ${item.quantity})`,
-      });
-
       if (!hasStock) {
         canFulfillToday = false;
-        minWaitHours = Math.max(minWaitHours, product.productionTimeHours);
+        maxLeadTime = Math.max(maxLeadTime, product.leadTimeDays);
       }
-    }
 
-    // Calculate the earliest pickup date/time
-    const now = new Date();
-    const earliestPickup = new Date(now.getTime() + minWaitHours * 60 * 60 * 1000);
-    
-    // Round up to the next hour
-    earliestPickup.setMinutes(0, 0, 0);
-    if (minWaitHours === 0) {
-      // Can pickup today - but only during business hours
-      const businessHours = { open: 9, close: 17 };
-      if (now.getHours() < businessHours.open) {
-        earliestPickup.setHours(businessHours.open);
-      } else if (now.getHours() >= businessHours.close) {
-        // After hours, suggest tomorrow
-        earliestPickup.setDate(earliestPickup.getDate() + 1);
-        earliestPickup.setHours(businessHours.open);
-      }
-    }
+      return {
+        productId: product.id,
+        name: product.name,
+        inStock: hasStock,
+        stockQuantity: product.stockQuantity,
+        leadTimeDays: product.leadTimeDays,
+        leadTimeDisplay: formatLeadTime(product.leadTimeDays),
+      };
+    });
 
-    // Check available time slots for the earliest date
-    const availableSlots = getAvailableSlots(earliestPickup, canFulfillToday ? 0 : minWaitHours);
+    // Calculate earliest pickup
+    const earliestDate = getEarliestPickupDate(maxLeadTime, canFulfillToday);
+    const earliestTime = getEarliestTimeSlot(now);
+
+    // Get available slots
+    const availableSlots = getAvailableSlots(earliestDate, now);
 
     return NextResponse.json({
       canFulfillToday,
-      minWaitHours,
-      earliestPickupDate: earliestPickup.toISOString().split('T')[0],
-      earliestPickupTime: earliestPickup.toTimeString().slice(0, 5),
+      leadTimeDays: maxLeadTime,
+      leadTimeDisplay: formatLeadTime(maxLeadTime),
+      earliestPickupDate: earliestDate.toISOString().split('T')[0],
+      earliestPickupTime: earliestTime,
       availableSlots,
       products: results,
       businessHours: {
@@ -152,16 +119,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Helper function to get available slots
-function getAvailableSlots(date: Date, waitHours: number): string[] {
-  // Standard time slots
+function getAvailableSlots(date: Date, now: Date): string[] {
   const allSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
   
   const dateStr = date.toISOString().split('T')[0];
-  const currentHour = new Date().getHours();
+  const todayStr = now.toISOString().split('T')[0];
   
-  // Filter out past slots for today
-  if (dateStr === new Date().toISOString().split('T')[0]) {
+  if (dateStr === todayStr) {
+    const currentHour = now.getHours();
     return allSlots.filter(slot => {
       const slotHour = parseInt(slot.split(':')[0], 10);
       return slotHour > currentHour;
@@ -171,7 +136,7 @@ function getAvailableSlots(date: Date, waitHours: number): string[] {
   return allSlots;
 }
 
-// POST /api/availability - Check a single product's availability
+// POST /api/availability - Check a single product
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -190,7 +155,7 @@ export async function POST(request: NextRequest) {
         id: true,
         name: true,
         stockQuantity: true,
-        productionTimeHours: true,
+        leadTimeDays: true,
         available: true,
       },
     });
@@ -205,24 +170,26 @@ export async function POST(request: NextRequest) {
     const hasStock = product.stockQuantity >= quantity;
     const canFulfillToday = product.available && hasStock;
     
-    // Calculate earliest pickup
-    const waitHours = canFulfillToday ? 0 : product.productionTimeHours;
-    const earliestPickup = new Date(Date.now() + waitHours * 60 * 60 * 1000);
-    earliestPickup.setMinutes(0, 0, 0);
+    const earliestDate = getEarliestPickupDate(
+      canFulfillToday ? 0 : product.leadTimeDays,
+      hasStock
+    );
+    const earliestTime = getEarliestTimeSlot(new Date());
 
     return NextResponse.json({
       productId: product.id,
       name: product.name,
       inStock: hasStock,
       stockQuantity: product.stockQuantity,
-      productionTimeHours: product.productionTimeHours,
+      leadTimeDays: product.leadTimeDays,
+      leadTimeDisplay: formatLeadTime(product.leadTimeDays),
       canFulfillToday,
       availableQuantity: hasStock ? quantity : product.stockQuantity,
-      earliestPickupDate: earliestPickup.toISOString().split('T')[0],
-      earliestPickupTime: earliestPickup.toTimeString().slice(0, 5),
+      earliestPickupDate: earliestDate.toISOString().split('T')[0],
+      earliestPickupTime: earliestTime,
       message: hasStock 
         ? 'Available for pickup today!' 
-        : `Production time: ${product.productionTimeHours} hours. Available from ${earliestPickup.toLocaleDateString('en-GB')} ${earliestPickup.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}`,
+        : `Lead time: ${formatLeadTime(product.leadTimeDays)}. Available from ${earliestDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })}`,
     });
   } catch (error) {
     console.error('Error checking product availability:', error);

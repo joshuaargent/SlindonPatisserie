@@ -26,7 +26,8 @@ export default function CheckoutPage() {
   // Stock availability
   const [stockInfo, setStockInfo] = useState<{
     canFulfillToday: boolean
-    minWaitHours: number
+    leadTimeDays: number
+    leadTimeDisplay: string
     earliestDate: string
     earliestTime: string
   } | null>(null)
@@ -255,9 +256,9 @@ export default function CheckoutPage() {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 text-blue-800">
-                        <Clock className="w-5 h-5" />
-                        <span className="font-medium">Fresh production required</span>
-                        <span className="text-blue-700">Earliest pickup: {new Date(stockInfo.earliestDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })} at {stockInfo.earliestTime}</span>
+                        <Calendar className="w-5 h-5" />
+                        <span className="font-medium">Pickup in {stockInfo.leadTimeDisplay}</span>
+                        <span className="text-blue-700">Earliest: {new Date(stockInfo.earliestDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })} at {stockInfo.earliestTime}</span>
                       </div>
                     )}
                   </div>

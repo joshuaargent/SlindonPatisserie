@@ -51,6 +51,106 @@ export function formatISODate(date: string | Date): string {
   return dateObj.toISOString();
 }
 
+/**
+ * Checks if a date is a business day (Monday = 1 to Saturday = 6)
+ * Sunday (0) is NOT a business day
+ */
+export function isBusinessDay(date: Date): boolean {
+  const day = date.getDay();
+  return day >= 1 && day <= 6; // Monday (1) to Saturday (6)
+}
+
+/**
+ * Adds business days to a date and returns the result
+ * Excludes Sundays, counts Mon-Sat as business days
+ */
+export function addBusinessDays(startDate: Date, businessDays: number): Date {
+  if (businessDays <= 0) return startDate;
+  
+  const result = new Date(startDate);
+  let daysAdded = 0;
+  
+  while (daysAdded < businessDays) {
+    result.setDate(result.getDate() + 1);
+    if (isBusinessDay(result)) {
+      daysAdded++;
+    }
+  }
+  
+  return result;
+}
+
+/**
+ * Gets the next business day (skipping Sunday)
+ */
+export function getNextBusinessDay(date: Date): Date {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  
+  if (result.getDay() === 0) {
+    result.setDate(result.getDate() + 1); // Sunday → Monday
+  } else if (result.getDay() === 6) {
+    result.setDate(result.getDate() + 2); // Saturday → Monday
+  }
+  
+  return result;
+}
+
+/**
+ * Formats lead time days to human-readable string
+ */
+export function formatLeadTime(days: number): string {
+  if (days === 1) return 'tomorrow';
+  if (days === 2) return '2 days';
+  return `${days} days`;
+}
+
+/**
+ * Gets the earliest pickup date based on lead time
+ */
+export function getEarliestPickupDate(leadTimeDays: number, inStock: boolean): Date {
+  const now = new Date();
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  
+  if (inStock) {
+    // In stock - can pickup today if during business hours
+    if (now.getHours() < 17 && isBusinessDay(now)) {
+      return today;
+    }
+    // After hours - next business day
+    return getNextBusinessDay(today);
+  }
+  
+  // Not in stock - add lead time in business days
+  if (leadTimeDays === 1) {
+    return getNextBusinessDay(today);
+  }
+  
+  // 2 business days
+  return addBusinessDays(today, 2);
+}
+
+/**
+ * Gets the earliest pickup time slot
+ */
+export function getEarliestTimeSlot(now: Date): string {
+  const hour = now.getHours();
+  
+  if (hour < 9) return '09:00';
+  if (hour < 10) return '10:00';
+  if (hour < 11) return '11:00';
+  if (hour < 12) return '12:00';
+  if (hour < 13) return '13:00';
+  if (hour < 14) return '14:00';
+  if (hour < 15) return '15:00';
+  if (hour < 16) return '16:00';
+  if (hour < 17) return '17:00';
+  
+  // After hours - tomorrow 9am
+  return '09:00';
+}
+
 // ============================================
 // Number Utilities
 // ============================================

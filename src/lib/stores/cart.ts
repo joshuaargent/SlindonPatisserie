@@ -36,7 +36,8 @@ interface CartState {
   clearCart: () => void;
   checkStockAvailability: () => Promise<{
     canFulfillToday: boolean;
-    minWaitHours: number;
+    leadTimeDays: number;
+    leadTimeDisplay: string;
     earliestDate: string;
     earliestTime: string;
     products: Array<{
@@ -45,6 +46,7 @@ interface CartState {
       inStock: boolean;
       stockQuantity: number;
       productionTime: number;
+      productionTimeDisplay: string;
       availableQuantity: number;
     }>;
   }>;
@@ -116,7 +118,8 @@ export const useCartStore = create<CartState>()(
         if (items.length === 0) {
           return {
             canFulfillToday: true,
-            minWaitHours: 0,
+            leadTimeDays: 0,
+            leadTimeDisplay: 'today',
             earliestDate: new Date().toISOString().split('T')[0],
             earliestTime: '09:00',
             products: [],
@@ -140,42 +143,43 @@ export const useCartStore = create<CartState>()(
           const newStockStatus: CartState['stockStatus'] = {};
           for (const product of data.products) {
             newStockStatus[product.productId] = {
-              inStock: product.availableToday,
-              stockQuantity: product.stockQuantity,
-              productionTime: product.productionTimeHours,
+              inStock: product.inStock,
+              stockQuantity: product.stockQuantity || 0,
+              productionTime: product.leadTimeDays,
             };
           }
           set({ stockStatus: newStockStatus });
           
           return {
             canFulfillToday: data.canFulfillToday,
-            minWaitHours: data.minWaitHours,
+            leadTimeDays: data.leadTimeDays,
+            leadTimeDisplay: data.leadTimeDisplay,
             earliestDate: data.earliestPickupDate,
             earliestTime: data.earliestPickupTime,
             products: data.products.map((p: { 
-                productId: string; 
-                name: string; 
-                stockQuantity: number; 
-                productionTimeHours: number; 
-                availableToday: boolean;
-                availableTodayQuantity?: number;
-              }) => ({
+              productId: string; 
+              name: string; 
+              stockQuantity: number; 
+              leadTimeDays: number; 
+              leadTimeDisplay: string;
+              inStock: boolean;
+            }) => ({
               productId: p.productId,
               name: p.name,
-              inStock: p.availableToday,
+              inStock: p.inStock,
               stockQuantity: p.stockQuantity,
-              productionTime: p.productionTimeHours,
-              availableQuantity: p.availableTodayQuantity || 0,
+              productionTime: p.leadTimeDays,
+              productionTimeDisplay: p.leadTimeDisplay,
+              availableQuantity: p.inStock ? 1 : 0,
             })),
           };
         } catch (error) {
           console.error('Error checking stock:', error);
-          // Fallback - assume we need max production time
-          const maxProdTime = get().getMaxProductionTime();
           return {
             canFulfillToday: false,
-            minWaitHours: maxProdTime,
-            earliestDate: new Date(Date.now() + maxProdTime * 60 * 60 * 1000).toISOString().split('T')[0],
+            leadTimeDays: 1,
+            leadTimeDisplay: '1 day',
+            earliestDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             earliestTime: '09:00',
             products: [],
           };

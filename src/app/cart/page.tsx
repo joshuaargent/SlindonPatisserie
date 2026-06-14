@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, Clock, ArrowRight, CheckCircle, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, Clock, ArrowRight, CheckCircle, AlertTriangle, Calendar } from 'lucide-react'
 import { useCartStore, formatPrice } from '@/lib/stores/cart'
 
 // Client component for cart content
@@ -10,8 +10,16 @@ function CartContent() {
   const { items, updateQuantity, removeItem, clearCart, getSubtotal, checkStockAvailability } = useCartStore()
   const [stockInfo, setStockInfo] = useState<{
     canFulfillToday: boolean
-    minWaitHours: number
-    products: Array<{ productId: string; name: string; inStock: boolean; availableQuantity: number }>
+    leadTimeDays: number
+    leadTimeDisplay: string
+    products: Array<{ 
+      productId: string; 
+      name: string; 
+      inStock: boolean; 
+      availableQuantity: number;
+      productionTime: number;
+      productionTimeDisplay: string;
+    }>
   } | null>(null)
   const [loadingStock, setLoadingStock] = useState(false)
   
@@ -87,22 +95,19 @@ function CartContent() {
               <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-green-800">Available for pickup today!</p>
-                <p className="text-sm text-green-700">All items are in stock at our Camberley bakery. You can pick up your order today.</p>
+                <p className="text-sm text-green-700">All items are in stock at our Camberley bakery.</p>
               </div>
             </>
           ) : (
             <>
-              <Clock className="h-5 w-5 text-[#8B1E22] shrink-0 mt-0.5" />
+              <Calendar className="h-5 w-5 text-[#8B1E22] shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-[#3A2C2A]">
-                  {stockInfo.minWaitHours > 0 
-                    ? `Some items need ${stockInfo.minWaitHours} hours production time`
-                    : 'Some items need to be made fresh'
-                  }
+                  Pickup in {stockInfo.leadTimeDisplay}
                 </p>
                 <p className="text-sm text-[#6B5344]">
                   {stockInfo.products.filter(p => !p.inStock).map(p => p.name).join(', ')} 
-                  {' '}will be prepared fresh for your order. Select a pickup slot at checkout.
+                  {' '}need to be prepared fresh. Select a pickup slot at checkout.
                 </p>
               </div>
             </>
@@ -133,7 +138,7 @@ function CartContent() {
                         </span>
                       ) : (
                         <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {item.productionTime}h wait
+                          <Calendar className="w-3 h-3" /> {itemStock.productionTimeDisplay}
                         </span>
                       )
                     )}
