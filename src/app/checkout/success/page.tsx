@@ -191,6 +191,14 @@ export default function CheckoutSuccessPage() {
           <p className="mt-6 text-center text-sm text-[#6B5344]">
             We'll confirm your order via email. See you soon!
           </p>
+          
+          {/* Teya Payment Status */}
+          <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-center">
+            <p className="text-amber-800">
+              <strong>Payment:</strong> You'll be able to pay by card, cash, or contactless when you collect your order. 
+              Online payment integration via Teya is currently being set up. Thank you for your patience!
+            </p>
+          </div>
         </div>
       </div>
     </div>

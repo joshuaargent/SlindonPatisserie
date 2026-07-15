@@ -5,11 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar, Zap } from 'lucide-react'
 import { useCartStore, formatPrice } from '@/lib/stores/cart'
-import { createTeyaPaymentSession, isTeyaConfigured } from '@/lib/teya'
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, getSubtotal, clearCart, checkStockAvailability } = useCartStore()
+  const { items, getSubtotal, clearCart, checkAvailability } = useCartStore()
   const [deliveryMethod, setDeliveryMethod] = useState<'collection' | 'delivery'>('collection')
   const [pickupDate, setPickupDate] = useState('')
   const [pickupTime, setPickupTime] = useState('')
@@ -23,8 +22,8 @@ export default function CheckoutPage() {
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
   
-  // Stock availability
-  const [stockInfo, setStockInfo] = useState<{
+  // Availability info
+  const [availabilityInfo, setAvailabilityInfo] = useState<{
     canFulfillToday: boolean
     leadTimeDays: number
     leadTimeDisplay: string
@@ -38,11 +37,11 @@ export default function CheckoutPage() {
   const deliveryFee = deliveryMethod === 'delivery' ? 3.50 : 0
   const total = subtotal + deliveryFee
 
-  // Check stock and set minimum date
+  // Check availability and set minimum date
   useEffect(() => {
     if (items.length > 0) {
-      checkStockAvailability().then(result => {
-        setStockInfo(result)
+      checkAvailability().then(result => {
+        setAvailabilityInfo(result)
         setPickupDate(result.earliestDate)
         setPickupTime(result.earliestTime)
         
@@ -55,9 +54,9 @@ export default function CheckoutPage() {
 
   // Update slots when date changes
   useEffect(() => {
-    if (pickupDate && stockInfo) {
+    if (pickupDate && availabilityInfo) {
       const isToday = pickupDate === new Date().toISOString().split('T')[0]
-      const slots = generateTimeSlots(pickupDate, stockInfo.canFulfillToday && isToday)
+      const slots = generateTimeSlots(pickupDate, availabilityInfo.canFulfillToday && isToday)
       setAvailableSlots(slots)
       
       // If current time slot is not available, select the first available
@@ -65,7 +64,7 @@ export default function CheckoutPage() {
         setPickupTime(slots[0] || '')
       }
     }
-  }, [pickupDate, stockInfo])
+  }, [pickupDate, availabilityInfo])
 
   // Generate available time slots
   const generateTimeSlots = (date: string, canFulfillToday: boolean): string[] => {
@@ -105,20 +104,12 @@ export default function CheckoutPage() {
       // Create order ID
       const orderId = `order_${Date.now()}`
 
-      // If Teya is configured, create a payment session
-      if (isTeyaConfigured()) {
-        const session = await createTeyaPaymentSession({
-          amount: total,
-          currency: 'GBP',
-          orderId,
-          customerEmail: customerInfo.email,
-          customerName: customerInfo.name,
-          description: `Slindon Patisserie Order - ${items.length} items`,
-        })
-
-        // In production, redirect to Teya payment page
-        // window.location.href = session.paymentUrl
-      }
+      // Check if Teya is configured via env vars
+      const teyaConfigured = !!(
+        process.env.NEXT_PUBLIC_TEYA_API_URL &&
+        process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID &&
+        process.env.TEYA_API_KEY
+      )
 
       // For demo, simulate successful order
       await new Promise((resolve) => setTimeout(resolve, 1500))
@@ -132,6 +123,7 @@ export default function CheckoutPage() {
         pickupTime,
         deliveryMethod,
         customer: customerInfo,
+        teyaIntegrated: teyaConfigured,
       }))
 
       router.push('/checkout/success')
@@ -242,23 +234,23 @@ export default function CheckoutPage() {
                 </h2>
 
                 {/* Availability Banner */}
-                {stockInfo && (
+                {availabilityInfo && (
                   <div className={`mb-4 p-4 rounded-lg ${
-                    stockInfo.canFulfillToday 
+                    availabilityInfo.canFulfillToday 
                       ? 'bg-green-50 border border-green-200' 
                       : 'bg-blue-50 border border-blue-200'
                   }`}>
-                    {stockInfo.canFulfillToday ? (
+                    {availabilityInfo.canFulfillToday ? (
                       <div className="flex items-center gap-2 text-green-800">
                         <Zap className="w-5 h-5" />
-                        <span className="font-medium">Available today!</span>
-                        <span className="text-green-700">All items in stock at Camberley bakery.</span>
+                        <span className="font-medium">Available for pickup!</span>
+                        <span className="text-green-700">All items ready at Camberley bakery.</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 text-blue-800">
                         <Calendar className="w-5 h-5" />
-                        <span className="font-medium">Pickup in {stockInfo.leadTimeDisplay}</span>
-                        <span className="text-blue-700">Earliest: {new Date(stockInfo.earliestDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })} at {stockInfo.earliestTime}</span>
+                        <span className="font-medium">Pickup in {availabilityInfo.leadTimeDisplay}</span>
+                        <span className="text-blue-700">Earliest: {new Date(availabilityInfo.earliestDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })} at {availabilityInfo.earliestTime}</span>
                       </div>
                     )}
                   </div>
@@ -273,7 +265,7 @@ export default function CheckoutPage() {
                       type="date"
                       value={pickupDate}
                       onChange={(e) => setPickupDate(e.target.value)}
-                      min={stockInfo?.earliestDate || new Date().toISOString().split('T')[0]}
+                      min={availabilityInfo?.earliestDate || new Date().toISOString().split('T')[0]}
                       required
                       className="w-full px-4 py-3 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22] focus:border-transparent"
                     />
@@ -310,9 +302,9 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {stockInfo?.canFulfillToday ? (
+                {availabilityInfo?.canFulfillToday ? (
                   <p className="mt-4 text-sm text-green-700">
-                    Great news! All items are ready for immediate pickup. Select a time that works for you.
+                    Great news! All items are available for pickup. Select a time that works for you.
                   </p>
                 ) : (
                   <p className="mt-4 text-sm text-[#6B5344]">
@@ -383,14 +375,22 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
-                {isTeyaConfigured() ? (
-                  <p className="text-sm text-[#6B5344]">
-                    Your payment will be processed securely via Teya when you collect your order.
-                  </p>
+                {/* Check Teya integration dynamically */}
+                {typeof window !== 'undefined' && 
+                 process.env.NEXT_PUBLIC_TEYA_API_URL && 
+                 process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID && 
+                 process.env.TEYA_API_KEY ? (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-sm text-green-800">
+                      <strong>✓ Teya Payment Ready:</strong> Your payment will be processed securely via Teya POS when you collect your order.
+                    </p>
+                  </div>
                 ) : (
-                  <p className="text-sm text-[#6B5344]">
-                    Teya payment integration is being set up. You'll pay when you collect.
-                  </p>
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      <strong>⚠ Teya Integration Coming Soon:</strong> Thank you for your patience. You'll be able to pay by card, cash, or contactless when you collect your order. Online payment integration is currently being set up.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

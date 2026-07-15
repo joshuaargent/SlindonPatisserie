@@ -7,42 +7,41 @@ import { useCartStore, formatPrice } from '@/lib/stores/cart'
 
 // Client component for cart content
 function CartContent() {
-  const { items, updateQuantity, removeItem, clearCart, getSubtotal, checkStockAvailability } = useCartStore()
-  const [stockInfo, setStockInfo] = useState<{
+  const { items, updateQuantity, removeItem, clearCart, getSubtotal, checkAvailability } = useCartStore()
+  const [availabilityInfo, setAvailabilityInfo] = useState<{
     canFulfillToday: boolean
     leadTimeDays: number
     leadTimeDisplay: string
     products: Array<{ 
       productId: string; 
       name: string; 
-      inStock: boolean; 
-      availableQuantity: number;
-      productionTime: number;
-      productionTimeDisplay: string;
+      available: boolean;
+      leadTimeDays: number;
+      leadTimeDisplay: string;
     }>
   } | null>(null)
-  const [loadingStock, setLoadingStock] = useState(false)
+  const [loadingAvailability, setLoadingAvailability] = useState(false)
   
   const subtotal = getSubtotal()
   
-  // Check stock availability when cart changes
+  // Check availability when cart changes
   useEffect(() => {
     if (items.length > 0) {
-      setLoadingStock(true)
-      checkStockAvailability().then(result => {
-        setStockInfo(result)
-        setLoadingStock(false)
+      setLoadingAvailability(true)
+      checkAvailability().then(result => {
+        setAvailabilityInfo(result)
+        setLoadingAvailability(false)
       }).catch(() => {
-        setLoadingStock(false)
+        setLoadingAvailability(false)
       })
     } else {
-      setStockInfo(null)
+      setAvailabilityInfo(null)
     }
-  }, [items, checkStockAvailability])
+  }, [items, checkAvailability])
   
-  // Get stock status for a specific item
-  const getItemStockStatus = (productId: string) => {
-    return stockInfo?.products.find(p => p.productId === productId)
+  // Get availability status for a specific item
+  const getItemAvailability = (productId: string) => {
+    return availabilityInfo?.products.find(p => p.productId === productId)
   }
   
   if (items.length === 0) {
@@ -78,24 +77,24 @@ function CartContent() {
         </button>
       </div>
       
-      {/* Stock Availability Banner */}
-      {loadingStock ? (
+      {/* Availability Banner */}
+      {loadingAvailability ? (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center gap-3">
           <div className="animate-spin h-5 w-5 border-2 border-[#8B1E22] border-t-transparent rounded-full" />
           <p className="text-[#6B5344]">Checking availability...</p>
         </div>
-      ) : stockInfo && (
+      ) : availabilityInfo && (
         <div className={`rounded-lg p-4 flex items-start gap-3 ${
-          stockInfo.canFulfillToday 
+          availabilityInfo.canFulfillToday 
             ? 'bg-green-50 border border-green-200' 
             : 'bg-[#FDF8E8] border border-[#D0A246]'
         }`}>
-          {stockInfo.canFulfillToday ? (
+          {availabilityInfo.canFulfillToday ? (
             <>
               <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-green-800">Available for pickup today!</p>
-                <p className="text-sm text-green-700">All items are in stock at our Camberley bakery.</p>
+                <p className="font-medium text-green-800">Available for pickup!</p>
+                <p className="text-sm text-green-700">All items ready at our Camberley bakery.</p>
               </div>
             </>
           ) : (
@@ -103,11 +102,10 @@ function CartContent() {
               <Calendar className="h-5 w-5 text-[#8B1E22] shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-[#3A2C2A]">
-                  Pickup in {stockInfo.leadTimeDisplay}
+                  Pickup in {availabilityInfo.leadTimeDisplay}
                 </p>
                 <p className="text-sm text-[#6B5344]">
-                  {stockInfo.products.filter(p => !p.inStock).map(p => p.name).join(', ')} 
-                  {' '}need to be prepared fresh. Select a pickup slot at checkout.
+                  Items will be prepared fresh. Select a pickup slot at checkout.
                 </p>
               </div>
             </>
@@ -119,7 +117,7 @@ function CartContent() {
       <div className="bg-white rounded-xl border border-[#E8DDD0] overflow-hidden">
         <div className="divide-y divide-[#E8DDD0]">
           {items.map((item) => {
-            const itemStock = getItemStockStatus(item.productId)
+            const itemAvailability = getItemAvailability(item.productId)
             return (
               <div key={item.id} className="p-4 flex items-center gap-4">
                 {/* Product Image Placeholder */}
@@ -131,24 +129,13 @@ function CartContent() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-[#3A2C2A] truncate">{item.name}</h3>
-                    {itemStock && (
-                      itemStock.inStock ? (
-                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" /> In Stock
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> {itemStock.productionTimeDisplay}
-                        </span>
-                      )
+                    {itemAvailability && (
+                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" /> Available
+                      </span>
                     )}
                   </div>
                   <p className="text-sm text-[#6B5344]">{item.category}</p>
-                  {itemStock && !itemStock.inStock && (
-                    <p className="text-xs text-orange-600">
-                      {itemStock.availableQuantity} available, {item.quantity - itemStock.availableQuantity} need production
-                    </p>
-                  )}
                 </div>
               
               {/* Quantity Controls */}

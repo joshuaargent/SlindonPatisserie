@@ -14,27 +14,25 @@ export interface CartItem {
   id: string;
   productId: string;
   name: string;
-  price: number; // retail or wholesale depending on user type
+  price: number;
   imageUrl?: string;
   quantity: number;
-  productionTime: number; // hours
+  leadTimeDays: number;
   category: string;
 }
 
 interface CartState {
   items: CartItem[];
-  stockStatus: Record<string, {
-    inStock: boolean;
-    stockQuantity: number;
-    productionTime: number;
+  availabilityInfo: Record<string, {
+    available: boolean;
+    leadTimeDays: number;
   }>;
   
-  // Actions
   addItem: (item: Omit<CartItem, 'id'>) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  checkStockAvailability: () => Promise<{
+  checkAvailability: () => Promise<{
     canFulfillToday: boolean;
     leadTimeDays: number;
     leadTimeDisplay: string;
@@ -43,32 +41,26 @@ interface CartState {
     products: Array<{
       productId: string;
       name: string;
-      inStock: boolean;
-      stockQuantity: number;
-      productionTime: number;
-      productionTimeDisplay: string;
-      availableQuantity: number;
+      available: boolean;
+      leadTimeDays: number;
+      leadTimeDisplay: string;
     }>;
   }>;
   
-  // Computed
   getItemCount: () => number;
   getSubtotal: () => number;
-  getMaxProductionTime: () => number;
-  getAllInStock: () => boolean;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      stockStatus: {},
-
+      availabilityInfo: {},
+	
       addItem: (item) => {
         const existingItem = get().items.find(i => i.productId === item.productId);
         
         if (existingItem) {
-          // Update quantity
           set((state) => ({
             items: state.items.map(i => 
               i.productId === item.productId 
@@ -77,7 +69,6 @@ export const useCartStore = create<CartState>()(
             )
           }));
         } else {
-          // Add new item with generated ID
           set((state) => ({
             items: [...state.items, { ...item, id: `cart-${Date.now()}` }]
           }));
@@ -87,8 +78,8 @@ export const useCartStore = create<CartState>()(
       removeItem: (productId) => {
         set((state) => ({
           items: state.items.filter(i => i.productId !== productId),
-          stockStatus: Object.fromEntries(
-            Object.entries(state.stockStatus).filter(([key]) => key !== productId)
+          availabilityInfo: Object.fromEntries(
+            Object.entries(state.availabilityInfo).filter(([key]) => key !== productId)
           )
         }));
       },
@@ -109,10 +100,10 @@ export const useCartStore = create<CartState>()(
       },
 
       clearCart: () => {
-        set({ items: [], stockStatus: {} });
+        set({ items: [], availabilityInfo: {} });
       },
 
-      checkStockAvailability: async () => {
+      checkAvailability: async () => {
         const items = get().items;
         
         if (items.length === 0) {
@@ -139,16 +130,14 @@ export const useCartStore = create<CartState>()(
           
           const data = await response.json();
           
-          // Update stock status in store
-          const newStockStatus: CartState['stockStatus'] = {};
+          const newAvailabilityInfo: Record<string, { available: boolean; leadTimeDays: number }> = {};
           for (const product of data.products) {
-            newStockStatus[product.productId] = {
-              inStock: product.inStock,
-              stockQuantity: product.stockQuantity || 0,
-              productionTime: product.leadTimeDays,
+            newAvailabilityInfo[product.productId] = {
+              available: product.available,
+              leadTimeDays: product.leadTimeDays,
             };
           }
-          set({ stockStatus: newStockStatus });
+          set({ availabilityInfo: newAvailabilityInfo });
           
           return {
             canFulfillToday: data.canFulfillToday,
@@ -158,25 +147,22 @@ export const useCartStore = create<CartState>()(
             earliestTime: data.earliestPickupTime,
             products: data.products.map((p: { 
               productId: string; 
-              name: string; 
-              stockQuantity: number; 
+              name: string;
+              available: boolean;
               leadTimeDays: number; 
               leadTimeDisplay: string;
-              inStock: boolean;
             }) => ({
               productId: p.productId,
               name: p.name,
-              inStock: p.inStock,
-              stockQuantity: p.stockQuantity,
-              productionTime: p.leadTimeDays,
-              productionTimeDisplay: p.leadTimeDisplay,
-              availableQuantity: p.inStock ? 1 : 0,
+              available: p.available,
+              leadTimeDays: p.leadTimeDays,
+              leadTimeDisplay: p.leadTimeDisplay,
             })),
           };
         } catch (error) {
-          console.error('Error checking stock:', error);
+          console.error('Error checking availability:', error);
           return {
-            canFulfillToday: false,
+            canFulfillToday: true,
             leadTimeDays: 1,
             leadTimeDisplay: '1 day',
             earliestDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -193,39 +179,16 @@ export const useCartStore = create<CartState>()(
       getSubtotal: () => {
         return get().items.reduce((total, item) => total + (item.price * item.quantity), 0);
       },
-
-      getMaxProductionTime: () => {
-        const items = get().items;
-        if (items.length === 0) return 0;
-        
-        // Get the maximum production time (wait longest for any product)
-        return Math.max(...items.map(item => item.productionTime));
-      },
-
-      getAllInStock: () => {
-        const { items, stockStatus } = get();
-        if (items.length === 0) return true;
-        
-        // If we haven't checked stock yet, use production time as fallback
-        return items.every(item => {
-          const status = stockStatus[item.productId];
-          if (!status) {
-            // Not checked yet - use production time (assume not in stock if > 0)
-            return item.productionTime === 0;
-          }
-          return status.inStock;
-        });
-      },
     }),
     {
-      name: 'slindon-cart', // localStorage key
-      partialize: (state) => ({ items: state.items }), // Don't persist stock status
+      name: 'slindon-cart',
+      partialize: (state) => ({ items: state.items }),
     }
   )
 );
 
 // ============================================
-// User Store - Authentication State
+// User Store
 // ============================================
 
 export type UserType = 'RETAIL' | 'WHOLESALE';
@@ -238,7 +201,6 @@ interface UserState {
   userType: UserType;
   wholesaleStatus: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
   
-  // Actions
   setUser: (user: {
     id: string;
     email: string;
@@ -248,8 +210,6 @@ interface UserState {
     wholesaleStatus: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
   }) => void;
   logout: () => void;
-  
-  // Computed
   isLoggedIn: () => boolean;
   isWholesale: () => boolean;
   canSeeWholesalePricing: () => boolean;
@@ -287,26 +247,16 @@ export const useUserStore = create<UserState>()(
         });
       },
 
-      isLoggedIn: () => {
-        return get().userId !== null;
-      },
-
-      isWholesale: () => {
-        return get().userType === 'WHOLESALE' && get().wholesaleStatus === 'APPROVED';
-      },
-
-      canSeeWholesalePricing: () => {
-        return get().isWholesale();
-      },
+      isLoggedIn: () => get().userId !== null,
+      isWholesale: () => get().userType === 'WHOLESALE' && get().wholesaleStatus === 'APPROVED',
+      canSeeWholesalePricing: () => get().isWholesale(),
     }),
-    {
-      name: 'slindon-user', // localStorage key
-    }
+    { name: 'slindon-user' }
   )
 );
 
 // ============================================
-// Checkout Store - Checkout Flow State
+// Checkout Store
 // ============================================
 
 export type CheckoutStep = 'cart' | 'checkout' | 'slot' | 'delivery' | 'confirm';
@@ -320,7 +270,6 @@ interface CheckoutState {
   deliveryNotes: string;
   isDeliveryServiceable: boolean;
   
-  // Actions
   setStep: (step: CheckoutStep) => void;
   setOrderType: (type: 'COLLECTION' | 'DELIVERY') => void;
   setSelectedSlot: (slotId: string) => void;
@@ -343,18 +292,14 @@ export const useCheckoutStore = create<CheckoutState>()((set) => ({
   isDeliveryServiceable: false,
 
   setStep: (step) => set({ step }),
-  
   setOrderType: (type) => set({ orderType: type }),
-  
   setSelectedSlot: (slotId) => set({ selectedSlotId: slotId }),
-  
   setDeliveryInfo: (info) => set({
     deliveryPostcode: info.postcode,
     deliveryAddress: info.address,
     deliveryNotes: info.notes,
     isDeliveryServiceable: info.isServiceable,
   }),
-  
   resetCheckout: () => set({
     step: 'cart',
     orderType: 'COLLECTION',
