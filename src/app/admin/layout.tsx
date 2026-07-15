@@ -47,7 +47,7 @@ export default function AdminLayout({
   const userName = user?.user_metadata?.name || user?.email || 'Admin'
   const userInitial = userName.charAt(0).toUpperCase()
 
-  // Check admin role from database (by ID first, then email)
+  // Check admin role from database (by authId)
   useEffect(() => {
     if (!user) {
       setRoleLoading(false)
@@ -56,28 +56,14 @@ export default function AdminLayout({
     const { createClient } = require('@/lib/supabase/client')
     const supabase = createClient()
 
-    // Try by ID first (Supabase auth user ID)
     supabase
       .from('User')
       .select('role')
-      .eq('id', user.id)
+      .eq('authId', user.id)
       .maybeSingle()
       .then(({ data }: { data: { role: string } | null }) => {
-        if (data?.role === 'admin') {
-          setIsAdmin(true)
-          setRoleLoading(false)
-          return
-        }
-        // Fall back to email match
-        return supabase
-          .from('User')
-          .select('role')
-          .eq('email', user.email)
-          .maybeSingle()
-          .then(({ data: emailData }: { data: { role: string } | null }) => {
-            setIsAdmin(emailData?.role === 'admin')
-            setRoleLoading(false)
-          })
+        setIsAdmin(data?.role === 'admin')
+        setRoleLoading(false)
       })
   }, [user])
 

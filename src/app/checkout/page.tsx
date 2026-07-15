@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar, Zap } from 'lucide-react'
+import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar } from 'lucide-react'
 import { useCartStore, formatPrice } from '@/lib/stores/cart'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, getSubtotal, clearCart, checkAvailability } = useCartStore()
+  const { user } = useSupabaseUser()
   const [deliveryMethod, setDeliveryMethod] = useState<'collection' | 'delivery'>('collection')
   const [pickupDate, setPickupDate] = useState('')
   const [pickupTime, setPickupTime] = useState('')
@@ -21,7 +23,7 @@ export default function CheckoutPage() {
   const [deliveryAddress, setDeliveryAddress] = useState('')
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
-  
+
   // Availability info
   const [availabilityInfo, setAvailabilityInfo] = useState<{
     canFulfillToday: boolean
@@ -37,6 +39,16 @@ export default function CheckoutPage() {
   const deliveryFee = deliveryMethod === 'delivery' ? 3.50 : 0
   const total = subtotal + deliveryFee
 
+  // Prefill customer info from logged-in user
+  useEffect(() => {
+    if (!user) return
+    setCustomerInfo(prev => ({
+      name: prev.name || user.user_metadata?.name || '',
+      email: prev.email || user.email || '',
+      phone: prev.phone || '',
+    }))
+  }, [user])
+
   // Check availability and set minimum date
   useEffect(() => {
     if (items.length > 0) {
@@ -44,7 +56,7 @@ export default function CheckoutPage() {
         setAvailabilityInfo(result)
         setPickupDate(result.earliestDate)
         setPickupTime(result.earliestTime)
-        
+
         // Generate available slots
         const slots = generateTimeSlots(result.earliestDate, result.canFulfillToday)
         setAvailableSlots(slots)
@@ -101,34 +113,42 @@ export default function CheckoutPage() {
     setProcessing(true)
 
     try {
-      // Create order ID
-      const orderId = `order_${Date.now()}`
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(item => ({ id: item.productId, name: item.name, price: item.price, quantity: item.quantity })),
+          customerName: customerInfo.name,
+          customerEmail: customerInfo.email,
+          customerPhone: customerInfo.phone || undefined,
+          deliveryMethod,
+          pickupDate,
+          pickupTime,
+          deliveryAddress: deliveryAddress || undefined,
+        }),
+      })
 
-      // Check if Teya is configured via env vars
-      const teyaConfigured = !!(
-        process.env.NEXT_PUBLIC_TEYA_API_URL &&
-        process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID &&
-        process.env.TEYA_API_KEY
-      )
+      const data = await res.json()
 
-      // For demo, simulate successful order
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to create order')
+      }
 
-      // Store order in session for demo
+      clearCart()
+
       sessionStorage.setItem('lastOrder', JSON.stringify({
-        orderId,
+        orderId: data.orderId,
         items: items,
-        total,
+        total: data.total,
         pickupDate,
         pickupTime,
         deliveryMethod,
         customer: customerInfo,
-        teyaIntegrated: teyaConfigured,
       }))
 
       router.push('/checkout/success')
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.')
       setProcessing(false)
     }
   }

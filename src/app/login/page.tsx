@@ -43,7 +43,7 @@ export default function LoginPage() {
           const { data: profile } = await supabase
             .from('User')
             .select('role')
-            .eq('id', user.id)
+            .eq('authId', user.id)
             .maybeSingle()
           router.push(profile?.role === 'admin' ? '/admin' : '/account')
         } else {

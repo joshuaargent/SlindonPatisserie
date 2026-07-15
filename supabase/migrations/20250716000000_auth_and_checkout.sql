@@ -32,21 +32,21 @@ ALTER TABLE "Review" ENABLE ROW LEVEL SECURITY;
 -- Users can read/update their own profile
 CREATE POLICY "Users can view own profile" ON "User"
   FOR SELECT USING (
-    "authId" = (SELECT id::text FROM auth.users LIMIT 1)
-    OR email = (SELECT email FROM auth.users LIMIT 1)
+    "authId" = auth.uid()::text
+    OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
   );
 
 CREATE POLICY "Users can update own profile" ON "User"
   FOR UPDATE USING (
-    "authId" = (SELECT id::text FROM auth.users LIMIT 1)
-    OR email = (SELECT email FROM auth.users LIMIT 1)
+    "authId" = auth.uid()::text
+    OR email = (SELECT email FROM auth.users WHERE id = auth.uid())
   );
 
 -- Orders visible to: owner, or guest with matching email
 CREATE POLICY "Users can view own orders" ON "Order"
   FOR SELECT USING (
-    "userId" = (SELECT id FROM "User" WHERE "authId" = (SELECT id::text FROM auth.users LIMIT 1) LIMIT 1)
-    OR "customerEmail" = (SELECT email FROM auth.users LIMIT 1)
+    "userId" = (SELECT id FROM "User" WHERE "authId" = auth.uid()::text LIMIT 1)
+    OR "customerEmail" = (SELECT email FROM auth.users WHERE id = auth.uid())
     OR "userId" IS NULL
   );
 
@@ -57,7 +57,41 @@ CREATE POLICY "Anyone can read approved reviews" ON "Review"
 -- Reviews: logged-in users can insert their own
 CREATE POLICY "Users can create own reviews" ON "Review"
   FOR INSERT WITH CHECK (
-    "userId" = (SELECT id FROM "User" WHERE "authId" = (SELECT id::text FROM auth.users LIMIT 1) LIMIT 1)
+    "userId" = (SELECT id FROM "User" WHERE "authId" = auth.uid()::text LIMIT 1)
+  );
+
+-- 7. Enable RLS on remaining tables
+ALTER TABLE "OrderItem" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "OrderStatusHistory" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Product" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Category" ENABLE ROW LEVEL SECURITY;
+
+-- Product: public read
+CREATE POLICY "Public can view products" ON "Product" FOR SELECT USING (true);
+
+-- Category: public read
+CREATE POLICY "Public can view categories" ON "Category" FOR SELECT USING (true);
+
+-- OrderItem: users can view items from their own orders
+CREATE POLICY "Users can view own order items" ON "OrderItem"
+  FOR SELECT USING (
+    "orderId" IN (
+      SELECT id FROM "Order" WHERE
+        "userId" = (SELECT id FROM "User" WHERE "authId" = auth.uid()::text)
+        OR "customerEmail" = (SELECT email FROM auth.users WHERE id = auth.uid())
+        OR "userId" IS NULL
+    )
+  );
+
+-- OrderStatusHistory: users can view history from their own orders
+CREATE POLICY "Users can view own order status history" ON "OrderStatusHistory"
+  FOR SELECT USING (
+    "orderId" IN (
+      SELECT id FROM "Order" WHERE
+        "userId" = (SELECT id FROM "User" WHERE "authId" = auth.uid()::text)
+        OR "customerEmail" = (SELECT email FROM auth.users WHERE id = auth.uid())
+        OR "userId" IS NULL
+    )
   );
 
 -- ============================================

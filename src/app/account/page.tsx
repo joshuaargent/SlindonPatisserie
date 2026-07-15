@@ -25,8 +25,8 @@ export default function AccountPage() {
     supabase
       .from('User')
       .select('role')
-      .eq('email', user.email)
-      .single()
+      .eq('authId', user.id)
+      .maybeSingle()
       .then(({ data }: { data: { role: string } | null }) => {
         setRole(data?.role ?? 'customer')
       })
