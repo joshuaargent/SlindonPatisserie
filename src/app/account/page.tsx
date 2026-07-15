@@ -17,18 +17,18 @@ export default function AccountPage() {
     }
   }, [loading, user, router])
 
-  // Fetch user role from database
+  // Fetch user role from server-side API
   useEffect(() => {
     if (!user) return
-    const { createClient } = require('@/lib/supabase/client')
-    const supabase = createClient()
-    supabase
-      .from('User')
-      .select('role')
-      .eq('authId', user.id)
-      .maybeSingle()
-      .then(({ data }: { data: { role: string } | null }) => {
-        setRole(data?.role ?? 'customer')
+    fetch('/api/account/profile')
+      .then(res => res.json())
+      .then(data => {
+        if (data.profile) {
+          setRole(data.profile.role ?? 'customer')
+        }
+      })
+      .catch(() => {
+        setRole('customer')
       })
   }, [user])
 

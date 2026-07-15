@@ -34,21 +34,11 @@ export default function LoginPage() {
       setError('Invalid email or password')
       setLoading(false)
     } else {
-      // Check if admin, send to admin dashboard
+      // Check if admin via server-side API
       try {
-        const { createClient } = await import('@/lib/supabase/client')
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          const { data: profile } = await supabase
-            .from('User')
-            .select('role')
-            .eq('authId', user.id)
-            .maybeSingle()
-          router.push(profile?.role === 'admin' ? '/admin' : '/account')
-        } else {
-          router.push('/account')
-        }
+        const res = await fetch('/api/admin/check-role')
+        const data = await res.json()
+        router.push(data.isAdmin ? '/admin' : '/account')
         router.refresh()
       } catch {
         router.push('/account')

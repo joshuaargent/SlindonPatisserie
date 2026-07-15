@@ -50,23 +50,21 @@ export default function ProductsPage() {
   const { user } = useSupabaseUser()
   const addItem = useCartStore((state) => state.addItem)
 
-  // Fetch user role from database
+  // Fetch user role from server-side API
   useEffect(() => {
     if (!user) {
       setUserRole('customer')
       return
     }
-    const { createClient } = require('@/lib/supabase/client')
-    const supabase = createClient()
-    supabase
-      .from('User')
-      .select('role')
-      .eq('authId', user.id)
-      .maybeSingle()
-      .then(({ data }: { data: { role: string } | null }) => {
-        const role = data?.role ?? 'customer'
+    fetch('/api/account/profile')
+      .then(res => res.json())
+      .then(data => {
+        const role = data.profile?.role ?? 'customer'
         setUserRole(role)
         setShowRetailPrices(role !== 'wholesale')
+      })
+      .catch(() => {
+        setUserRole('customer')
       })
   }, [user])
 
