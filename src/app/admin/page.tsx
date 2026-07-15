@@ -1,54 +1,36 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { 
-  Package, 
-  ShoppingCart, 
-  Users, 
+import {
+  Package,
+  ShoppingCart,
+  Users,
   DollarSign,
-  TrendingUp,
-  TrendingDown,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  Star,
+  AlertCircle,
 } from 'lucide-react'
 
-// Sample stats - in production these come from database
-const stats = [
-  { 
-    name: 'Total Products', 
-    value: '16', 
-    change: '+2', 
-    changeType: 'positive',
-    icon: Package 
-  },
-  { 
-    name: 'Pending Orders', 
-    value: '8', 
-    change: '-3', 
-    changeType: 'negative',
-    icon: ShoppingCart 
-  },
-  { 
-    name: 'Total Users', 
-    value: '45', 
-    change: '+5', 
-    changeType: 'positive',
-    icon: Users 
-  },
-  { 
-    name: 'Revenue (Month)', 
-    value: '£2,847', 
-    change: '+12%', 
-    changeType: 'positive',
-    icon: DollarSign 
-  },
-]
+interface DashboardStats {
+  totalProducts: number
+  pendingOrders: number
+  totalUsers: number
+  monthlyRevenue: number
+  pendingReviews: number
+}
 
-const recentOrders = [
-  { id: 'ORD-001', customer: 'Sarah Mitchell', items: 3, total: 24.50, status: 'pending', time: '10 min ago' },
-  { id: 'ORD-002', customer: 'James Wilson', items: 5, total: 45.00, status: 'confirmed', time: '25 min ago' },
-  { id: 'ORD-003', customer: 'Emma Thompson', items: 2, total: 12.80, status: 'ready', time: '1 hour ago' },
-  { id: 'ORD-004', customer: 'Robert Brown', items: 8, total: 68.00, status: 'pending', time: '2 hours ago' },
-  { id: 'ORD-005', customer: 'Lisa Anderson', items: 4, total: 35.50, status: 'confirmed', time: '3 hours ago' },
-]
+interface RecentOrder {
+  id: string
+  orderNumber: string
+  customer: string
+  email: string
+  total: number
+  status: string
+  createdAt: string
+}
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -56,37 +38,97 @@ const statusColors: Record<string, string> = {
   preparing: 'bg-orange-100 text-orange-800',
   ready: 'bg-green-100 text-green-800',
   completed: 'bg-gray-100 text-gray-800',
+  cancelled: 'bg-red-100 text-red-800',
+}
+
+function formatTimeAgo(dateString: string): string {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins} min ago`
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
 }
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchDashboard() {
+      try {
+        const res = await fetch('/api/admin/dashboard')
+        if (!res.ok) throw new Error('Failed to load dashboard')
+        const data = await res.json()
+        setStats(data.stats)
+        setRecentOrders(data.recentOrders)
+      } catch (err) {
+        console.error(err)
+        setError('Failed to load dashboard data')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDashboard()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="p-8 -m-8 flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-[#8B1E22] animate-spin" />
+          <p className="text-[#6B5344]">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="p-8 -m-8 flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <AlertCircle className="w-8 h-8 text-red-500" />
+          <p className="text-red-600">{error ?? 'Failed to load dashboard'}</p>
+          <button onClick={() => window.location.reload()} className="text-[#8B1E22] underline">
+            Try again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const statsCards = [
+    { name: 'Total Products', value: stats.totalProducts, icon: Package, color: 'bg-[#8B1E22]/10' },
+    { name: 'Pending Orders', value: stats.pendingOrders, icon: ShoppingCart, color: 'bg-yellow-100' },
+    { name: 'Total Users', value: stats.totalUsers, icon: Users, color: 'bg-blue-100' },
+    {
+      name: 'Revenue (Month)',
+      value: `£${stats.monthlyRevenue.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      icon: DollarSign,
+      color: 'bg-green-100',
+    },
+  ]
+
   return (
     <div className="p-8 -m-8">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-serif font-bold text-[#3A2C2A]">Dashboard</h1>
-        <p className="text-[#6B5344] mt-1">Welcome back! Here's what's happening today.</p>
+        <p className="text-[#6B5344] mt-1">Welcome back! Here&apos;s what&apos;s happening today.</p>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => {
+        {statsCards.map((stat) => {
           const Icon = stat.icon
           return (
             <div key={stat.name} className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-lg bg-[#8B1E22]/10 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-[#8B1E22]" />
-                </div>
-                <span className={`flex items-center gap-1 text-sm font-medium ${
-                  stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stat.changeType === 'positive' ? (
-                    <TrendingUp className="w-4 h-4" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4" />
-                  )}
-                  {stat.change}
-                </span>
+              <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center mb-4`}>
+                <Icon className="w-6 h-6 text-[#8B1E22]" />
               </div>
               <h3 className="text-2xl font-bold text-[#3A2C2A]">{stat.value}</h3>
               <p className="text-[#6B5344] text-sm">{stat.name}</p>
@@ -95,25 +137,40 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      {/* Quick Actions */}
+      {(stats.pendingReviews > 0 || stats.pendingOrders > 0) && (
+        <div className="mb-8 space-y-3">
+          {stats.pendingReviews > 0 && (
+            <Link href="/admin/reviews" className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-lg p-4 hover:bg-yellow-100 transition-colors">
+              <Star className="w-5 h-5 text-yellow-600 shrink-0" />
+              <span className="text-yellow-800 text-sm font-medium">
+                {stats.pendingReviews} review{stats.pendingReviews > 1 ? 's' : ''} awaiting moderation
+              </span>
+              <ArrowRight className="w-4 h-4 text-yellow-600 ml-auto" />
+            </Link>
+          )}
+          {stats.pendingOrders > 0 && (
+            <Link href="/admin/orders" className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors">
+              <ShoppingCart className="w-5 h-5 text-blue-600 shrink-0" />
+              <span className="text-blue-800 text-sm font-medium">
+                {stats.pendingOrders} order{stats.pendingOrders > 1 ? 's' : ''} need{stats.pendingOrders === 1 ? 's' : ''} attention
+              </span>
+              <ArrowRight className="w-4 h-4 text-blue-600 ml-auto" />
+            </Link>
+          )}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Link
-          href="/admin/products/new"
-          className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4"
-        >
+        <Link href="/admin/products" className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
           <div className="w-12 h-12 rounded-lg bg-[#8B1E22] flex items-center justify-center">
             <Package className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-[#3A2C2A]">Add New Product</h3>
-            <p className="text-sm text-[#6B5344]">Create a new product listing</p>
+            <h3 className="font-semibold text-[#3A2C2A]">Manage Products</h3>
+            <p className="text-sm text-[#6B5344]">Add, edit or remove products</p>
           </div>
         </Link>
-
-        <Link
-          href="/admin/orders"
-          className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4"
-        >
+        <Link href="/admin/orders" className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
           <div className="w-12 h-12 rounded-lg bg-[#8B1E22] flex items-center justify-center">
             <ShoppingCart className="w-6 h-6 text-white" />
           </div>
@@ -122,13 +179,9 @@ export default function AdminDashboard() {
             <p className="text-sm text-[#6B5344]">Manage pending orders</p>
           </div>
         </Link>
-
-        <Link
-          href="/admin/categories"
-          className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4"
-        >
+        <Link href="/admin/categories" className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
           <div className="w-12 h-12 rounded-lg bg-[#D0A246] flex items-center justify-center">
-            <span className="text-2xl text-[#3A2C2A]">🏷️</span>
+            <span className="text-2xl">🏷️</span>
           </div>
           <div>
             <h3 className="font-semibold text-[#3A2C2A]">Manage Categories</h3>
@@ -137,82 +190,55 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
-      {/* Recent Orders Table */}
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-[#E8DDD0] flex items-center justify-between">
           <h2 className="text-xl font-semibold text-[#3A2C2A]">Recent Orders</h2>
-          <Link
-            href="/admin/orders"
-            className="text-[#8B1E22] font-medium hover:underline flex items-center gap-1"
-          >
-            View All
-            <ArrowRight className="w-4 h-4" />
+          <Link href="/admin/orders" className="text-[#8B1E22] font-medium hover:underline flex items-center gap-1">
+            View All <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-[#F7F2E9]">
-              <tr>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Order ID
-                </th>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Items
-                </th>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Time
-                </th>
-                <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E8DDD0]">
-              {recentOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-[#F7F2E9]/50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="font-medium text-[#3A2C2A]">{order.id}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-[#3A2C2A]">{order.customer}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-[#6B5344]">
-                    {order.items} items
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="font-medium text-[#3A2C2A]">£{order.total.toFixed(2)}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[order.status]}`}>
-                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-[#6B5344]">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {order.time}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="text-[#8B1E22] font-medium hover:underline">
-                      View
-                    </button>
-                  </td>
+        {recentOrders.length === 0 ? (
+          <div className="p-12 text-center">
+            <ShoppingCart className="w-12 h-12 mx-auto text-[#E8DDD0] mb-4" />
+            <p className="text-[#6B5344]">No orders yet</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#F7F2E9]">
+                <tr>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">Order ID</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">Customer</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">Total</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">Time</th>
+                  <th className="px-4 py-2.5 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[#E8DDD0]">
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="hover:bg-[#F7F2E9]/50">
+                    <td className="px-6 py-4 whitespace-nowrap"><span className="font-medium text-[#3A2C2A]">{order.orderNumber}</span></td>
+                    <td className="px-6 py-4 whitespace-nowrap"><span className="text-[#3A2C2A]">{order.customer}</span></td>
+                    <td className="px-6 py-4 whitespace-nowrap"><span className="font-medium text-[#3A2C2A]">£{order.total.toFixed(2)}</span></td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[order.status] ?? 'bg-gray-100 text-gray-800'}`}>
+                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-[#6B5344]">
+                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{formatTimeAgo(order.createdAt)}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Link href={`/admin/orders?id=${order.id}`} className="text-[#8B1E22] font-medium hover:underline">View</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )

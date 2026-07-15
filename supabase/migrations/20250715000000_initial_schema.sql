@@ -339,6 +339,25 @@ CREATE TRIGGER update_wholesale_updated_at BEFORE UPDATE ON "WholesaleEnquiry"
 CREATE TRIGGER update_career_updated_at BEFORE UPDATE ON "CareerApplication"
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- ============================================
+-- Auth Triggers — sync User profile on signup
+-- ============================================
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public."User" (id, email)
+  VALUES (NEW.id, NEW.email)
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Fire when a new user is created in auth.users
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 CREATE TRIGGER update_contact_updated_at BEFORE UPDATE ON "ContactEnquiry"
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 

@@ -4,7 +4,7 @@ import { siteConfig, meta } from '@/lib/constants';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/Toaster';
-import { NextAuthProvider } from '@/components/providers/NextAuthProvider';
+import { SupabaseProvider } from '@/components/providers/SupabaseProvider';
 import { ContentWrapper } from '@/components/layout/ContentWrapper';
 import './globals.css';
 
@@ -90,14 +90,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#8B1E22" />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
-        <NextAuthProvider>
+        <SupabaseProvider>
           <Navbar />
           <ContentWrapper>
             {children}
           </ContentWrapper>
           <Footer />
           <Toaster />
-        </NextAuthProvider>
+        </SupabaseProvider>
       </body>
     </html>
   );

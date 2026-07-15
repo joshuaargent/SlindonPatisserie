@@ -4,9 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Mail, Lock, User, Phone, AlertCircle, CheckCircle } from 'lucide-react'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { signUp } = useSupabaseUser()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -39,12 +41,15 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      // In production, this would call an API endpoint
-      // For demo, we just simulate success
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setSuccess(true)
+      const result = await signUp(formData.email, formData.password, formData.name)
       
-      // Redirect to login after 2 seconds
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
+
+      setSuccess(true)
       setTimeout(() => {
         router.push('/login')
       }, 2000)

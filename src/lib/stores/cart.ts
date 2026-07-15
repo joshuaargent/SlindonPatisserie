@@ -17,7 +17,7 @@ export interface CartItem {
   price: number;
   imageUrl?: string;
   quantity: number;
-  leadTimeDays: number;
+  productionTime: number;
   category: string;
 }
 

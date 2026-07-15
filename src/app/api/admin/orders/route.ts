@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/auth/server'
 
 // GET /api/admin/orders - Get all orders (admin only)
 export async function GET(request: NextRequest) {
-  try {
-    // TODO: Add proper admin auth check
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const authError = await requireAdmin(request)
+  if (authError) return authError
 
+  try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const search = searchParams.get('search')
@@ -25,7 +23,7 @@ export async function GET(request: NextRequest) {
           Product:productId (name)
         )
       `)
-      .orderBy('createdAt', { ascending: false })
+      .order('createdAt', { ascending: false })
 
     if (status && status !== 'all') {
       query = query.eq('status', status.toUpperCase())
@@ -74,13 +72,10 @@ export async function GET(request: NextRequest) {
 
 // PATCH /api/admin/orders - Update order status
 export async function PATCH(request: NextRequest) {
-  try {
-    // TODO: Add proper admin auth check
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const authError = await requireAdmin(request)
+  if (authError) return authError
 
+  try {
     const body = await request.json()
     const { orderId, status, note } = body
 
@@ -91,7 +86,15 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    // Find order by orderNumber (display ID) or internal ID
+    // Find order by orderNumber (display ID) or internal ID — both are validated
+    // to prevent injection in the .or() filter string
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId)
+    const isOrderNumber = /^ORD-\d+$/.test(orderId)
+
+    if (!isUUID && !isOrderNumber) {
+      return NextResponse.json({ error: 'Invalid order ID format' }, { status: 400 })
+    }
+
     let query = supabaseAdmin
       .from('Order')
       .select('id, orderNumber')

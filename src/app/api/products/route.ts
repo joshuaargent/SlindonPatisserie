@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/auth/server'
 
-// GET /api/products - List all products with optional filters
-export async function GET(request: Request) {
+// GET /api/products - List all products with optional filters (public)
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
         madeAtFactoryB,
         Category:categoryId (id, name, slug)
       `)
-      .orderBy('name', { ascending: true })
+      .order('name', { ascending: true })
 
     if (category && category !== 'all') {
       query = query.eq('categoryId', category)
@@ -62,7 +63,7 @@ export async function GET(request: Request) {
       .from('Category')
       .select('id, name, slug')
       .eq('isActive', true)
-      .orderBy('sortOrder', { ascending: true })
+      .order('sortOrder', { ascending: true })
 
     return NextResponse.json({
       products: transformedProducts,
@@ -78,7 +79,10 @@ export async function GET(request: Request) {
 }
 
 // POST /api/products - Create a new product (admin only)
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const authError = await requireAdmin(request)
+  if (authError) return authError
+
   try {
     const body = await request.json()
 

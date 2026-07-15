@@ -1,14 +1,14 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Tag, 
+import { usePathname, useRouter } from 'next/navigation'
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  Tag,
   Settings,
   Star,
   LogOut,
@@ -17,7 +17,7 @@ import {
   ChevronDown,
   Boxes
 } from 'lucide-react'
-import { useState } from 'react'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
 const adminNav = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -35,13 +35,36 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const { data: session } = useSession()
+  const router = useRouter()
+  const { user, loading, signOut } = useSupabaseUser()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/login' })
-  }
+  const userName = user?.user_metadata?.name || user?.email || 'Admin'
+  const userInitial = userName.charAt(0).toUpperCase()
+
+  // Check admin role from database
+  useEffect(() => {
+    if (!user) return
+    const { createClient } = require('@/lib/supabase/client')
+    const supabase = createClient()
+    supabase
+      .from('User')
+      .select('role')
+      .eq('email', user.email)
+      .single()
+      .then(({ data }: { data: { role: string } | null }) => {
+        setIsAdmin(data?.role === 'admin')
+      })
+  }, [user])
+
+  // Redirect non-admins
+  useEffect(() => {
+    if (!loading && (!user || !isAdmin)) {
+      router.push('/')
+    }
+  }, [loading, user, isAdmin, router])
 
   return (
     <div className="min-h-screen bg-[#F7F2E9]">
@@ -98,9 +121,9 @@ export default function AdminLayout({
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 transition-colors"
                 >
                   <div className="h-8 w-8 rounded-full bg-[#D0A246] flex items-center justify-center text-[#3A2C2A] font-bold text-sm">
-                    {session?.user?.name?.charAt(0) || 'A'}
+                    {userInitial}
                   </div>
-                  <span className="hidden lg:block text-sm">{session?.user?.name || 'Admin'}</span>
+                  <span className="hidden lg:block text-sm">{userName}</span>
                   <ChevronDown className="w-4 h-4" />
                 </button>
 
@@ -114,7 +137,7 @@ export default function AdminLayout({
                       View Website
                     </Link>
                     <button
-                      onClick={handleSignOut}
+                      onClick={() => signOut()}
                       className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-[#F7F2E9] text-left text-red-600"
                     >
                       <LogOut className="w-4 h-4" />

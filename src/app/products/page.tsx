@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 import { ArrowLeft, ShoppingCart, ShoppingBag, Package, Loader2, ShoppingBagIcon, Lock } from 'lucide-react'
 import { useCartStore } from '@/lib/stores/cart'
 
@@ -45,22 +45,32 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [addedToCart, setAddedToCart] = useState<string | null>(null)
+  const [userRole, setUserRole] = useState<string>('customer')
   
-  const { data: session, status } = useSession()
+  const { user } = useSupabaseUser()
   const addItem = useCartStore((state) => state.addItem)
 
-  // Determine if user can see wholesale pricing
-  const canSeeWholesale = status === 'authenticated' && session?.user?.role === 'wholesale'
-  
-  // If not logged in, default to retail prices
+  // Fetch user role from database
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      setShowRetailPrices(true)
-    } else if (canSeeWholesale) {
-      // Wholesale users can see wholesale by default
-      setShowRetailPrices(false)
+    if (!user) {
+      setUserRole('customer')
+      return
     }
-  }, [status, canSeeWholesale])
+    const { createClient } = require('@/lib/supabase/client')
+    const supabase = createClient()
+    supabase
+      .from('User')
+      .select('role')
+      .eq('email', user.email)
+      .single()
+      .then(({ data }: { data: { role: string } | null }) => {
+        const role = data?.role ?? 'customer'
+        setUserRole(role)
+        setShowRetailPrices(role !== 'wholesale')
+      })
+  }, [user])
+
+  const canSeeWholesale = userRole === 'wholesale'
 
   // Fetch products from API
   const fetchProducts = useCallback(async () => {
@@ -200,7 +210,7 @@ export default function ProductsPage() {
                     50% OFF
                   </span>
                 </button>
-                {status === 'unauthenticated' && (
+                {!user && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-[#E8DDD0] p-4 z-10">
                     <div className="flex items-start gap-3">
                       <Lock className="h-5 w-5 text-[#D0A246] shrink-0 mt-0.5" />

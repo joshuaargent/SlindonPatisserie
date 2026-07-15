@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { isValidEmail } from '@/lib/utils'
 
-// Contact form categories for Resend email routing
+// Contact form categories
 export const CONTACT_CATEGORIES = {
   GENERAL: 'general',
   ALLERGY: 'allergy',
@@ -15,18 +15,6 @@ export const CONTACT_CATEGORIES = {
 } as const
 
 type ContactCategory = typeof CONTACT_CATEGORIES[keyof typeof CONTACT_CATEGORIES]
-
-// Email templates for auto-response (to be implemented with Resend)
-const CATEGORY_AUTO_RESPONSES: Record<ContactCategory, string | null> = {
-  [CONTACT_CATEGORIES.ALLERGY]: 'allergens-list', // Auto-send allergens list
-  [CONTACT_CATEGORIES.ORDER]: null,
-  [CONTACT_CATEGORIES.WHOLESALE]: null,
-  [CONTACT_CATEGORIES.FRANCHISE]: null,
-  [CONTACT_CATEGORIES.CAREERS]: null,
-  [CONTACT_CATEGORIES.COMPLAINT]: null,
-  [CONTACT_CATEGORIES.GENERAL]: null,
-  [CONTACT_CATEGORIES.OTHER]: null,
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -85,11 +73,9 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error
 
-    // TODO: Implement Resend email integration
-    // When Resend is configured, send auto-response based on category:
-    // if (CATEGORY_AUTO_RESPONSES[contactCategory]) {
-    //   await sendAutoResponseEmail(email, name, CATEGORY_AUTO_RESPONSES[contactCategory])
-    // }
+    // TODO: Send email notifications via Resend (when API key is configured)
+    // await sendContactNotification({ ... })
+    // await sendAutoReply({ ... })
 
     return NextResponse.json({
       success: true,
@@ -116,7 +102,7 @@ export async function GET() {
     const { data: enquiries, error } = await supabaseAdmin
       .from('ContactEnquiry')
       .select('*')
-      .orderBy('createdAt', { ascending: false })
+      .order('createdAt', { ascending: false })
       .limit(100)
 
     if (error) throw error

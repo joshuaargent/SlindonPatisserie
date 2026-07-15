@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/auth/server'
 
 // PATCH /api/admin/reviews/[id] - Update review status or add reply
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    // TODO: Add proper admin auth check
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const authError = await requireAdmin(request)
+  if (authError) return authError
 
+  try {
     const { id } = await params
     const body = await request.json()
     const { status, reply } = body
 
-    const updateData: Record<string, any> = {}
+    const updateData: Record<string, unknown> = {}
 
     if (status) {
       updateData.status = status
@@ -54,13 +52,10 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    // TODO: Add proper admin auth check
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const authError = await requireAdmin(request)
+  if (authError) return authError
 
+  try {
     const { id } = await params
 
     const { error } = await supabaseAdmin

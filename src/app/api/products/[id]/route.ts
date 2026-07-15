@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/auth/server'
 
-// GET /api/products/[id] - Get single product
+// GET /api/products/[id] - Get single product (public)
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -35,11 +36,14 @@ export async function GET(
   }
 }
 
-// PATCH /api/products/[id] - Update product
+// PATCH /api/products/[id] - Update product (admin only)
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = await requireAdmin(request)
+  if (authError) return authError
+
   try {
     const { id } = await params
     const body = await request.json()
@@ -75,11 +79,14 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/products/[id] - Delete product
+// DELETE /api/products/[id] - Delete product (admin only)
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = await requireAdmin(request)
+  if (authError) return authError
+
   try {
     const { id } = await params
 

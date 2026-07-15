@@ -1,22 +1,38 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import { ArrowLeft, User, Package, Settings, LogOut, ChevronRight } from 'lucide-react'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
 export default function AccountPage() {
-  const { data: session, status } = useSession()
+  const { user, loading, signOut } = useSupabaseUser()
   const router = useRouter()
+  const [role, setRole] = useState<string | null>(null)
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!loading && !user) {
       router.push('/login')
     }
-  }, [status, router])
+  }, [loading, user, router])
 
-  if (status === 'loading') {
+  // Fetch user role from database
+  useEffect(() => {
+    if (!user) return
+    const { createClient } = require('@/lib/supabase/client')
+    const supabase = createClient()
+    supabase
+      .from('User')
+      .select('role')
+      .eq('email', user.email)
+      .single()
+      .then(({ data }: { data: { role: string } | null }) => {
+        setRole(data?.role ?? 'customer')
+      })
+  }, [user])
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#F7F2E9] flex items-center justify-center">
         <div className="text-[#8B1E22]">Loading...</div>
@@ -24,11 +40,9 @@ export default function AccountPage() {
     )
   }
 
-  if (!session) {
+  if (!user) {
     return null
   }
-
-  const user = session.user
 
   return (
     <div className="min-h-screen bg-[#F7F2E9]">
@@ -51,7 +65,7 @@ export default function AccountPage() {
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold text-[#8B1E22] mb-2">My Account</h1>
           <p className="text-[#6B5344]">
-            Welcome back, {user.name}
+            Welcome back, {user.user_metadata?.name || user.email}
           </p>
         </div>
 
@@ -62,10 +76,10 @@ export default function AccountPage() {
               <User className="w-8 h-8 text-[#8B1E22]" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-[#8B1E22]">{user.name}</h2>
+              <h2 className="text-xl font-semibold text-[#8B1E22]">{user.user_metadata?.name || 'User'}</h2>
               <p className="text-[#6B5344]">{user.email}</p>
               <span className="inline-block mt-1 px-2 py-1 text-xs bg-[#D0A246] text-[#3A2C2A] rounded">
-                {user.role === 'wholesale' ? 'Wholesale Account' : user.role === 'admin' ? 'Admin' : 'Customer'}
+                {role === 'wholesale' ? 'Wholesale Account' : role === 'admin' ? 'Admin' : 'Customer'}
               </span>
             </div>
           </div>
@@ -112,7 +126,7 @@ export default function AccountPage() {
           </Link>
 
           {/* Wholesale Info (only for wholesale users) */}
-          {user.role === 'wholesale' && (
+          {role === 'wholesale' && (
             <Link
               href="/wholesale"
               className="block bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow"
@@ -136,7 +150,7 @@ export default function AccountPage() {
 
           {/* Logout */}
           <button
-            onClick={() => signOut({ callbackUrl: '/' })}
+            onClick={() => signOut()}
             className="w-full bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow text-left"
           >
             <div className="flex items-center gap-4">

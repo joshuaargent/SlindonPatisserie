@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Mail, Lock, AlertCircle } from 'lucide-react'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { signIn } = useSupabaseUser()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,23 +19,14 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
+    const result = await signIn(email, password)
 
-      if (result?.error) {
-        setError('Invalid email or password')
-        setLoading(false)
-      } else {
-        router.push('/account')
-        router.refresh()
-      }
-    } catch (err) {
-      setError('An error occurred. Please try again.')
+    if (result?.error) {
+      setError('Invalid email or password')
       setLoading(false)
+    } else {
+      router.push('/account')
+      router.refresh()
     }
   }
 
@@ -121,16 +113,6 @@ export default function LoginPage() {
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
-
-                        {/* Demo Accounts */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-6 p-4 bg-[#F7F2E9] rounded-lg">
-                <p className="text-sm text-[#6B5344] font-semibold mb-2">Development Only:</p>
-                <div className="text-xs text-[#6B5344] space-y-1">
-                  <p>Admin: admin@slindon.co.uk / admin123</p>
-                </div>
-              </div>
-            )}
 
             {/* Register Link */}
             <p className="mt-6 text-center text-sm text-[#6B5344]">

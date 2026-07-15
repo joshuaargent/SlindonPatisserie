@@ -1,22 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { requireAdmin } from '@/lib/auth/server'
 
 // GET /api/admin/reviews - Get all reviews (admin only)
 export async function GET(request: NextRequest) {
-  try {
-    // TODO: Add proper admin auth check
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  const authError = await requireAdmin(request)
+  if (authError) return authError
 
+  try {
     const { data: reviews, error } = await supabaseAdmin
       .from('Review')
       .select(`
         *,
         User:userId (name, email)
       `)
-      .orderBy('createdAt', { ascending: false })
+      .order('createdAt', { ascending: false })
 
     if (error) throw error
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/auth/server'
 
 // GET /api/reviews - Get approved reviews
 export async function GET(request: NextRequest) {
@@ -8,20 +9,20 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10')
     const offset = parseInt(searchParams.get('offset') || '0')
 
-    const { data: reviews, error, count } = await supabaseAdmin
+    const supabase = createAdminClient()
+    const { data: reviews, error, count } = await supabase
       .from('Review')
       .select(`
         *,
         User:userId (name)
       `, { count: 'exact' })
       .eq('status', 'APPROVED')
-      .orderBy('createdAt', { ascending: false })
+      .order('createdAt', { ascending: false })
       .range(offset, offset + limit - 1)
 
     if (error) throw error
 
-    // Transform to flatten user
-    const transformedReviews = reviews?.map(r => ({
+    const transformedReviews = reviews?.map((r: Record<string, unknown>) => ({
       id: r.id,
       userId: r.userId,
       user: { name: (r.User as any)?.name },
@@ -45,20 +46,16 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/reviews - Submit a new review (placeholder - needs auth integration)
+// POST /api/reviews - Submit a new review
 export async function POST(request: NextRequest) {
-  try {
-    // TODO: Integrate with Supabase Auth for user session
-    // For now, require userId in request body
-    const body = await request.json()
-    const { userId, rating, title, comment } = body
+  const user = await getAuthUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'You must be logged in to submit a review' },
-        { status: 401 }
-      )
-    }
+  try {
+    const body = await request.json()
+    const { rating, title, comment } = body
 
     if (!rating || rating < 1 || rating > 5) {
       return NextResponse.json(
@@ -74,11 +71,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const supabase = createAdminClient()
+
     // Check if user has completed an order
-    const { data: orders } = await supabaseAdmin
+    const { data: orders } = await supabase
       .from('Order')
       .select('id')
-      .eq('userId', userId)
+      .eq('userId', user.id)
       .in('status', ['READY', 'COMPLETED'])
       .limit(1)
 
@@ -89,14 +88,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data: review, error } = await supabaseAdmin
+    const { data: review, error } = await supabase
       .from('Review')
       .insert({
-        userId,
+        userId: user.id,
         rating,
         title: title?.trim() || null,
         comment: comment.trim(),
-        status: 'PENDING', // Reviews need approval
+        status: 'PENDING',
       })
       .select()
       .single()

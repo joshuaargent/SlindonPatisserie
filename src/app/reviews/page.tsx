@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Star, Send, ArrowLeft, CheckCircle } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 import { useRouter } from 'next/navigation'
 
 interface Review {
@@ -18,7 +18,7 @@ interface Review {
 }
 
 export default function ReviewsPage() {
-  const { data: session } = useSession()
+  const { user } = useSupabaseUser()
   const router = useRouter()
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
@@ -218,7 +218,7 @@ export default function ReviewsPage() {
                 Share Your Experience
               </h3>
               
-              {!session ? (
+              {!user ? (
                 <div className="text-center py-8">
                   <p className="text-[#6B5344] mb-4">
                     Please sign in to leave a review

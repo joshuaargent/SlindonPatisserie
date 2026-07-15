@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/auth/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
 // GET /api/admin/products - Get all products for admin
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Add proper admin auth check with Supabase Auth
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const authError = await requireAdmin(request)
+    if (authError) return authError
 
     const { searchParams } = new URL(request.url)
     const categoryId = searchParams.get('category')
@@ -20,7 +18,7 @@ export async function GET(request: NextRequest) {
         *,
         Category:categoryId (id, name)
       `)
-      .orderBy('name', { ascending: true })
+      .order('name', { ascending: true })
 
     if (categoryId) {
       query = query.eq('categoryId', categoryId)
@@ -53,10 +51,8 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/products - Create a new product
 export async function POST(request: NextRequest) {
   try {
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const authError = await requireAdmin(request)
+    if (authError) return authError
 
     const body = await request.json()
     const {
@@ -121,10 +117,8 @@ export async function POST(request: NextRequest) {
 // PATCH /api/admin/products - Update a product
 export async function PATCH(request: NextRequest) {
   try {
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const authError = await requireAdmin(request)
+    if (authError) return authError
 
     const body = await request.json()
     const { id, ...updates } = body
@@ -162,10 +156,8 @@ export async function PATCH(request: NextRequest) {
 // DELETE /api/admin/products - Delete a product
 export async function DELETE(request: NextRequest) {
   try {
-    const apiKey = request.headers.get('x-api-key')
-    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const authError = await requireAdmin(request)
+    if (authError) return authError
 
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
