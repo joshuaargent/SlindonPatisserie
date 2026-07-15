@@ -32,21 +32,21 @@ ALTER TABLE "Review" ENABLE ROW LEVEL SECURITY;
 -- Users can read/update their own profile
 CREATE POLICY "Users can view own profile" ON "User"
   FOR SELECT USING (
-    "authId" = (SELECT id FROM auth.users() LIMIT 1)
-    OR email = (SELECT email FROM auth.users() LIMIT 1)
+    "authId" = (SELECT id::text FROM auth.users LIMIT 1)
+    OR email = (SELECT email FROM auth.users LIMIT 1)
   );
 
 CREATE POLICY "Users can update own profile" ON "User"
   FOR UPDATE USING (
-    "authId" = (SELECT id FROM auth.users() LIMIT 1)
-    OR email = (SELECT email FROM auth.users() LIMIT 1)
+    "authId" = (SELECT id::text FROM auth.users LIMIT 1)
+    OR email = (SELECT email FROM auth.users LIMIT 1)
   );
 
 -- Orders visible to: owner, or guest with matching email
 CREATE POLICY "Users can view own orders" ON "Order"
   FOR SELECT USING (
-    "userId" = (SELECT id FROM "User" WHERE "authId" = (SELECT id FROM auth.users() LIMIT 1) LIMIT 1)
-    OR "customerEmail" = (SELECT email FROM auth.users() LIMIT 1)
+    "userId" = (SELECT id FROM "User" WHERE "authId" = (SELECT id::text FROM auth.users LIMIT 1) LIMIT 1)
+    OR "customerEmail" = (SELECT email FROM auth.users LIMIT 1)
     OR "userId" IS NULL
   );
 
@@ -57,7 +57,7 @@ CREATE POLICY "Anyone can read approved reviews" ON "Review"
 -- Reviews: logged-in users can insert their own
 CREATE POLICY "Users can create own reviews" ON "Review"
   FOR INSERT WITH CHECK (
-    "userId" = (SELECT id FROM "User" WHERE "authId" = (SELECT id FROM auth.users() LIMIT 1) LIMIT 1)
+    "userId" = (SELECT id FROM "User" WHERE "authId" = (SELECT id::text FROM auth.users LIMIT 1) LIMIT 1)
   );
 
 -- ============================================
@@ -74,8 +74,17 @@ ON CONFLICT (id) DO NOTHING;
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."User" (id, email, "authId")
-  VALUES (NEW.id, NEW.email, NEW.id)
+  INSERT INTO public."User" (id, email, name, "authId")
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(
+      NEW.raw_app_meta_data->>'full_name',
+      NEW.raw_user_meta_data->>'name',
+      split_part(NEW.email, '@', 1)
+    ),
+    NEW.id
+  )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
