@@ -53,16 +53,15 @@ export default function AdminLayout({
       setRoleLoading(false)
       return
     }
-    const { createClient } = require('@/lib/supabase/client')
-    const supabase = createClient()
-
-    supabase
-      .from('User')
-      .select('role')
-      .eq('authId', user.id)
-      .maybeSingle()
-      .then(({ data }: { data: { role: string } | null }) => {
-        setIsAdmin(data?.role === 'admin')
+    // Use server-side API to check admin role to bypass RLS
+    fetch('/api/admin/check-role')
+      .then(res => res.json())
+      .then(data => {
+        setIsAdmin(data.isAdmin || false)
+        setRoleLoading(false)
+      })
+      .catch(() => {
+        setIsAdmin(false)
         setRoleLoading(false)
       })
   }, [user])

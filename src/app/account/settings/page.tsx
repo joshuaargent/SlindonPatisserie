@@ -5,27 +5,36 @@ import Link from 'next/link'
 import { ArrowLeft, User, Save, CheckCircle, AlertCircle } from 'lucide-react'
 import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
+interface ProfileData {
+  name: string
+  phone: string
+}
+
 export default function AccountSettingsPage() {
   const { user, refresh } = useSupabaseUser()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
-    if (!user) return
-    const { createClient } = require('@/lib/supabase/client')
-    const supabase = createClient()
-    supabase
-      .from('User')
-      .select('name, phone')
-      .eq('authId', user.id)
-      .maybeSingle()
-      .then(({ data }: { data: { name: string; phone: string } | null }) => {
-        if (data) {
-          setName(data.name || '')
-          setPhone(data.phone || '')
+    if (!user) {
+      setLoading(false)
+      return
+    }
+    
+    fetch('/api/account/profile')
+      .then(res => res.json())
+      .then(data => {
+        if (data.profile) {
+          setName(data.profile.name || '')
+          setPhone(data.profile.phone || '')
         }
+        setLoading(false)
+      })
+      .catch(() => {
+        setLoading(false)
       })
   }, [user])
 
@@ -35,13 +44,12 @@ export default function AccountSettingsPage() {
     setSaving(true)
     setMessage(null)
     try {
-      const { createClient } = require('@/lib/supabase/client')
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('User')
-        .update({ name, phone: phone || null })
-        .eq('authId', user.id)
-      if (error) throw error
+      const res = await fetch('/api/account/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone }),
+      })
+      if (!res.ok) throw new Error('Failed to save')
       setMessage({ type: 'success', text: 'Profile updated successfully!' })
       await refresh()
     } catch (err) {
@@ -52,6 +60,14 @@ export default function AccountSettingsPage() {
   }
 
   if (!user) return null
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F7F2E9] flex items-center justify-center">
+        <p className="text-[#6B5344]">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F2E9]">

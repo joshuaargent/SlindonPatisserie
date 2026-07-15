@@ -11,40 +11,41 @@ import {
   Loader2,
   X,
   Save,
-  ChevronDown
+  AlertCircle
 } from 'lucide-react'
+
+// Category type from database
+interface Category {
+  id: string
+  name: string
+  slug: string
+}
 
 // Product type matching database schema
 interface Product {
   id: string
   name: string
   description: string
-  category: string
+  categoryId: string
+  category?: Category | string
   retailPrice: number
   wholesalePrice: number | null
   image: string | null
   available: boolean
-  productionTimeHours: number
+  leadTimeDays: number
+  availability?: string
   madeAtFactoryA: boolean
   madeAtFactoryB: boolean
-}
-
-const categories = ['bakery', 'bread', 'catering', 'wholesale', 'pos', 'sundries']
-
-const categoryLabels: Record<string, string> = {
-  bakery: 'Patisserie',
-  bread: 'Artisan Bread',
-  catering: 'Catering',
-  wholesale: 'Wholesale',
-  pos: 'POS & Supplies',
-  sundries: 'Sundries',
+  featured?: boolean
 }
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterCategory, setFilterCategory] = useState('all')
+  const [error, setError] = useState<string | null>(null)
   
   // Modal state
   const [showModal, setShowModal] = useState(false)
@@ -52,42 +53,78 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    category: 'bakery',
+    categoryId: '',
     retailPrice: '',
     wholesalePrice: '',
     image: '',
     available: true,
-    productionTimeHours: '24',
+    leadTimeDays: '1',
     madeAtFactoryA: true,
     madeAtFactoryB: false,
   })
   const [saving, setSaving] = useState(false)
 
-  // Fetch products
+  // Fetch categories from database
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await fetch('/api/products')
+      if (response.ok) {
+        const data = await response.json()
+        setCategories(data.categories || [])
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err)
+    }
+  }, [])
+
+  // Fetch products from admin API
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/products?includeWholesale=true')
+      setError(null)
+      const response = await fetch('/api/admin/products')
       if (response.ok) {
         const data = await response.json()
-        setProducts(data.products)
+        setProducts(data.products || [])
+      } else if (response.status === 401) {
+        setError('Please log in to access the admin dashboard.')
+      } else if (response.status === 403) {
+        setError('You do not have admin access.')
+      } else {
+        setError('Failed to load products. Please try again.')
       }
     } catch (error) {
       console.error('Failed to fetch products:', error)
+      setError('Network error. Please check your connection.')
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
+    fetchCategories()
     fetchProducts()
-  }, [fetchProducts])
+  }, [fetchCategories, fetchProducts])
+
+  // Get category name by ID
+  const getCategoryName = (categoryId: string): string => {
+    const cat = categories.find(c => c.id === categoryId)
+    return cat?.name || 'Unknown'
+  }
+
+  // Get category slug for filtering
+  const getCategorySlug = (product: Product): string => {
+    if (typeof product.category === 'string') return product.category
+    if (typeof product.category === 'object' && product.category?.slug) return product.category.slug
+    return ''
+  }
 
   // Filter products
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase()) ||
       product.description.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = filterCategory === 'all' || product.category === filterCategory
+    const productCategorySlug = getCategorySlug(product)
+    const matchesCategory = filterCategory === 'all' || productCategorySlug === filterCategory || product.categoryId === filterCategory
     return matchesSearch && matchesCategory
   })
 
@@ -98,12 +135,12 @@ export default function AdminProductsPage() {
       setFormData({
         name: product.name,
         description: product.description,
-        category: product.category,
+        categoryId: product.categoryId,
         retailPrice: product.retailPrice.toString(),
         wholesalePrice: product.wholesalePrice?.toString() || '',
         image: product.image || '',
         available: product.available,
-        productionTimeHours: product.productionTimeHours.toString(),
+        leadTimeDays: (product.leadTimeDays || 1).toString(),
         madeAtFactoryA: product.madeAtFactoryA,
         madeAtFactoryB: product.madeAtFactoryB,
       })
@@ -112,12 +149,12 @@ export default function AdminProductsPage() {
       setFormData({
         name: '',
         description: '',
-        category: 'bakery',
+        categoryId: categories[0]?.id || '',
         retailPrice: '',
         wholesalePrice: '',
         image: '',
         available: true,
-        productionTimeHours: '24',
+        leadTimeDays: '1',
         madeAtFactoryA: true,
         madeAtFactoryB: false,
       })
@@ -142,35 +179,45 @@ export default function AdminProductsPage() {
 
   // Save product
   const handleSave = async () => {
+    if (!formData.categoryId) {
+      alert('Please select a category')
+      return
+    }
+    
     setSaving(true)
     try {
       const payload = {
         name: formData.name,
         description: formData.description,
-        category: formData.category,
+        categoryId: formData.categoryId,
         retailPrice: parseFloat(formData.retailPrice),
         wholesalePrice: formData.wholesalePrice ? parseFloat(formData.wholesalePrice) : null,
         image: formData.image || null,
         available: formData.available,
-        productionTimeHours: parseInt(formData.productionTimeHours) || 24,
+        leadTimeDays: parseInt(formData.leadTimeDays) || 1,
         madeAtFactoryA: formData.madeAtFactoryA,
         madeAtFactoryB: formData.madeAtFactoryB,
       }
 
-      const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
+      const url = editingProduct ? `/api/admin/products?id=${editingProduct.id}` : '/api/admin/products'
       const method = editingProduct ? 'PATCH' : 'POST'
 
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(editingProduct ? { ...payload, id: editingProduct.id } : payload),
       })
 
       if (response.ok) {
         await fetchProducts()
         closeModal()
+      } else if (response.status === 401) {
+        alert('Please log in to save products.')
+      } else if (response.status === 403) {
+        alert('You do not have permission to save products.')
       } else {
-        alert('Failed to save product')
+        const data = await response.json()
+        alert(data.error || 'Failed to save product')
       }
     } catch (error) {
       console.error('Failed to save:', error)
@@ -185,9 +232,11 @@ export default function AdminProductsPage() {
     if (!confirm('Are you sure you want to delete this product?')) return
     
     try {
-      const response = await fetch(`/api/products/${id}`, { method: 'DELETE' })
+      const response = await fetch(`/api/admin/products?id=${id}`, { method: 'DELETE' })
       if (response.ok) {
         await fetchProducts()
+      } else {
+        alert('Failed to delete product')
       }
     } catch (error) {
       console.error('Failed to delete:', error)
@@ -211,6 +260,21 @@ export default function AdminProductsPage() {
         </button>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-red-700 font-medium">{error}</p>
+            {error.includes('log in') && (
+              <Link href="/login" className="text-red-600 underline mt-1 inline-block">
+                Go to Login
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="bg-white rounded-xl p-4 shadow-sm mb-6 flex flex-wrap gap-4">
         <div className="flex-1 min-w-[200px] relative">
@@ -231,7 +295,7 @@ export default function AdminProductsPage() {
         >
           <option value="all">All Categories</option>
           {categories.map(cat => (
-            <option key={cat} value={cat}>{categoryLabels[cat]}</option>
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>
       </div>
@@ -246,6 +310,14 @@ export default function AdminProductsPage() {
           <div className="text-center py-20">
             <Package className="w-16 h-16 mx-auto text-[#6B5344] mb-4" />
             <p className="text-[#6B5344] text-lg">No products found</p>
+            {!error && (
+              <button
+                onClick={() => openModal()}
+                className="mt-4 text-[#8B1E22] hover:underline"
+              >
+                Add your first product
+              </button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -259,13 +331,10 @@ export default function AdminProductsPage() {
                     Category
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                    Retail Price
+                    Price
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                    Wholesale
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
-                    Status
+                    Available
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-[#6B5344] uppercase tracking-wider">
                     Actions
@@ -276,46 +345,30 @@ export default function AdminProductsPage() {
                 {filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-[#F7F2E9]/50">
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#F7F2E9] rounded-lg flex items-center justify-center text-2xl">
-                          {product.category === 'bakery' && '🥐'}
-                          {product.category === 'bread' && '🍞'}
-                          {product.category === 'catering' && '🥪'}
-                          {product.category === 'wholesale' && '📦'}
-                          {product.category === 'sundries' && '🛒'}
-                          {!['bakery', 'bread', 'catering', 'wholesale', 'sundries'].includes(product.category) && '🧁'}
-                        </div>
-                        <div>
-                          <p className="font-medium text-[#3A2C2A]">{product.name}</p>
-                          <p className="text-sm text-[#6B5344] truncate max-w-[200px]">{product.description}</p>
-                        </div>
-                      </div>
+                      <div className="font-medium text-[#3A2C2A]">{product.name}</div>
+                      <div className="text-sm text-[#6B5344] line-clamp-1">{product.description}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs bg-[#F7F2E9] text-[#6B5344] rounded">
-                        {categoryLabels[product.category] || product.category}
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#F7F2E9] text-[#6B5344]">
+                        {getCategoryName(product.categoryId)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <span className="font-medium text-[#3A2C2A]">£{product.retailPrice.toFixed(2)}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {product.wholesalePrice ? (
-                        <span className="text-[#6B5344]">£{product.wholesalePrice.toFixed(2)}</span>
-                      ) : (
-                        <span className="text-[#6B5344]">-</span>
+                      {product.wholesalePrice && (
+                        <span className="ml-2 text-sm text-[#6B5344]">/ £{product.wholesalePrice.toFixed(2)} wholesale</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        product.available 
-                          ? 'bg-green-100 text-green-800' 
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        product.available
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {product.available ? 'Active' : 'Inactive'}
+                        {product.available ? 'Yes' : 'No'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openModal(product)}
@@ -339,15 +392,10 @@ export default function AdminProductsPage() {
         )}
       </div>
 
-      {/* Product Count */}
-      <div className="mt-4 text-sm text-[#6B5344]">
-        Showing {filteredProducts.length} of {products.length} products
-      </div>
-
-      {/* Modal */}
+      {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="p-6 border-b border-[#E8DDD0] flex items-center justify-between">
               <h2 className="text-xl font-semibold text-[#3A2C2A]">
@@ -398,13 +446,15 @@ export default function AdminProductsPage() {
                   Category *
                 </label>
                 <select
-                  name="category"
-                  value={formData.category}
+                  name="categoryId"
+                  value={formData.categoryId}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                 >
+                  <option value="">Select a category</option>
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{categoryLabels[cat]}</option>
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
               </div>
@@ -444,19 +494,19 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              {/* Production Time */}
+              {/* Lead Time */}
               <div>
                 <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
-                  Production Time (hours)
+                  Lead Time (days)
                 </label>
                 <input
                   type="number"
-                  name="productionTimeHours"
-                  value={formData.productionTimeHours}
+                  name="leadTimeDays"
+                  value={formData.leadTimeDays}
                   onChange={handleInputChange}
                   min="0"
                   className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
-                  placeholder="24"
+                  placeholder="1"
                 />
               </div>
 
@@ -529,7 +579,7 @@ export default function AdminProductsPage() {
               </button>
               <button
                 onClick={handleSave}
-                disabled={saving || !formData.name || !formData.retailPrice}
+                disabled={saving || !formData.name || !formData.categoryId || !formData.retailPrice}
                 className="btn-secondary-sm disabled:opacity-50"
               >
                 {saving ? (

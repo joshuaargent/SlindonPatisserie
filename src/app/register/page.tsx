@@ -41,7 +41,7 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const result = await signUp(formData.email, formData.password, formData.name)
+      const result = await signUp(formData.email, formData.password, formData.name, formData.phone)
       
       if (result?.error) {
         setError(result.error)

@@ -103,12 +103,12 @@ VALUES ('00000000-0000-0000-0000-000000000000', 'guest@slindon.internal', 'Guest
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================
--- Update auth trigger to store auth ID
+-- Update auth trigger to store auth ID and phone
 -- ============================================
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."User" (id, email, name, "authId")
+  INSERT INTO public."User" (id, email, name, phone, "authId")
   VALUES (
     NEW.id,
     NEW.email,
@@ -117,6 +117,7 @@ BEGIN
       NEW.raw_user_meta_data->>'name',
       split_part(NEW.email, '@', 1)
     ),
+    NEW.raw_user_meta_data->>'phone',
     NEW.id
   )
   ON CONFLICT (id) DO NOTHING;

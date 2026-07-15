@@ -9,6 +9,7 @@ interface User {
   email: string
   user_metadata?: {
     name?: string
+    phone?: string
   }
 }
 
@@ -16,7 +17,7 @@ interface SupabaseContextType {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error?: string }>
-  signUp: (email: string, password: string, name: string) => Promise<{ error?: string }>
+  signUp: (email: string, password: string, name: string, phone?: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
   refresh: () => Promise<void>
 }
@@ -58,11 +59,11 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     return {}
   }
 
-  const signUp = async (email: string, password: string, name: string): Promise<{ error?: string }> => {
+  const signUp = async (email: string, password: string, name: string, phone?: string): Promise<{ error?: string }> => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name, phone } },
     })
     if (error) return { error: error.message }
     return {}

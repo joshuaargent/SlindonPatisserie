@@ -346,8 +346,18 @@ CREATE TRIGGER update_career_updated_at BEFORE UPDATE ON "CareerApplication"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."User" (id, email)
-  VALUES (NEW.id, NEW.email)
+  INSERT INTO public."User" (id, email, name, phone, "authId")
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(
+      NEW.raw_app_meta_data->>'full_name',
+      NEW.raw_user_meta_data->>'name',
+      split_part(NEW.email, '@', 1)
+    ),
+    NEW.raw_user_meta_data->>'phone',
+    NEW.id
+  )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;

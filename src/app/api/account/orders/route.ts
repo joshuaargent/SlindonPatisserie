@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Get user's User record
+  // Get user's User record by authId (linking to Supabase Auth)
   const { data: userRecord } = await supabase
     .from('User')
     .select('id')
-    .eq('id', user.id)
+    .eq('authId', user.id)
     .maybeSingle()
 
   if (!userRecord) {
