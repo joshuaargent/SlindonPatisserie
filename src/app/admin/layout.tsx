@@ -40,31 +40,66 @@ export default function AdminLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [roleLoading, setRoleLoading] = useState(true)
 
   const userName = user?.user_metadata?.name || user?.email || 'Admin'
   const userInitial = userName.charAt(0).toUpperCase()
 
-  // Check admin role from database
+  // Check admin role from database (by ID first, then email)
   useEffect(() => {
-    if (!user) return
+    if (!user) {
+      setRoleLoading(false)
+      return
+    }
     const { createClient } = require('@/lib/supabase/client')
     const supabase = createClient()
+
+    // Try by ID first (Supabase auth user ID)
     supabase
       .from('User')
       .select('role')
-      .eq('email', user.email)
-      .single()
+      .eq('id', user.id)
+      .maybeSingle()
       .then(({ data }: { data: { role: string } | null }) => {
-        setIsAdmin(data?.role === 'admin')
+        if (data?.role === 'admin') {
+          setIsAdmin(true)
+          setRoleLoading(false)
+          return
+        }
+        // Fall back to email match
+        return supabase
+          .from('User')
+          .select('role')
+          .eq('email', user.email)
+          .maybeSingle()
+          .then(({ data: emailData }: { data: { role: string } | null }) => {
+            setIsAdmin(emailData?.role === 'admin')
+            setRoleLoading(false)
+          })
       })
   }, [user])
 
-  // Redirect non-admins
+  // Redirect non-admins once role is confirmed
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    if (!loading && !roleLoading && !user) {
+      router.push('/login')
+    }
+    if (!loading && !roleLoading && user && !isAdmin) {
       router.push('/')
     }
-  }, [loading, user, isAdmin, router])
+  }, [loading, roleLoading, user, isAdmin, router])
+
+  // Show loading while auth or role is being checked
+  if (loading || roleLoading) {
+    return (
+      <div className="min-h-screen bg-[#F7F2E9] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-3 border-[#8B1E22] border-t-transparent rounded-full animate-spin" />
+          <p className="text-[#6B5344] text-sm">Checking access...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F2E9]">

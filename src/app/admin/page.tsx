@@ -64,13 +64,16 @@ export default function AdminDashboard() {
     async function fetchDashboard() {
       try {
         const res = await fetch('/api/admin/dashboard')
-        if (!res.ok) throw new Error('Failed to load dashboard')
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}))
+          throw new Error(body.error || `Dashboard error (${res.status})`)
+        }
         const data = await res.json()
         setStats(data.stats)
         setRecentOrders(data.recentOrders)
       } catch (err) {
-        console.error(err)
-        setError('Failed to load dashboard data')
+        console.error('Dashboard fetch failed:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard data')
       } finally {
         setLoading(false)
       }

@@ -22,16 +22,34 @@ export async function requireAdmin(_request?: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Check admin role in database
+  // Check admin role in database (try by id first, then email)
   const adminClient = createAdminClient()
-  const { data: profile } = await adminClient
+  let profile = null
+
+  // Try matching by Supabase Auth user ID
+  const { data: byId } = await adminClient
     .from('User')
     .select('role')
-    .eq('email', user.email)
-    .single()
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (byId) {
+    profile = byId
+  } else {
+    // Fall back to email match (for migrated users)
+    const { data: byEmail } = await adminClient
+      .from('User')
+      .select('role')
+      .eq('email', user.email)
+      .maybeSingle()
+    profile = byEmail
+  }
 
   if (profile?.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json(
+      { error: 'Forbidden — admin access required' },
+      { status: 403 }
+    )
   }
 
   return null
