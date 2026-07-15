@@ -4,8 +4,9 @@
 > **Client:** Joby (Slindon Patisserie)  
 > **Location:** Camberley, Surrey  
 > **Version:** 2.0  
-> **Last Updated:** June 10, 2026 (Post-Meeting Update)  
-> **Meeting Date:** Wednesday June 2026
+> **Last Updated:** July 15, 2026  
+> **Database:** Supabase PostgreSQL  
+> **Email:** Resend (planned)
 
 ---
 
@@ -93,7 +94,7 @@ Subtle, warm animations that feel natural — like dough rising or steam rising 
 │  ┌─────────────────────────────────────┐│
 │  │ About  |  Products  |  Support      ││
 │  │ Social |  Contact   |  Legal        ││
-│  │ Copyright 2026 Slindon Patisserie  ││
+│  │ Copyright 2026 Slindon Patisserie   ││
 │  └─────────────────────────────────────┘│
 └─────────────────────────────────────────┘
 ```
@@ -124,9 +125,9 @@ Subtle, warm animations that feel natural — like dough rising or steam rising 
 | Feature | Behavior |
 |---------|----------|
 | **Register** | Email, password, name, phone (optional) |
-| **Login** | Email + password, "Remember me" option |
+| **Login** | Email + password |
 | **Logout** | Clear session, redirect to home |
-| **Password Reset** | Email link for password reset |
+| **Password Reset** | Email link for password reset (via Resend) |
 | **Account Types** | Retail (default), Wholesale (approval required) |
 
 ### 4.2 Product Catalog
@@ -176,8 +177,6 @@ Cart → Delivery Method → Review → Confirmation → (Pay on Collection/Deli
 | **Delivery confirmation** | If serviceable, delivery option unlocks |
 | **Delivery cost** | TBD - to be configured per area/range |
 
-**Rationale:** This allows flexibility for Joby to manage delivery capacity without hard-cutoff frustration. Customers see all options and express interest, Joby can approve/manage delivery slots.
-
 ### 4.6 Franchise Page Strategy
 
 **Approach:** Information + Contact (no pricing displayed)
@@ -191,246 +190,37 @@ Cart → Delivery Method → Review → Confirmation → (Pay on Collection/Deli
 | **Contact form** | Name, email, phone, message → sends to Joby |
 | **No pricing** | Sales conversation required to close deals |
 
-**Rationale:** Franchise deals are complex and need personalized discussion. Showing prices online kills negotiation and may undervalue the opportunity. Contact-first approach lets Joby qualify leads and close better deals.
-
 ### 4.7 Pricing Model
 
 **Retail vs Wholesale:**
-- Wholesale pricing is approximately **50% of retail** (most products)
-- Some products have **exceptions** to the 50% rule (defined per product)
-- Pricing displayed dynamically based on user account type
+- Wholesale pricing is approximately **50% of retail** price
 
-| Account Type | Pricing | Display |
-|--------------|---------|---------|
-| **Retail** | Full price | £X.XX |
-| **Wholesale** | Discounted | £X.XX (with "Wholesale" badge) |
+### 4.8 Contact Form & Email Routing
 
-**Implementation:** Each product has:
-- `retailPrice`: number
-- `wholesalePrice`: number (can be null for products not available wholesale)
-- `wholesaleDiscountOverride`: boolean (if true, use actual wholesalePrice, not 50%)
+The contact form supports **category-based email routing** for automated responses via Resend.
 
-### 4.8 Factory Routing & Production
+**Contact Categories:**
+| Category | Description | Auto-Response |
+|----------|-------------|---------------|
+| `general` | General enquiries | None |
+| `allergy` | Allergy enquiries | **Send allergens list** |
+| `order` | Order-related questions | None |
+| `wholesale` | Wholesale enquiries | None |
+| `franchise` | Franchise opportunities | None |
+| `careers` | Job applications | None |
+| `complaint` | Complaints | None |
+| `other` | Other topics | None |
 
-**Two Factories:**
-- **Factory A** - Location TBD
-- **Factory B** - Location TBD
-
-**Product Assignment:**
-- Products can be made at **Factory A only**, **Factory B only**, or **Both**
-- Each factory has its own production schedule and capacity
-
-**Wait Time Calculation:**
-- Each product has a `productionTime` (in hours)
-- Products made at multiple factories have the **fastest** production time
-- Order's minimum pickup time = **max(all product wait times)**
-
-**Example:**
-```
-Donut: 24 hours production, made at Factory A
-Brownie: 48 hours production, made at Factory B
-Order contains both → Minimum pickup: 48 hours from now
-```
-
-**Pickup Slot Selection:**
-- Customer sees: "Earliest pickup: [Date] at [Time]"
-- Available slots start from minimum wait time
-- Time slots are configurable (e.g., 9am, 10am, 11am...)
-- Slots show availability based on capacity
-
-### 4.9 Order Management
-
-| Status | Description |
-|--------|-------------|
-| **Pending** | Order just placed, awaiting confirmation |
-| **Confirmed** | Order confirmed, being prepared |
-| **Ready** | Ready for collection or out for delivery |
-| **Collected/Delivered** | Order completed |
-
-### 4.10 Teya Sales Integration
-
-**Teya** is a point-of-sale (POS) and payment system. Integration will enable:
-
-| Feature | Description |
-|---------|-------------|
-| **Order Sync** | Orders placed on website automatically appear in Teya POS |
-| **Factory Routing** | Orders auto-sent to relevant factory based on product assignments |
-| **Multi-Factory Split** | Orders containing products from both factories split and sent to respective factories |
-| **Payment Processing** | Teya handles payment on collection (card reader at counter) |
-| **Inventory Sync** | Stock levels reflected in both systems |
-
-**Integration Architecture:**
-```
-Website Order → Prisma DB → Teya API → Factory A / Factory B
-                     ↓
-              Teya POS (for payment on collection)
-```
-
-**API Requirements:**
-- Teya API endpoint for order creation
-- Webhook for order status updates
-- Factory assignment based on products
-- Order splitting logic for multi-factory orders
-
-**Note:** Teya integration details pending - need to discuss API access and specific endpoints with Joby.
+**Resend Integration:**
+- When a customer selects "Allergy" category, an automated email with the allergens list is sent
+- Other categories are stored in database for manual review
+- Future: Different email templates for each category
 
 ---
 
-## 5. Component Inventory
+## 5. Technical Architecture
 
-### 5.1 Navigation Components
-
-| Component | States | Notes |
-|-----------|--------|-------|
-| **Header** | Default, Scrolled (shadow), Mobile | Sticky on scroll |
-| **NavLink** | Default, Hover (underline), Active | - |
-| **MobileMenu** | Closed, Open (slide-in) | 300ms slide animation |
-| **CartIcon** | Empty (0 badge), Has items (count badge) | - |
-
-### 5.2 Product Components
-
-| Component | States | Notes |
-|-----------|--------|-------|
-| **ProductCard** | Default, Hover (lift + shadow), Loading (skeleton) | Image, title, price, add button |
-| **ProductGrid** | Default, Empty (no products message) | Responsive columns |
-| **ProductDetail** | Default, Loading, Out of stock | Full info, gallery, add to cart |
-| **CategoryFilter** | Default, Active filter | Horizontal scroll on mobile |
-
-### 5.3 Cart Components
-
-| Component | States | Notes |
-|-----------|--------|-------|
-| **CartDrawer** | Closed, Open (slide from right) | 400px width |
-| **CartItem** | Default, Updating (spinner), Removing (fade out) | Image, title, qty, price, remove |
-| **CartSummary** | Default, Free delivery earned | Subtotal, delivery, total |
-
-### 5.4 Form Components
-
-| Component | States | Notes |
-|-----------|--------|-------|
-| **Input** | Default, Focus (gold border), Error (red), Disabled | - |
-| **Select** | Default, Open (dropdown), Disabled | - |
-| **Button** | Default, Hover, Active, Loading (spinner), Disabled | Primary, Secondary, Ghost variants |
-| **Checkbox** | Unchecked, Checked, Disabled | - |
-| **Radio** | Unselected, Selected, Disabled | - |
-
-### 5.5 Feedback Components
-
-| Component | States | Notes |
-|-----------|--------|-------|
-| **Toast** | Success (green), Error (red), Info (gold) | Auto-dismiss after 5s |
-| **Modal** | Closed, Open (fade in) | Backdrop blur |
-| **LoadingSpinner** | - | Gold color, 24px |
-| **Skeleton** | - | Cream shimmer animation |
-
----
-
-## 6. Page Specifications
-
-### 6.1 Homepage
-
-**Hero Section:**
-- Full-width background image (bakery scene)
-- Overlay with headline: "Artisan Bakery, Traditional Quality"
-- Subtext: "Fresh from our oven to your table"
-- CTA Button: "Shop Now" (or "View Products" if not logged in)
-
-**Featured Products:**
-- Section heading: "Today's Fresh Bakes"
-- 4-8 featured products in grid
-- "View All Products" link
-
-**About Preview:**
-- Brief history snippet
-- Image of the bakery
-- "Our Story" link
-
-**Franchise Teaser:**
-- "Interested in joining our family?"
-- Brief franchise description
-- "Learn More" button
-
-### 6.2 Products Page
-
-**Filters:**
-- Category tabs: Bakery, Catering, Wholesale, POS, Sundries
-- Toggle: Retail / Wholesale (if applicable)
-- Sort: Featured, Price Low-High, Price High-Low, Name A-Z
-
-**Product Grid:**
-- Responsive grid layout
-- Pagination or infinite scroll
-- Empty state: "No products found"
-
-### 6.3 Product Detail Page
-
-**Layout:**
-- Product image (large, zoom on hover)
-- Product info: name, category, price, description
-- Add to cart section: quantity selector, add button
-- Related products section
-
-### 6.4 About / Business History Page
-
-**Content:**
-- Brand story and heritage
-- Values and craftsmanship
-- Team/family background
-- Traditional baking methods
-- Photos of the bakery through time
-
-### 6.5 Franchise Page
-
-**Sections:**
-- Hero: "Own Your Dream Bakery"
-- What is "Biz in a Box" model
-- Benefits and support
-- Investment overview
-- Success stories/testimonials
-- Application form (name, email, phone, message)
-
-### 6.6 Careers Page
-
-**Content:**
-- "Join Our Team" heading
-- Part-time positions available
-- Job description (weekday work)
-- Application form: Name, Email, Phone, CV upload, Message
-- Note: Applications go to Joby
-
-### 6.7 Contact Page
-
-**Information:**
-- Address: Camberley location
-- Phone: (TBD)
-- Email: (TBD)
-- Opening hours: 9-5, Mon-Sat (TBD)
-
-**Form:**
-- Name, Email, Subject, Message
-- Submit button
-
-### 6.8 Account Pages
-
-**Dashboard:**
-- Welcome message
-- Quick links: Recent Orders, Profile, Addresses
-- Account summary
-
-**Orders:**
-- List of past orders with status
-- Order detail view
-- Reorder button
-
-**Profile:**
-- Edit personal information
-- Change password
-
----
-
-## 7. Technical Architecture
-
-### 7.1 Tech Stack
+### 5.1 Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -441,190 +231,68 @@ Website Order → Prisma DB → Teya API → Factory A / Factory B
 | **Animation** | Framer Motion |
 | **Icons** | Lucide React |
 | **Client State** | Zustand (cart, UI state) |
-| **Server State** | React Query / SWR |
-| **Database** | Prisma + PostgreSQL |
-| **Auth** | NextAuth.js with Prisma adapter |
+| **Database** | Supabase PostgreSQL |
+| **Auth** | Supabase Auth |
 | **Payments** | Teya POS (payment on collection) |
+| **Email** | Resend (planned) |
 
-### 7.2 Data Models
+### 5.2 Database Schema (Supabase)
 
-**User:**
-```typescript
-{
-  id: string
-  email: string
-  password: string (hashed)
-  name: string
-  phone?: string
-  role: 'customer' | 'wholesale' | 'admin'
-  createdAt: Date
-}
+**Tables:**
+- User (authentication and user data)
+- Category (product categories)
+- Product (bakery products)
+- Factory (production facilities)
+- PickupSlot (collection time slots)
+- Cart / CartItem (shopping cart)
+- Order / OrderItem / OrderStatusHistory (orders)
+- Review (customer reviews)
+- FranchiseEnquiry / WholesaleEnquiry / CareerApplication / ContactEnquiry (enquiries)
+- SiteSetting (configuration)
+- Subscriber (newsletter)
+
+### 5.3 Environment Variables
+
+```bash
+# Supabase (via Vercel Integration)
+NEXT_PUBLIC_SUPABASE_URL="${NEXT_PUBLIC_SUPABASE_URL}"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
+SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SECRET_KEY}"
+
+# Admin
+ADMIN_API_KEY="your-admin-api-key"
+
+# Resend (future)
+RESEND_API_KEY="re_xxxxxxxxxxxx"
 ```
-
-**Product:**
-```typescript
-{
-  id: string
-  name: string
-  description: string
-  category: 'bakery' | 'catering' | 'wholesale' | 'pos' | 'sundries'
-  retailPrice: number
-  wholesalePrice: number | null
-  wholesaleDiscountOverride: boolean
-  image: string
-  available: boolean
-  productionTime: number // hours
-  factoryA: boolean // made at Factory A
-  factoryB: boolean // made at Factory B
-}
-```
-
-**Factory:**
-```typescript
-{
-  id: string
-  name: string // 'Factory A' or 'Factory B'
-  location: string
-  address: string
-  contactEmail: string
-}
-```
-
-**Order:**
-```typescript
-{
-  id: string
-  userId: string
-  items: OrderItem[]
-  subtotal: number
-  deliveryFee: number
-  total: number
-  deliveryMethod: 'collection' | 'delivery'
-  deliveryAddress?: Address
-  pickupTime: Date // selected by customer
-  status: 'pending' | 'confirmed' | 'ready' | 'completed'
-  factorySplit: {
-    factoryA: OrderItem[]
-    factoryB: OrderItem[]
-  }
-  teyaOrderId?: string
-  createdAt: Date
-}
-```
-
-**PickupSlot:**
-```typescript
-{
-  id: string
-  date: Date
-  time: string // e.g., '09:00', '10:00'
-  capacity: number
-  booked: number
-  available: boolean
-}
-```
-
-### 7.3 API Endpoints
-
-**Authentication:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Create new user |
-| POST | `/api/auth/login` | Login user |
-| POST | `/api/auth/logout` | Logout user |
-| POST | `/api/auth/reset-password` | Send password reset email |
-
-**Products:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/products` | List products (with filters: category, wholesale/retail) |
-| GET | `/api/products/[id]` | Get product detail |
-| GET | `/api/products/wait-time` | Calculate minimum wait time for product list |
-
-**Cart:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/cart` | Get user cart |
-| POST | `/api/cart` | Add item to cart |
-| PATCH | `/api/cart/[itemId]` | Update cart item quantity |
-| DELETE | `/api/cart/[itemId]` | Remove cart item |
-
-**Orders:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/orders` | Create order (with factory split logic) |
-| GET | `/api/orders` | List user orders |
-| GET | `/api/orders/[id]` | Get order detail |
-| PATCH | `/api/orders/[id]/status` | Update order status (admin) |
-
-**Pickup Slots:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/pickup-slots` | Get available slots (from minimum wait time) |
-| POST | `/api/pickup-slots` | Create slots (admin) |
-
-**Delivery (Interest Form):**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/delivery/check` | Check if postcode is serviceable |
-| POST | `/api/delivery/interest` | Submit delivery interest (stores preference) |
-
-**Franchise:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/franchise/contact` | Submit franchise enquiry to Joby |
-
-**Teya Integration:**
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/teya/sync` | Sync order to Teya |
-| GET | `/api/teya/orders` | Get Teya order status |
-| POST | `/api/teya/webhook` | Teya webhook for status updates |
 
 ---
 
-## 8. Assets Required
+## 6. Development
 
-| Asset | Status | Notes |
-|-------|--------|-------|
-| **Logo** | ⏳ Pending | SVG + PNG versions |
-| **Product Images** | ⏳ Pending | High-quality photos |
-| **Hero Image** | ⏳ Pending | Bakery scene for homepage |
-| **About Images** | ⏳ Pending | Historical/current photos |
-| **Favicon** | ⏳ Pending | Match logo |
+### 6.1 Local Development
 
----
+```bash
+npm install
+npm run dev
+```
 
-## 9. Open Questions (for Wednesday Meeting)
+### 6.2 Supabase Setup
 
-1. **Delivery threshold:** What minimum order amount for free delivery?
-2. **Delivery area:** What radius do you deliver to?
-3. **Delivery fee:** Is there a fee for orders below threshold?
-4. **Wholesale approval:** How do wholesale accounts work?
-5. **Payment confirmation:** Do you want any payment processing?
-6. **Product pricing:** Can we get wholesale vs retail prices?
-7. **Business hours:** What are your opening hours?
-8. **Contact details:** Phone and email for the site?
-9. **Logo delivery:** When can you send the logo?
-10. **Product images:** When can you send product photos?
+1. Create project at https://app.supabase.com
+2. Connect GitHub integration in project settings
+3. Migrations auto-run on preview branches
+
+### 6.3 Resend Integration (Planned)
+
+1. Create Resend account at https://resend.com
+2. Add `RESEND_API_KEY` to environment variables
+3. Create email templates for each contact category
+4. Implement auto-response logic in `/api/contact` route
 
 ---
 
-## 10. Development Phases
-
-| Phase | Tasks | Status |
-|-------|-------|--------|
-| **Phase 1** | Design system, branding, layout components | Todo |
-| **Phase 2** | Product catalog, browsing, filtering | Todo |
-| **Phase 3** | Shopping cart, add/remove/update | Todo |
-| **Phase 4** | User authentication (register/login) | Todo |
-| **Phase 5** | Checkout flow (collection/delivery) | Todo |
-| **Phase 6** | Order management, history | Todo |
-| **Phase 7** | Business pages (About, Franchise, Careers) | Todo |
-| **Phase 8** | Testing, polish, launch | Todo |
-
----
-
-*Specification Version: 1.0*  
+*Specification Version: 2.0*  
 *Created: June 10, 2026*  
+*Last Updated: July 15, 2026*  
 *Client: Joby (Slindon Patisserie)*

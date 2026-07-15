@@ -1,9 +1,5 @@
-'use server'
-
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import prisma from '@/lib/prisma'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET /api/reviews - Get approved reviews
 export async function GET(request: NextRequest) {
@@ -12,25 +8,34 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10')
     const offset = parseInt(searchParams.get('offset') || '0')
 
-    const reviews = await prisma.review.findMany({
-      where: { status: 'APPROVED' },
-      include: {
-        user: {
-          select: {
-            name: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip: offset,
-    })
+    const { data: reviews, error, count } = await supabaseAdmin
+      .from('Review')
+      .select(`
+        *,
+        User:userId (name)
+      `, { count: 'exact' })
+      .eq('status', 'APPROVED')
+      .orderBy('createdAt', { ascending: false })
+      .range(offset, offset + limit - 1)
 
-    const total = await prisma.review.count({
-      where: { status: 'APPROVED' },
-    })
+    if (error) throw error
 
-    return NextResponse.json({ reviews, total })
+    // Transform to flatten user
+    const transformedReviews = reviews?.map(r => ({
+      id: r.id,
+      userId: r.userId,
+      user: { name: (r.User as any)?.name },
+      rating: r.rating,
+      title: r.title,
+      comment: r.comment,
+      status: r.status,
+      reply: r.reply,
+      repliedAt: r.repliedAt,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }))
+
+    return NextResponse.json({ reviews: transformedReviews, total: count || 0 })
   } catch (error) {
     console.error('Error fetching reviews:', error)
     return NextResponse.json(
@@ -40,20 +45,20 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/reviews - Submit a new review
+// POST /api/reviews - Submit a new review (placeholder - needs auth integration)
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session?.user?.id) {
+    // TODO: Integrate with Supabase Auth for user session
+    // For now, require userId in request body
+    const body = await request.json()
+    const { userId, rating, title, comment } = body
+
+    if (!userId) {
       return NextResponse.json(
         { error: 'You must be logged in to submit a review' },
         { status: 401 }
       )
     }
-
-    const body = await request.json()
-    const { rating, title, comment } = body
 
     if (!rating || rating < 1 || rating > 5) {
       return NextResponse.json(
@@ -69,34 +74,38 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user has completed an order (they can only review after ordering)
-    const hasCompletedOrder = await prisma.order.findFirst({
-      where: {
-        userId: session.user.id,
-        status: { in: ['READY', 'COMPLETED'] },
-      },
-    })
+    // Check if user has completed an order
+    const { data: orders } = await supabaseAdmin
+      .from('Order')
+      .select('id')
+      .eq('userId', userId)
+      .in('status', ['READY', 'COMPLETED'])
+      .limit(1)
 
-    if (!hasCompletedOrder) {
+    if (!orders || orders.length === 0) {
       return NextResponse.json(
         { error: 'You can only review after completing a pickup' },
         { status: 403 }
       )
     }
 
-    const review = await prisma.review.create({
-      data: {
-        userId: session.user.id,
+    const { data: review, error } = await supabaseAdmin
+      .from('Review')
+      .insert({
+        userId,
         rating,
         title: title?.trim() || null,
         comment: comment.trim(),
         status: 'PENDING', // Reviews need approval
-      },
-    })
+      })
+      .select()
+      .single()
 
-    return NextResponse.json({ 
+    if (error) throw error
+
+    return NextResponse.json({
       message: 'Review submitted successfully! It will be visible after approval.',
-      review 
+      review,
     })
   } catch (error) {
     console.error('Error creating review:', error)

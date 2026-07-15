@@ -59,7 +59,6 @@ CREATE TABLE "Product" (
   "madeAtFactoryA" BOOLEAN NOT NULL DEFAULT true,
   "madeAtFactoryB" BOOLEAN NOT NULL DEFAULT false,
   featured BOOLEAN NOT NULL DEFAULT false,
-  "stockQuantity" INTEGER NOT NULL DEFAULT 100,
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now()
 );

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET /api/products - List all products with optional filters
 export async function GET(request: Request) {
@@ -9,45 +9,64 @@ export async function GET(request: Request) {
     const available = searchParams.get('available')
     const includeWholesale = searchParams.get('includeWholesale') === 'true'
 
-    const where: Record<string, unknown> = {}
-    
+    let query = supabaseAdmin
+      .from('Product')
+      .select(`
+        id,
+        name,
+        description,
+        categoryId,
+        retailPrice,
+        wholesalePrice,
+        image,
+        available,
+        leadTimeDays,
+        availability,
+        madeAtFactoryA,
+        madeAtFactoryB,
+        Category:categoryId (id, name, slug)
+      `)
+      .orderBy('name', { ascending: true })
+
     if (category && category !== 'all') {
-      where.category = category
+      query = query.eq('categoryId', category)
     }
-    
+
     if (available === 'true') {
-      where.available = true
+      query = query.eq('available', true)
     }
 
-    const products = await prisma.product.findMany({
-      where,
-      orderBy: { name: 'asc' },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        category: true,
-        retailPrice: true,
-        wholesalePrice: includeWholesale,
-        image: true,
-        available: true,
-        leadTimeDays: true,
-        availability: true,
-        madeAtFactoryA: true,
-        madeAtFactoryB: true,
-      },
-    })
+    const { data: products, error } = await query
 
-    // Get unique categories for filters
-    const categories = await prisma.product.findMany({
-      select: { categoryId: true, category: true },
-      distinct: ['categoryId'],
-      orderBy: { category: { name: 'asc' } },
-    })
+    if (error) throw error
+
+    // Transform products to flatten category
+    const transformedProducts = products?.map(p => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      categoryId: p.categoryId,
+      category: p.Category,
+      retailPrice: p.retailPrice,
+      wholesalePrice: includeWholesale ? p.wholesalePrice : null,
+      image: p.image,
+      available: p.available,
+      leadTimeDays: p.leadTimeDays,
+      availability: p.availability,
+      madeAtFactoryA: p.madeAtFactoryA,
+      madeAtFactoryB: p.madeAtFactoryB,
+    }))
+
+    // Get unique categories
+    const { data: categories } = await supabaseAdmin
+      .from('Category')
+      .select('id, name, slug')
+      .eq('isActive', true)
+      .orderBy('sortOrder', { ascending: true })
 
     return NextResponse.json({
-      products,
-      categories: categories.map(c => c.category),
+      products: transformedProducts,
+      categories: categories || [],
     })
   } catch (error) {
     console.error('Error fetching products:', error)
@@ -62,13 +81,16 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    
-    const product = await prisma.product.create({
-      data: {
+
+    const slug = body.slug || body.name.toLowerCase().replace(/\s+/g, '-')
+
+    const { data: product, error } = await supabaseAdmin
+      .from('Product')
+      .insert({
         name: body.name,
-        slug: body.slug || body.name.toLowerCase().replace(/\s+/g, '-'),
+        slug,
         description: body.description,
-        category: { connect: { id: body.categoryId } },
+        categoryId: body.categoryId,
         retailPrice: body.retailPrice,
         wholesalePrice: body.wholesalePrice,
         image: body.image,
@@ -77,8 +99,11 @@ export async function POST(request: Request) {
         availability: body.availability || 'RETAIL',
         madeAtFactoryA: body.madeAtFactoryA ?? true,
         madeAtFactoryB: body.madeAtFactoryB ?? false,
-      },
-    })
+      })
+      .select()
+      .single()
+
+    if (error) throw error
 
     return NextResponse.json(product, { status: 201 })
   } catch (error) {

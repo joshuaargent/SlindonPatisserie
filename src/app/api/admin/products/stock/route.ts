@@ -1,151 +1,195 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabase'
 
-// GET /api/admin/products/stock - Get all products with stock info
+// GET /api/admin/products - Get all products for admin
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // TODO: Add proper admin auth check with Supabase Auth
+    const apiKey = request.headers.get('x-api-key')
+    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url);
-    const categoryId = searchParams.get('category');
-    const lowStock = searchParams.get('lowStock') === 'true';
-    const search = searchParams.get('search');
+    const { searchParams } = new URL(request.url)
+    const categoryId = searchParams.get('category')
+    const search = searchParams.get('search')
 
-    const where: Record<string, unknown> = {};
-    
+    let query = supabaseAdmin
+      .from('Product')
+      .select(`
+        *,
+        Category:categoryId (id, name)
+      `)
+      .orderBy('name', { ascending: true })
+
     if (categoryId) {
-      where.categoryId = categoryId;
+      query = query.eq('categoryId', categoryId)
     }
-    
-    if (lowStock) {
-      where.stockQuantity = { lte: 10 };
-    }
-    
+
     if (search) {
-      where.name = { contains: search, mode: 'insensitive' };
+      query = query.ilike('name', `%${search}%`)
     }
 
-    const products = await prisma.product.findMany({
-      where,
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-      orderBy: [
-        { stockQuantity: 'asc' },
-        { name: 'asc' },
-      ],
-    });
+    const { data: products, error } = await query
 
-    // Calculate stock status
-    const productsWithStatus = products.map(product => {
-      let status: 'in_stock' | 'low_stock' | 'out_of_stock';
-      if (product.stockQuantity <= 0) {
-        status = 'out_of_stock';
-      } else if (product.stockQuantity <= 10) {
-        status = 'low_stock';
-      } else {
-        status = 'in_stock';
-      }
-      
-      return {
-        id: product.id,
-        name: product.name,
-        slug: product.slug,
-        category: product.category.name,
-        categoryId: product.categoryId,
-        retailPrice: product.retailPrice,
-        stockQuantity: product.stockQuantity,
-        status,
-        available: product.available,
-        image: product.image,
-      };
-    });
+    if (error) throw error
 
-    // Get summary stats
-    const stats = {
-      total: products.length,
-      inStock: productsWithStatus.filter(p => p.status === 'in_stock').length,
-      lowStock: productsWithStatus.filter(p => p.status === 'low_stock').length,
-      outOfStock: productsWithStatus.filter(p => p.status === 'out_of_stock').length,
-      unavailable: products.filter(p => !p.available).length,
-    };
+    // Transform products with category info
+    const transformedProducts = products?.map(product => ({
+      ...product,
+      category: (product.Category as any)?.name || 'Unknown',
+    })) || []
 
-    return NextResponse.json({ products: productsWithStatus, stats });
+    return NextResponse.json({ products: transformedProducts })
   } catch (error) {
-    console.error('Error fetching stock:', error);
+    console.error('Error fetching products:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch stock data' },
+      { error: 'Failed to fetch products' },
       { status: 500 }
-    );
+    )
   }
 }
 
-// PATCH /api/admin/products/stock - Update stock quantity
-export async function PATCH(request: NextRequest) {
+// POST /api/admin/products - Create a new product
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const apiKey = request.headers.get('x-api-key')
+    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json();
-    const { productId, stockQuantity, available } = body;
+    const body = await request.json()
+    const {
+      name,
+      slug,
+      description,
+      categoryId,
+      retailPrice,
+      wholesalePrice,
+      image,
+      available = true,
+      leadTimeDays = 1,
+      availability = 'RETAIL',
+      madeAtFactoryA = true,
+      madeAtFactoryB = false,
+      featured = false,
+    } = body
 
-    if (!productId) {
+    // Validation
+    if (!name || !description || !categoryId || !retailPrice) {
+      return NextResponse.json(
+        { error: 'Name, description, category, and price are required' },
+        { status: 400 }
+      )
+    }
+
+    // Generate slug if not provided
+    const productSlug = slug || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+
+    const { data: product, error } = await supabaseAdmin
+      .from('Product')
+      .insert({
+        name,
+        slug: productSlug,
+        description,
+        categoryId,
+        retailPrice: parseFloat(retailPrice),
+        wholesalePrice: wholesalePrice ? parseFloat(wholesalePrice) : null,
+        image: image || null,
+        available,
+        leadTimeDays,
+        availability,
+        madeAtFactoryA,
+        madeAtFactoryB,
+        featured,
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    return NextResponse.json({ success: true, product }, { status: 201 })
+  } catch (error) {
+    console.error('Error creating product:', error)
+    return NextResponse.json(
+      { error: 'Failed to create product' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH /api/admin/products - Update a product
+export async function PATCH(request: NextRequest) {
+  try {
+    const apiKey = request.headers.get('x-api-key')
+    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { id, ...updates } = body
+
+    if (!id) {
       return NextResponse.json(
         { error: 'Product ID is required' },
         { status: 400 }
-      );
+      )
     }
 
-    const updateData: Record<string, unknown> = {};
-    
-    if (typeof stockQuantity === 'number') {
-      if (stockQuantity < 0) {
-        return NextResponse.json(
-          { error: 'Stock quantity cannot be negative' },
-          { status: 400 }
-        );
-      }
-      updateData.stockQuantity = stockQuantity;
-    }
-    
-    if (typeof available === 'boolean') {
-      updateData.available = available;
-    }
+    // Parse numeric fields
+    if (updates.retailPrice) updates.retailPrice = parseFloat(updates.retailPrice)
+    if (updates.wholesalePrice) updates.wholesalePrice = parseFloat(updates.wholesalePrice)
 
-    const updatedProduct = await prisma.product.update({
-      where: { id: productId },
-      data: updateData,
-      select: {
-        id: true,
-        name: true,
-        stockQuantity: true,
-        available: true,
-      },
-    });
+    const { data: product, error } = await supabaseAdmin
+      .from('Product')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
 
-    return NextResponse.json({ 
-      success: true,
-      product: updatedProduct
-    });
+    if (error) throw error
+
+    return NextResponse.json({ success: true, product })
   } catch (error) {
-    console.error('Error updating stock:', error);
+    console.error('Error updating product:', error)
     return NextResponse.json(
-      { error: 'Failed to update stock' },
+      { error: 'Failed to update product' },
       { status: 500 }
-    );
+    )
+  }
+}
+
+// DELETE /api/admin/products - Delete a product
+export async function DELETE(request: NextRequest) {
+  try {
+    const apiKey = request.headers.get('x-api-key')
+    if (apiKey !== process.env.ADMIN_API_KEY && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Product ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const { error } = await supabaseAdmin
+      .from('Product')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting product:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete product' },
+      { status: 500 }
+    )
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET /api/products/[id] - Get single product
 export async function GET(
@@ -8,12 +8,17 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    
-    const product = await prisma.product.findUnique({
-      where: { id },
-    })
 
-    if (!product) {
+    const { data: product, error } = await supabaseAdmin
+      .from('Product')
+      .select(`
+        *,
+        Category:categoryId (id, name, slug, description)
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error || !product) {
       return NextResponse.json(
         { error: 'Product not found' },
         { status: 404 }
@@ -39,22 +44,26 @@ export async function PATCH(
     const { id } = await params
     const body = await request.json()
 
-    const product = await prisma.product.update({
-      where: { id },
-      data: {
+    const { data: product, error } = await supabaseAdmin
+      .from('Product')
+      .update({
         name: body.name,
         description: body.description,
-        category: body.category,
+        categoryId: body.categoryId,
         retailPrice: body.retailPrice,
         wholesalePrice: body.wholesalePrice,
-        wholesaleDiscountOverride: body.wholesaleDiscountOverride,
         image: body.image,
         available: body.available,
-        productionTimeHours: body.productionTimeHours,
+        leadTimeDays: body.leadTimeDays,
+        availability: body.availability,
         madeAtFactoryA: body.madeAtFactoryA,
         madeAtFactoryB: body.madeAtFactoryB,
-      },
-    })
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
 
     return NextResponse.json(product)
   } catch (error) {
@@ -74,9 +83,12 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    await prisma.product.delete({
-      where: { id },
-    })
+    const { error } = await supabaseAdmin
+      .from('Product')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
 
     return NextResponse.json({ success: true })
   } catch (error) {
