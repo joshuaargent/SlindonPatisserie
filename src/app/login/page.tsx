@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Mail, Lock, AlertCircle } from 'lucide-react'
@@ -13,6 +13,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [loginMessage, setLoginMessage] = useState('')
+
+  useEffect(() => {
+    const msg = sessionStorage.getItem('adminLoginMessage')
+    if (msg) {
+      setLoginMessage(msg)
+      sessionStorage.removeItem('adminLoginMessage')
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,8 +34,26 @@ export default function LoginPage() {
       setError('Invalid email or password')
       setLoading(false)
     } else {
-      router.push('/account')
-      router.refresh()
+      // Check if admin, send to admin dashboard
+      try {
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: profile } = await supabase
+            .from('User')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle()
+          router.push(profile?.role === 'admin' ? '/admin' : '/account')
+        } else {
+          router.push('/account')
+        }
+        router.refresh()
+      } catch {
+        router.push('/account')
+        router.refresh()
+      }
     }
   }
 
@@ -62,6 +89,13 @@ export default function LoginPage() {
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <p className="text-red-700 text-sm">{error}</p>
+              </div>
+            )}
+
+            {loginMessage && (
+              <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                <p className="text-amber-700 text-sm">{loginMessage}</p>
               </div>
             )}
 

@@ -15,7 +15,8 @@ import {
   Menu,
   X,
   ChevronDown,
-  Boxes
+  Boxes,
+  Building2,
 } from 'lucide-react'
 import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
@@ -26,6 +27,7 @@ const adminNav = [
   { name: 'Categories', href: '/admin/categories', icon: Tag },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Reviews', href: '/admin/reviews', icon: Star },
+  { name: 'Wholesale', href: '/admin/wholesale', icon: Building2 },
   { name: 'Users', href: '/admin/users', icon: Users },
 ]
 
@@ -82,10 +84,12 @@ export default function AdminLayout({
   // Redirect non-admins once role is confirmed
   useEffect(() => {
     if (!loading && !roleLoading && !user) {
+      sessionStorage.setItem('adminLoginMessage', 'You need to be logged in to access the admin dashboard.')
       router.push('/login')
     }
     if (!loading && !roleLoading && user && !isAdmin) {
-      router.push('/')
+      sessionStorage.setItem('adminLoginMessage', 'You need to be an admin to access this page.')
+      router.push('/login')
     }
   }, [loading, roleLoading, user, isAdmin, router])
 
