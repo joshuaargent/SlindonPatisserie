@@ -2,14 +2,14 @@
 -- Slindon Patisserie - Initial Schema
 -- ============================================
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Enable UUID extension (Supabase uses pgcrypto for UUIDs)
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============================================
 -- User & Authentication
 -- ============================================
 CREATE TABLE "User" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   name TEXT NOT NULL,
@@ -27,7 +27,7 @@ CREATE INDEX idx_user_role ON "User"(role);
 -- Product Categories
 -- ============================================
 CREATE TABLE "Category" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT UNIQUE NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
@@ -45,7 +45,7 @@ CREATE INDEX idx_category_active ON "Category"("isActive");
 -- Products
 -- ============================================
 CREATE TABLE "Product" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   description TEXT NOT NULL,
@@ -73,7 +73,7 @@ CREATE INDEX idx_product_featured ON "Product"(featured);
 -- Factories (for order routing)
 -- ============================================
 CREATE TABLE "Factory" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   location TEXT NOT NULL,
   address TEXT NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE "Factory" (
 -- Pickup Slots
 -- ============================================
 CREATE TABLE "PickupSlot" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   date TIMESTAMPTZ NOT NULL,
   time TEXT NOT NULL,
   capacity INTEGER NOT NULL DEFAULT 10,
@@ -103,7 +103,7 @@ CREATE INDEX idx_pickupslot_available ON "PickupSlot"(available);
 -- Cart
 -- ============================================
 CREATE TABLE "Cart" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "userId" TEXT UNIQUE NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -115,7 +115,7 @@ CREATE INDEX idx_cart_user ON "Cart"("userId");
 -- Cart Items
 -- ============================================
 CREATE TABLE "CartItem" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "cartId" TEXT NOT NULL REFERENCES "Cart"(id) ON DELETE CASCADE,
   "productId" TEXT NOT NULL REFERENCES "Product"(id) ON DELETE CASCADE,
   quantity INTEGER NOT NULL DEFAULT 1,
@@ -129,7 +129,7 @@ CREATE INDEX idx_cartitem_product ON "CartItem"("productId");
 -- Orders
 -- ============================================
 CREATE TABLE "Order" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "orderNumber" TEXT UNIQUE NOT NULL,
   "userId" TEXT NOT NULL REFERENCES "User"(id),
   subtotal REAL NOT NULL,
@@ -157,7 +157,7 @@ CREATE INDEX idx_order_created ON "Order"("createdAt");
 -- Order Items
 -- ============================================
 CREATE TABLE "OrderItem" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "orderId" TEXT NOT NULL REFERENCES "Order"(id) ON DELETE CASCADE,
   "productId" TEXT NOT NULL REFERENCES "Product"(id),
   quantity INTEGER NOT NULL,
@@ -174,7 +174,7 @@ CREATE INDEX idx_orderitem_factory ON "OrderItem"("factoryId");
 -- Order Status History
 -- ============================================
 CREATE TABLE "OrderStatusHistory" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "orderId" TEXT NOT NULL REFERENCES "Order"(id) ON DELETE CASCADE,
   status TEXT NOT NULL,
   note TEXT,
@@ -187,7 +187,7 @@ CREATE INDEX idx_orderstatushistory_order ON "OrderStatusHistory"("orderId");
 -- Customer Reviews
 -- ============================================
 CREATE TABLE "Review" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "userId" TEXT NOT NULL REFERENCES "User"(id),
   rating INTEGER NOT NULL,
   title TEXT,
@@ -207,7 +207,7 @@ CREATE INDEX idx_review_created ON "Review"("createdAt");
 -- Franchise Enquiry
 -- ============================================
 CREATE TABLE "FranchiseEnquiry" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
@@ -224,7 +224,7 @@ CREATE INDEX idx_franchise_status ON "FranchiseEnquiry"(status);
 -- Wholesale Enquiry
 -- ============================================
 CREATE TABLE "WholesaleEnquiry" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "businessName" TEXT NOT NULL,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
@@ -242,7 +242,7 @@ CREATE INDEX idx_wholesale_status ON "WholesaleEnquiry"(status);
 -- Career Application
 -- ============================================
 CREATE TABLE "CareerApplication" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
@@ -261,7 +261,7 @@ CREATE INDEX idx_career_status ON "CareerApplication"(status);
 -- Contact Enquiry
 -- ============================================
 CREATE TABLE "ContactEnquiry" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
@@ -279,7 +279,7 @@ CREATE INDEX idx_contact_status ON "ContactEnquiry"(status);
 -- Site Settings
 -- ============================================
 CREATE TABLE "SiteSetting" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   key TEXT UNIQUE NOT NULL,
   value TEXT NOT NULL,
   type TEXT NOT NULL DEFAULT 'string',
@@ -293,7 +293,7 @@ CREATE INDEX idx_sitesetting_key ON "SiteSetting"(key);
 -- Newsletter Subscribers
 -- ============================================
 CREATE TABLE "Subscriber" (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   email TEXT UNIQUE NOT NULL,
   "isActive" BOOLEAN NOT NULL DEFAULT true,
   "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now()
