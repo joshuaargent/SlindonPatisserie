@@ -132,24 +132,6 @@ export async function createTeyaCheckoutSession(params: {
 }
 
 /**
- * Check if Teya is configured
- */
-export function isTeyaConfigured(): boolean {
-  return !!(
-    teyaConfig.clientId &&
-    teyaConfig.clientSecret &&
-    teyaConfig.storeId
-  );
-}
-
-/**
- * Format amount for Teya (minor units)
- */
-export function toMinorUnits(amount: number): number {
-  return Math.round(amount * 100);
-}
-
-/**
  * Create a Teya payment session (legacy - for hosted checkout)
  * This is called when user reaches checkout confirmation
  */
