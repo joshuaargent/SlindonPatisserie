@@ -30,7 +30,7 @@ export async function requireAdmin(_request?: NextRequest) {
     .eq('authId', user.id)
     .maybeSingle()
 
-  if (profile?.role !== 'admin') {
+  if (profile?.role?.toUpperCase() !== 'ADMIN') {
     return NextResponse.json(
       { error: 'Forbidden — admin access required' },
       { status: 403 }

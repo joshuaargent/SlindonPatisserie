@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle()
 
     return NextResponse.json({
-      isAdmin: userRecord?.role === 'admin',
+      isAdmin: userRecord?.role?.toUpperCase() === 'ADMIN',
     })
   } catch (error) {
     console.error('Error checking admin role:', error)
