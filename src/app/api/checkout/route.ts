@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase'
 
 function generateOrderNumber(sequence: number): string {
   return 'ORD-' + String(sequence).padStart(6, '0')
@@ -20,14 +21,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Pickup date and time are required' }, { status: 400 })
     }
 
-    const supabase = createClient()
-    const adminClient = createAdminClient()
+    const supabase = await createClient()
 
     // Get auth user (optional - guest checkout allowed)
     let userId: string | null = null
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      const { data: userRecord } = await adminClient
+      const { data: userRecord } = await supabaseAdmin
         .from('User')
         .select('id')
         .eq('authId', user.id)
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     const total = subtotal + deliveryFee
 
     // Get next sequence number
-    const { data: seqData } = await adminClient
+    const { data: seqData } = await supabaseAdmin
       .from('Order')
       .select('orderNumber')
       .order('createdAt', { ascending: false })
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     const orderNumber = generateOrderNumber(nextSeq)
 
     // Create the order
-    const { data: order, error: orderError } = await adminClient
+    const { data: order, error: orderError } = await supabaseAdmin
       .from('Order')
       .insert({
         orderNumber,
@@ -89,14 +89,14 @@ export async function POST(request: NextRequest) {
       unitPrice: item.price,
     }))
 
-    const { error: itemsError } = await adminClient
+    const { error: itemsError } = await supabaseAdmin
       .from('OrderItem')
       .insert(orderItems)
 
     if (itemsError) {
       console.error('Order items error:', itemsError)
       // Rollback order
-      await adminClient.from('Order').delete().eq('id', order.id)
+      await supabaseAdmin.from('Order').delete().eq('id', order.id)
       return NextResponse.json({ error: 'Failed to create order items' }, { status: 500 })
     }
 

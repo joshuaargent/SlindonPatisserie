@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth/server'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   const authError = await requireAdmin(request)
@@ -8,10 +9,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const status = searchParams.get('status') ?? 'all'
 
-  const { createAdminClient } = await import('@/lib/supabase/server')
-  const supabase = createAdminClient()
-
-  let query = supabase
+  let query = supabaseAdmin
     .from('WholesaleEnquiry')
     .select('*')
     .order('"createdAt"', { ascending: false })
@@ -41,10 +39,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'id and status are required' }, { status: 400 })
   }
 
-  const { createAdminClient } = await import('@/lib/supabase/server')
-  const supabase = createAdminClient()
-
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('WholesaleEnquiry')
     .update({ status: status.toUpperCase(), note: note ?? null, "updatedAt": new Date().toISOString() })
     .eq('id', id)
