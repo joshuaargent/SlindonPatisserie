@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase'
 
 /**
  * Returns the authenticated user from the session cookie, or null.
@@ -22,28 +23,12 @@ export async function requireAdmin(_request?: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Check admin role in database (try by id first, then email)
-  const adminClient = createAdminClient()
-  let profile = null
-
-  // Try matching by Supabase Auth user ID
-  const { data: byId } = await adminClient
+  // Check admin role in database using authId
+  const { data: profile } = await supabaseAdmin
     .from('User')
     .select('role')
-    .eq('id', user.id)
+    .eq('authId', user.id)
     .maybeSingle()
-
-  if (byId) {
-    profile = byId
-  } else {
-    // Fall back to email match (for migrated users)
-    const { data: byEmail } = await adminClient
-      .from('User')
-      .select('role')
-      .eq('email', user.email)
-      .maybeSingle()
-    profile = byEmail
-  }
 
   if (profile?.role !== 'admin') {
     return NextResponse.json(
