@@ -41,13 +41,13 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
-    // Transform products to flatten category
+    // Transform products to flatten category (use slug as category identifier)
     const transformedProducts = products?.map(p => ({
       id: p.id,
       name: p.name,
       description: p.description,
       categoryId: p.categoryId,
-      category: p.Category,
+      category: (p.Category as any)?.slug || (p.Category as any)?.name?.toLowerCase().replace(/\s+/g, '-') || 'other',
       retailPrice: p.retailPrice,
       wholesalePrice: includeWholesale ? p.wholesalePrice : null,
       image: p.image,
@@ -58,16 +58,16 @@ export async function GET(request: NextRequest) {
       madeAtFactoryB: p.madeAtFactoryB,
     }))
 
-    // Get unique categories
+    // Get categories as slugs array for the filter tabs
     const { data: categories } = await supabaseAdmin
       .from('Category')
-      .select('id, name, slug')
+      .select('slug')
       .eq('isActive', true)
       .order('sortOrder', { ascending: true })
 
     return NextResponse.json({
       products: transformedProducts,
-      categories: categories || [],
+      categories: categories?.map(c => c.slug) || [],
     })
   } catch (error) {
     console.error('Error fetching products:', error)

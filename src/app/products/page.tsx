@@ -16,9 +16,10 @@ interface Product {
   wholesalePrice: number | null
   image: string | null
   available: boolean
-  productionTimeHours: number
+  leadTimeDays: number
   madeAtFactoryA: boolean
   madeAtFactoryB: boolean
+  availability: string
 }
 
 // Category display configuration
@@ -116,7 +117,7 @@ export default function ProductsPage() {
       name: product.name,
       price,
       quantity: 1,
-      productionTime: product.productionTimeHours,
+      productionTime: product.leadTimeDays * 24, // Convert days to hours
       category: product.category,
     })
     
@@ -306,7 +307,7 @@ export default function ProductsPage() {
               const displayPrice = showRetailPrices 
                 ? product.retailPrice 
                 : (product.wholesalePrice ?? product.retailPrice)
-              const hasWholesale = product.wholesalePrice !== null
+              const hasWholesale = product.wholesalePrice !== null && product.wholesalePrice < product.retailPrice
               const savings = hasWholesale && product.wholesalePrice
                 ? ((product.retailPrice - product.wholesalePrice) / product.retailPrice * 100).toFixed(0)
                 : 0
@@ -351,9 +352,9 @@ export default function ProductsPage() {
                     <h3 className="font-semibold text-[#3A2C2A] text-lg">{product.name}</h3>
                     <p className="text-sm text-[#6B5344] mt-1 line-clamp-2">{product.description}</p>
                     
-                    {product.productionTimeHours > 0 && (
+                    {product.leadTimeDays > 0 && (
                       <p className="text-xs text-[#6B5344] mt-2">
-                        Ready in ~{product.productionTimeHours}h
+                        Lead time: {product.leadTimeDays} day{product.leadTimeDays > 1 ? 's' : ''}
                       </p>
                     )}
 
@@ -363,7 +364,7 @@ export default function ProductsPage() {
                         <span className="text-2xl font-bold text-[#8B1E22]">
                           £{displayPrice.toFixed(2)}
                         </span>
-                        {hasWholesale && showRetailPrices && (
+                        {hasWholesale && !showRetailPrices && (
                           <span className="text-sm text-[#6B5344] ml-2 line-through">
                             £{product.retailPrice.toFixed(2)}
                           </span>
