@@ -3,19 +3,23 @@
 // ============================================
 // 
 // Required environment variables:
-// - NEXT_PUBLIC_TEYA_API_URL: Teya API endpoint
-// - NEXT_PUBLIC_TEYA_CLIENT_API_URL: Client API URL for SDK
-// - NEXT_PUBLIC_TEYA_ASSET_URL: Asset URL for SDK
+// - TEYA_ID_URL: OAuth token URL (https://id.teya.com/oauth/v2/oauth-token)
+// - TEYA_API_URL: API URL (https://api.teya.com)
 // - TEYA_CLIENT_ID: OAuth client ID
 // - TEYA_CLIENT_SECRET: OAuth client secret
 // - TEYA_STORE_ID: Store ID
+// - NEXT_PUBLIC_TEYA_SDK_URL: SDK script URL for embedded components
 //
-// Contact Teya to obtain credentials: https://www.teya.io
+// Based on Teya WooCommerce plugin documentation
 
 export const teyaConfig = {
-  apiUrl: process.env.NEXT_PUBLIC_TEYA_API_URL || 'https://api.teya.io',
-  clientApiUrl: process.env.NEXT_PUBLIC_TEYA_CLIENT_API_URL || 'https://clientapi.teya.io',
-  assetUrl: process.env.NEXT_PUBLIC_TEYA_ASSET_URL || 'https://assets.teya.io',
+  // OAuth endpoint
+  idUrl: process.env.TEYA_ID_URL || 'https://id.teya.com/oauth/v2',
+  // API endpoint
+  apiUrl: process.env.TEYA_API_URL || 'https://api.teya.com',
+  // SDK URL for embedded components
+  sdkUrl: process.env.NEXT_PUBLIC_TEYA_SDK_URL || 'https://api.teya.com/v2/checkout/sdk',
+  // OAuth credentials
   clientId: process.env.TEYA_CLIENT_ID || '',
   clientSecret: process.env.TEYA_CLIENT_SECRET || '',
   storeId: process.env.TEYA_STORE_ID || '',
@@ -37,7 +41,7 @@ async function getAccessToken(): Promise<string> {
     throw new Error('Teya OAuth credentials not configured');
   }
 
-  const response = await fetch(`${teyaConfig.apiUrl}/oauth/token`, {
+  const response = await fetch(`${teyaConfig.idUrl}/oauth-token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -67,7 +71,7 @@ async function getAccessToken(): Promise<string> {
 
 /**
  * Create a Teya checkout session for embedded components
- * This should be called from an API route (server-side)
+ * Uses v2/checkout/sessions endpoint
  */
 export async function createTeyaCheckoutSession(params: {
   amount: number; // in minor units (pence/cents)
@@ -84,32 +88,34 @@ export async function createTeyaCheckoutSession(params: {
   // Get OAuth access token
   const accessToken = await getAccessToken();
 
-  const response = await fetch(`${teyaConfig.apiUrl}/v1/sessions`, {
+  // Create checkout session using v2 API
+  const response = await fetch(`${teyaConfig.apiUrl}/v2/checkout/sessions`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
-      'X-Store-Id': teyaConfig.storeId,
     },
     body: JSON.stringify({
       order: {
+        reference: params.orderId,
         amount: params.amount,
         currency: params.currency,
-        reference: params.orderId,
-        description: params.description,
+      },
+      checkout: {
+        returnUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?orderId=${params.orderId}`,
+        cancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout?cancelled=true`,
       },
       customer: {
-        emailAddress: params.customerEmail,
+        email: params.customerEmail,
         firstName: params.customerName.split(' ')[0] || params.customerName,
         lastName: params.customerName.split(' ').slice(1).join(' ') || '',
       },
-      returnUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?orderId=${params.orderId}`,
-      returnCancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout?cancelled=true`,
     }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    console.error('Teya session creation failed:', error);
     throw new Error(`Teya session creation failed: ${error}`);
   }
 
@@ -117,12 +123,30 @@ export async function createTeyaCheckoutSession(params: {
   
   return {
     sessionToken: data.sessionToken || data.id,
-    clientApiUrl: teyaConfig.clientApiUrl,
-    assetUrl: teyaConfig.assetUrl,
+    sessionId: data.id,
+    sdkUrl: teyaConfig.sdkUrl,
     orderId: params.orderId,
     amount: params.amount,
     currency: params.currency,
   };
+}
+
+/**
+ * Check if Teya is configured
+ */
+export function isTeyaConfigured(): boolean {
+  return !!(
+    teyaConfig.clientId &&
+    teyaConfig.clientSecret &&
+    teyaConfig.storeId
+  );
+}
+
+/**
+ * Format amount for Teya (minor units)
+ */
+export function toMinorUnits(amount: number): number {
+  return Math.round(amount * 100);
 }
 
 /**

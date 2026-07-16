@@ -94,11 +94,11 @@ export function TeyaCheckout({
         return
       }
 
-      // Load from Teya's CDN (this URL should be provided by Teya)
-      const sdkUrl = 'https://cdn.teya.io/blocks/v1/teyablocks.min.js'
+      // SDK URL from environment or default
+      const sdkUrl = process.env.NEXT_PUBLIC_TEYA_SDK_URL || 'https://api.teya.com/v2/checkout/sdk'
       
       try {
-        // Try loading from Teya's actual CDN
+        // Load Teya's SDK script
         const script = document.createElement('script')
         script.src = sdkUrl
         script.async = true
@@ -111,7 +111,7 @@ export function TeyaCheckout({
         
         setSdkLoading(false)
       } catch (err) {
-        console.warn('Teya SDK not available from CDN, using fallback')
+        console.warn('Teya SDK not available, using fallback mode')
         // For development, we'll show a placeholder
         setSdkLoading(false)
       }
