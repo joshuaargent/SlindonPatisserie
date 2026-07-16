@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar } from 'lucide-react'
+import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar, Zap } from 'lucide-react'
 import { useCartStore, formatPrice } from '@/lib/stores/cart'
 import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
 
