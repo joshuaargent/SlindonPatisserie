@@ -135,7 +135,9 @@ function CartContent() {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-[#6B5344]">{item.category}</p>
+                  <p className="text-sm text-[#6B5344]">
+                    {typeof item.category === 'object' ? (item.category as any)?.name || 'Product' : item.category}
+                  </p>
                 </div>
               
               {/* Quantity Controls */}

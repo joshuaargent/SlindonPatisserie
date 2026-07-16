@@ -112,13 +112,18 @@ export default function ProductsPage() {
       ? product.retailPrice 
       : (product.wholesalePrice ?? product.retailPrice)
 
+    // Ensure category is always a string (not an object)
+    const categoryValue = typeof product.category === 'string' 
+      ? product.category 
+      : (product.category as any)?.slug || (product.category as any)?.name || 'other'
+
     addItem({
       productId: product.id,
       name: product.name,
       price,
       quantity: 1,
       productionTime: product.leadTimeDays * 24, // Convert days to hours
-      category: product.category,
+      category: categoryValue,
     })
     
     setAddedToCart(product.id)
@@ -311,7 +316,11 @@ export default function ProductsPage() {
               const savings = hasWholesale && product.wholesalePrice
                 ? ((product.retailPrice - product.wholesalePrice) / product.retailPrice * 100).toFixed(0)
                 : 0
-              const categoryInfo = getCategoryInfo(product.category)
+              // Ensure category is always a string
+              const categorySlug = typeof product.category === 'string' 
+                ? product.category 
+                : (product.category as any)?.slug || 'other'
+              const categoryInfo = getCategoryInfo(categorySlug)
 
               return (
                 <div
