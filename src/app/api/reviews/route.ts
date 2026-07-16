@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { getAuthUser } from '@/lib/auth/server'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // GET /api/reviews - Get approved reviews
 export async function GET(request: NextRequest) {
@@ -9,8 +10,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10')
     const offset = parseInt(searchParams.get('offset') || '0')
 
-    const supabase = createAdminClient()
-    const { data: reviews, error, count } = await supabase
+    const { data: reviews, error, count } = await supabaseAdmin
       .from('Review')
       .select(`
         *,
@@ -71,14 +71,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createAdminClient()
+    // Get user's User record by authId
+    const { data: userRecord } = await supabaseAdmin
+      .from('User')
+      .select('id')
+      .eq('authId', user.id)
+      .maybeSingle()
+
+    if (!userRecord) {
+      return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
+    }
 
     // Check if user has completed an order
-    const { data: orders } = await supabase
+    const { data: orders } = await supabaseAdmin
       .from('Order')
       .select('id')
-      .eq('userId', user.id)
-      .in('status', ['READY', 'COMPLETED'])
+      .eq('userId', userRecord.id)
+      .in('status', ['READY', 'COMPLETED', 'DELIVERED'])
       .limit(1)
 
     if (!orders || orders.length === 0) {
@@ -88,10 +97,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data: review, error } = await supabase
+    const { data: review, error } = await supabaseAdmin
       .from('Review')
       .insert({
-        userId: user.id,
+        userId: userRecord.id,
         rating,
         title: title?.trim() || null,
         comment: comment.trim(),
