@@ -3,20 +3,67 @@
 // ============================================
 // 
 // Required environment variables:
-// - NEXT_PUBLIC_TEYA_API_URL: Teya Online Payments API endpoint (e.g., https://eu.access.deviceatlascloud.com)
-// - NEXT_PUBLIC_TEYA_MERCHANT_ID: Your merchant/account ID
-// - TEYA_API_KEY: API key for server-side requests
+// - NEXT_PUBLIC_TEYA_API_URL: Teya API endpoint
+// - NEXT_PUBLIC_TEYA_CLIENT_API_URL: Client API URL for SDK
+// - NEXT_PUBLIC_TEYA_ASSET_URL: Asset URL for SDK
+// - TEYA_CLIENT_ID: OAuth client ID
+// - TEYA_CLIENT_SECRET: OAuth client secret
+// - TEYA_STORE_ID: Store ID
 //
 // Contact Teya to obtain credentials: https://www.teya.io
 
 export const teyaConfig = {
-  // Online Payments API URLs
   apiUrl: process.env.NEXT_PUBLIC_TEYA_API_URL || 'https://api.teya.io',
-  clientApiUrl: process.env.NEXT_PUBLIC_TEYA_CLIENT_API_URL || 'https://eu.access.deviceatlascloud.com',
-  assetUrl: process.env.NEXT_PUBLIC_TEYA_ASSET_URL || 'https://static-eu.access.deviceatlascloud.com',
-  merchantId: process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID || '',
-  apiKey: process.env.TEYA_API_KEY || '',
+  clientApiUrl: process.env.NEXT_PUBLIC_TEYA_CLIENT_API_URL || 'https://clientapi.teya.io',
+  assetUrl: process.env.NEXT_PUBLIC_TEYA_ASSET_URL || 'https://assets.teya.io',
+  clientId: process.env.TEYA_CLIENT_ID || '',
+  clientSecret: process.env.TEYA_CLIENT_SECRET || '',
+  storeId: process.env.TEYA_STORE_ID || '',
 };
+
+// Cache for access token
+let accessTokenCache: { token: string; expiresAt: number } | null = null;
+
+/**
+ * Get OAuth access token using client credentials
+ */
+async function getAccessToken(): Promise<string> {
+  // Check if we have a valid cached token
+  if (accessTokenCache && accessTokenCache.expiresAt > Date.now()) {
+    return accessTokenCache.token;
+  }
+
+  if (!teyaConfig.clientId || !teyaConfig.clientSecret) {
+    throw new Error('Teya OAuth credentials not configured');
+  }
+
+  const response = await fetch(`${teyaConfig.apiUrl}/oauth/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: teyaConfig.clientId,
+      client_secret: teyaConfig.clientSecret,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Teya OAuth failed: ${error}`);
+  }
+
+  const data = await response.json();
+  
+  // Cache the token (subtract 60 seconds for safety margin)
+  accessTokenCache = {
+    token: data.access_token,
+    expiresAt: Date.now() + (data.expires_in - 60) * 1000,
+  };
+
+  return data.access_token;
+}
 
 /**
  * Create a Teya checkout session for embedded components
@@ -30,18 +77,21 @@ export async function createTeyaCheckoutSession(params: {
   customerName: string;
   description: string;
 }) {
-  if (!teyaConfig.apiKey || !teyaConfig.merchantId) {
-    throw new Error('Teya API credentials not configured');
+  if (!teyaConfig.clientId || !teyaConfig.clientSecret || !teyaConfig.storeId) {
+    throw new Error('Teya OAuth credentials not configured');
   }
+
+  // Get OAuth access token
+  const accessToken = await getAccessToken();
 
   const response = await fetch(`${teyaConfig.apiUrl}/v1/sessions`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${teyaConfig.apiKey}`,
+      'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
+      'X-Store-Id': teyaConfig.storeId,
     },
     body: JSON.stringify({
-      merchantId: teyaConfig.merchantId,
       order: {
         amount: params.amount,
         currency: params.currency,
@@ -66,8 +116,7 @@ export async function createTeyaCheckoutSession(params: {
   const data = await response.json();
   
   return {
-    clientSessionId: data.clientSessionId,
-    customerId: data.customerId,
+    sessionToken: data.sessionToken || data.id,
     clientApiUrl: teyaConfig.clientApiUrl,
     assetUrl: teyaConfig.assetUrl,
     orderId: params.orderId,
