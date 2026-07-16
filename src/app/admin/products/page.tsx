@@ -33,7 +33,7 @@ interface Product {
   image: string | null
   available: boolean
   leadTimeDays: number
-  availability?: string
+  availability: string // RETAIL, WHOLESALE, or BOTH
   madeAtFactoryA: boolean
   madeAtFactoryB: boolean
   featured?: boolean
@@ -61,6 +61,7 @@ export default function AdminProductsPage() {
     leadTimeDays: '1',
     madeAtFactoryA: true,
     madeAtFactoryB: false,
+    availability: 'RETAIL', // RETAIL, WHOLESALE, or BOTH
   })
   const [saving, setSaving] = useState(false)
 
@@ -143,6 +144,7 @@ export default function AdminProductsPage() {
         leadTimeDays: (product.leadTimeDays || 1).toString(),
         madeAtFactoryA: product.madeAtFactoryA,
         madeAtFactoryB: product.madeAtFactoryB,
+        availability: product.availability || 'RETAIL',
       })
     } else {
       setEditingProduct(null)
@@ -157,6 +159,7 @@ export default function AdminProductsPage() {
         leadTimeDays: '1',
         madeAtFactoryA: true,
         madeAtFactoryB: false,
+        availability: 'RETAIL',
       })
     }
     setShowModal(true)
@@ -197,6 +200,7 @@ export default function AdminProductsPage() {
         leadTimeDays: parseInt(formData.leadTimeDays) || 1,
         madeAtFactoryA: formData.madeAtFactoryA,
         madeAtFactoryB: formData.madeAtFactoryB,
+        availability: formData.availability,
       }
 
       const url = editingProduct ? `/api/admin/products?id=${editingProduct.id}` : '/api/admin/products'
@@ -358,6 +362,23 @@ export default function AdminProductsPage() {
                       {product.wholesalePrice && (
                         <span className="ml-2 text-sm text-[#6B5344]">/ £{product.wholesalePrice.toFixed(2)} wholesale</span>
                       )}
+                      <div className="flex gap-1 mt-1">
+                        {product.availability === 'RETAIL' && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                            Retail
+                          </span>
+                        )}
+                        {product.availability === 'WHOLESALE' && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                            Wholesale
+                          </span>
+                        )}
+                        {product.availability === 'BOTH' && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                            Both
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -492,6 +513,28 @@ export default function AdminProductsPage() {
                     placeholder="1.25"
                   />
                 </div>
+              </div>
+
+              {/* Availability */}
+              <div>
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
+                  Available For
+                </label>
+                <select
+                  name="availability"
+                  value={formData.availability}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
+                >
+                  <option value="RETAIL">Retail Only</option>
+                  <option value="WHOLESALE">Wholesale Only</option>
+                  <option value="BOTH">Both Retail &amp; Wholesale</option>
+                </select>
+                <p className="text-xs text-[#6B5344] mt-1">
+                  {formData.availability === 'RETAIL' && 'Product will only appear in retail store'}
+                  {formData.availability === 'WHOLESALE' && 'Product will only appear in wholesale store'}
+                  {formData.availability === 'BOTH' && 'Product will appear in both retail and wholesale'}
+                </p>
               </div>
 
               {/* Lead Time */}
