@@ -1,22 +1,83 @@
 // ============================================
-// Teya Payment Integration
+// Teya Online Payments Integration
 // ============================================
 // 
 // Required environment variables:
-// - NEXT_PUBLIC_TEYA_API_URL: Teya API endpoint
-// - NEXT_PUBLIC_TEYA_MERCHANT_ID: Your merchant ID
+// - NEXT_PUBLIC_TEYA_API_URL: Teya Online Payments API endpoint (e.g., https://eu.access.deviceatlascloud.com)
+// - NEXT_PUBLIC_TEYA_MERCHANT_ID: Your merchant/account ID
 // - TEYA_API_KEY: API key for server-side requests
 //
 // Contact Teya to obtain credentials: https://www.teya.io
 
 export const teyaConfig = {
+  // Online Payments API URLs
   apiUrl: process.env.NEXT_PUBLIC_TEYA_API_URL || 'https://api.teya.io',
+  clientApiUrl: process.env.NEXT_PUBLIC_TEYA_CLIENT_API_URL || 'https://eu.access.deviceatlascloud.com',
+  assetUrl: process.env.NEXT_PUBLIC_TEYA_ASSET_URL || 'https://static-eu.access.deviceatlascloud.com',
   merchantId: process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID || '',
   apiKey: process.env.TEYA_API_KEY || '',
 };
 
 /**
- * Create a Teya payment session (like Stripe PaymentIntent)
+ * Create a Teya checkout session for embedded components
+ * This should be called from an API route (server-side)
+ */
+export async function createTeyaCheckoutSession(params: {
+  amount: number; // in minor units (pence/cents)
+  currency: string;
+  orderId: string;
+  customerEmail: string;
+  customerName: string;
+  description: string;
+}) {
+  if (!teyaConfig.apiKey || !teyaConfig.merchantId) {
+    throw new Error('Teya API credentials not configured');
+  }
+
+  const response = await fetch(`${teyaConfig.apiUrl}/v1/sessions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${teyaConfig.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      merchantId: teyaConfig.merchantId,
+      order: {
+        amount: params.amount,
+        currency: params.currency,
+        reference: params.orderId,
+        description: params.description,
+      },
+      customer: {
+        emailAddress: params.customerEmail,
+        firstName: params.customerName.split(' ')[0] || params.customerName,
+        lastName: params.customerName.split(' ').slice(1).join(' ') || '',
+      },
+      returnUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?orderId=${params.orderId}`,
+      returnCancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout?cancelled=true`,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Teya session creation failed: ${error}`);
+  }
+
+  const data = await response.json();
+  
+  return {
+    clientSessionId: data.clientSessionId,
+    customerId: data.customerId,
+    clientApiUrl: teyaConfig.clientApiUrl,
+    assetUrl: teyaConfig.assetUrl,
+    orderId: params.orderId,
+    amount: params.amount,
+    currency: params.currency,
+  };
+}
+
+/**
+ * Create a Teya payment session (legacy - for hosted checkout)
  * This is called when user reaches checkout confirmation
  */
 export async function createTeyaPaymentSession(params: {

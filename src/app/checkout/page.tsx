@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ShoppingBag, MapPin, Clock, CreditCard, CheckCircle, AlertCircle, Calendar, Zap } from 'lucide-react'
 import { useCartStore, formatPrice } from '@/lib/stores/cart'
 import { useSupabaseUser } from '@/components/providers/SupabaseProvider'
+import { TeyaCheckout } from '@/components/payment/TeyaCheckout'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -23,6 +24,10 @@ export default function CheckoutPage() {
   const [deliveryAddress, setDeliveryAddress] = useState('')
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
+  // Payment state
+  const [orderId, setOrderId] = useState<string | null>(null)
+  const [internalOrderId, setInternalOrderId] = useState<string | null>(null)
+  const [showPayment, setShowPayment] = useState(false)
 
   // Availability info
   const [availabilityInfo, setAvailabilityInfo] = useState<{
@@ -134,23 +139,72 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'Failed to create order')
       }
 
-      clearCart()
+      // Store order info for payment or success page
+      setOrderId(data.orderId)
+      setInternalOrderId(data.internalId)
 
-      sessionStorage.setItem('lastOrder', JSON.stringify({
-        orderId: data.orderId,
-        items: items,
-        total: data.total,
-        pickupDate,
-        pickupTime,
-        deliveryMethod,
-        customer: customerInfo,
-      }))
+      // Check if Teya is configured for online payments
+      const statusRes = await fetch('/api/teya/status')
+      const statusData = await statusRes.json()
 
-      router.push('/checkout/success')
+      if (statusData.configured) {
+        // Show embedded payment form
+        setShowPayment(true)
+        setProcessing(false)
+      } else {
+        // No online payment - complete order and go to success
+        clearCart()
+        sessionStorage.setItem('lastOrder', JSON.stringify({
+          orderId: data.orderId,
+          items: items,
+          total: data.total,
+          pickupDate,
+          pickupTime,
+          deliveryMethod,
+          customer: customerInfo,
+          paymentStatus: 'PENDING',
+        }))
+        router.push('/checkout/success')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred. Please try again.')
       setProcessing(false)
     }
+  }
+
+  const handlePaymentSuccess = async (paymentResult: any) => {
+    try {
+      // Update order payment status
+      await fetch(`/api/orders/${internalOrderId}/payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentId: paymentResult.paymentId,
+          status: paymentResult.status,
+        }),
+      })
+
+      clearCart()
+      sessionStorage.setItem('lastOrder', JSON.stringify({
+        orderId,
+        items: items,
+        total: total,
+        pickupDate,
+        pickupTime,
+        deliveryMethod,
+        customer: customerInfo,
+        paymentStatus: 'PAID',
+        paymentId: paymentResult.paymentId,
+      }))
+      router.push('/checkout/success')
+    } catch (err) {
+      setError('Failed to complete order. Please contact support.')
+    }
+  }
+
+  const handlePaymentError = (error: string) => {
+    setError(`Payment failed: ${error}`)
+    setShowPayment(false)
   }
 
   return (
@@ -388,29 +442,38 @@ export default function CheckoutPage() {
                   Payment
                 </h2>
 
-                <div className="p-4 bg-[#FDF8E8] rounded-lg mb-4">
-                  <p className="text-sm text-[#6B5344]">
-                    <strong>Payment is collected at collection/delivery.</strong> You can pay by card, 
-                    cash, or contactless when you pick up your order.
-                  </p>
-                </div>
-
-                {/* Check Teya integration dynamically */}
-                {typeof window !== 'undefined' && 
-                 process.env.NEXT_PUBLIC_TEYA_API_URL && 
-                 process.env.NEXT_PUBLIC_TEYA_MERCHANT_ID && 
-                 process.env.TEYA_API_KEY ? (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-sm text-green-800">
-                      <strong>✓ Teya Payment Ready:</strong> Your payment will be processed securely via Teya POS when you collect your order.
-                    </p>
-                  </div>
+                {showPayment && orderId ? (
+                  // Embedded Teya payment form
+                  <TeyaCheckout
+                    amount={total}
+                    currency="GBP"
+                    orderId={orderId}
+                    customerEmail={customerInfo.email}
+                    customerName={customerInfo.name}
+                    description={`Order ${orderId} - Slindon Patisserie`}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                    onCancel={() => {
+                      setShowPayment(false)
+                      setError('Payment cancelled. Your order is still saved.')
+                    }}
+                  />
                 ) : (
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-sm text-amber-800">
-                      <strong>⚠ Teya Integration Coming Soon:</strong> Thank you for your patience. You'll be able to pay by card, cash, or contactless when you collect your order. Online payment integration is currently being set up.
-                    </p>
-                  </div>
+                  // Default: Payment on collection
+                  <>
+                    <div className="p-4 bg-[#FDF8E8] rounded-lg mb-4">
+                      <p className="text-sm text-[#6B5344]">
+                        <strong>Payment is collected at collection/delivery.</strong> You can pay by card, 
+                        cash, or contactless when you pick up your order.
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        <strong>⚠ Teya Integration Coming Soon:</strong> Thank you for your patience. You'll be able to pay by card, cash, or contactless when you collect your order. Online payment integration is currently being set up.
+                      </p>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
