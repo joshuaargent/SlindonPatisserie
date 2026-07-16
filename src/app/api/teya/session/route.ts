@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if Teya is configured
-    if (!teyaConfig.apiKey || !teyaConfig.merchantId) {
+    if (!teyaConfig.clientId || !teyaConfig.clientSecret || !teyaConfig.storeId) {
       return NextResponse.json(
         { error: 'Teya payment is not configured. Please contact support.' },
         { status: 503 }
