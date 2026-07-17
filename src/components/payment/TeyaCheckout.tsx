@@ -293,29 +293,33 @@ export function TeyaCheckout({
       )}
 
       {/* SDK placeholder for development */}
-      {!window.TeyaBlocks && (
+      {!window.TeyaBlocks && !loading && (
         <div className="p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
           <CreditCard className="w-12 h-12 text-gray-400 mx-auto mb-3" />
           <p className="text-gray-600 font-medium">Teya Payment Form</p>
           <p className="text-gray-500 text-sm mt-1">
             Card number, expiry, and CVV fields will appear here.
           </p>
-          <p className="text-gray-400 text-xs mt-3">
-            (Development mode - SDK not loaded)
-          </p>
-          {/* Simulate success for testing */}
-          <button
-            onClick={() => onSuccess({
-              paymentId: `dev_${Date.now()}`,
-              orderId,
-              status: 'COMPLETED',
-              amount,
-              currency,
-            })}
-            className="mt-4 px-4 py-2 bg-[#8B1E22] text-white rounded-lg hover:bg-[#6B1A1C] transition-colors"
-          >
-            Simulate Successful Payment (Dev Only)
-          </button>
+          {process.env.NODE_ENV === 'development' && (
+            <>
+              <p className="text-gray-400 text-xs mt-3">
+                (Development mode - SDK not loaded)
+              </p>
+              {/* Simulate success for testing */}
+              <button
+                onClick={() => onSuccess({
+                  paymentId: `dev_${Date.now()}`,
+                  orderId,
+                  status: 'COMPLETED',
+                  amount,
+                  currency,
+                })}
+                className="mt-4 px-4 py-2 bg-[#8B1E22] text-white rounded-lg hover:bg-[#6B1A1C] transition-colors"
+              >
+                Simulate Successful Payment (Dev Only)
+              </button>
+            </>
+          )}
         </div>
       )}
 

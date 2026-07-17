@@ -460,20 +460,12 @@ export default function CheckoutPage() {
                   />
                 ) : (
                   // Default: Payment on collection
-                  <>
-                    <div className="p-4 bg-[#FDF8E8] rounded-lg mb-4">
-                      <p className="text-sm text-[#6B5344]">
-                        <strong>Payment is collected at collection/delivery.</strong> You can pay by card, 
-                        cash, or contactless when you pick up your order.
-                      </p>
-                    </div>
-
-                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                      <p className="text-sm text-amber-800">
-                        <strong>⚠ Teya Integration Coming Soon:</strong> Thank you for your patience. You'll be able to pay by card, cash, or contactless when you collect your order. Online payment integration is currently being set up.
-                      </p>
-                    </div>
-                  </>
+                  <div className="p-4 bg-[#FDF8E8] rounded-lg">
+                    <p className="text-sm text-[#6B5344]">
+                      <strong>Payment is collected at collection/delivery.</strong> You can pay by card, 
+                      cash, or contactless when you pick up your order.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

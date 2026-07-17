@@ -12,68 +12,92 @@ import {
   Package
 } from 'lucide-react'
 
-// Category type
+// Category type from database
 interface Category {
   id: string
   name: string
-  label: string
-  emoji: string
-  color: string
-  productCount: number
+  slug: string
+  description: string | null
+  image: string | null
+  sortOrder: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
-// Predefined categories
-const defaultCategories: Category[] = [
-  { id: '1', name: 'bakery', label: 'Patisserie', emoji: '🥐', color: '#8B1E22', productCount: 0 },
-  { id: '2', name: 'bread', label: 'Artisan Bread', emoji: '🍞', color: '#8B1E22', productCount: 0 },
-  { id: '3', name: 'catering', label: 'Catering', emoji: '🥪', color: '#D0A246', productCount: 0 },
-  { id: '4', name: 'wholesale', label: 'Wholesale', emoji: '📦', color: '#8B1E22', productCount: 0 },
-  { id: '5', name: 'pos', label: 'POS & Supplies', emoji: '🛍️', color: '#6B5344', productCount: 0 },
-  { id: '6', name: 'sundries', label: 'Sundries', emoji: '🛒', color: '#3A2C2A', productCount: 0 },
-]
+// Emoji and color mapping (stored in description or derived from name)
+const emojiMap: Record<string, string> = {
+  bakery: '🥐',
+  bread: '🍞',
+  patisserie: '🥐',
+  catering: '🥪',
+  wholesale: '📦',
+  pos: '🛍️',
+  sundries: '🛒',
+  default: '🧁',
+}
 
 const colorOptions = [
-  '#8B1E22', '#8B1E22', '#D0A246', '#8B1E22', '#6B5344', '#3A2C2A',
+  '#8B1E22', '#D0A246', '#6B5344', '#3A2C2A',
   '#2563EB', '#059669', '#7C3AED', '#DB2777', '#EA580C', '#0891B2',
 ]
 
 const emojiOptions = ['🥐', '🍞', '🥖', '🥪', '🍰', '🧁', '🥧', '🍩', '🍪', '📦', '🛒', '🛍️', '☕', '🍵', '🥤']
 
+function getEmoji(name: string): string {
+  const lower = name.toLowerCase()
+  for (const [key, emoji] of Object.entries(emojiMap)) {
+    if (lower.includes(key)) return emoji
+  }
+  return emojiMap.default
+}
+
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>(defaultCategories)
-  const [loading, setLoading] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [productCounts, setProductCounts] = useState<Record<string, number>>({})
+  const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [formData, setFormData] = useState({
     name: '',
-    label: '',
-    emoji: '🥐',
-    color: '#8B1E22',
+    slug: '',
+    description: '',
   })
   const [saving, setSaving] = useState(false)
 
-  // Fetch products to get counts
+  // Fetch categories and product counts
   useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        const response = await fetch('/api/products')
-        if (response.ok) {
-          const data = await response.json()
-          const productCounts: Record<string, number> = {}
-          data.products.forEach((product: { category: string }) => {
-            productCounts[product.category] = (productCounts[product.category] || 0) + 1
-          })
-          setCategories(prev => prev.map(cat => ({
-            ...cat,
-            productCount: productCounts[cat.name] || 0
-          })))
-        }
-      } catch (error) {
-        console.error('Failed to fetch product counts:', error)
-      }
-    }
-    fetchCounts()
+    fetchCategories()
+    fetchProductCounts()
   }, [])
+
+  async function fetchCategories() {
+    try {
+      const res = await fetch('/api/admin/categories')
+      const data = await res.json()
+      setCategories(data.categories || [])
+    } catch (error) {
+      console.error('Failed to fetch categories:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function fetchProductCounts() {
+    try {
+      const res = await fetch('/api/products')
+      const data = await res.json()
+      const counts: Record<string, number> = {}
+      data.products?.forEach((product: { categoryId: string }) => {
+        if (product.categoryId) {
+          counts[product.categoryId] = (counts[product.categoryId] || 0) + 1
+        }
+      })
+      setProductCounts(counts)
+    } catch (error) {
+      console.error('Failed to fetch product counts:', error)
+    }
+  }
 
   // Open modal for new/edit
   const openModal = (category?: Category) => {
@@ -81,17 +105,15 @@ export default function AdminCategoriesPage() {
       setEditingCategory(category)
       setFormData({
         name: category.name,
-        label: category.label,
-        emoji: category.emoji,
-        color: category.color,
+        slug: category.slug,
+        description: category.description || '',
       })
     } else {
       setEditingCategory(null)
       setFormData({
         name: '',
-        label: '',
-        emoji: '🥐',
-        color: '#8B1E22',
+        slug: '',
+        description: '',
       })
     }
     setShowModal(true)
@@ -104,47 +126,88 @@ export default function AdminCategoriesPage() {
   }
 
   // Handle input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  // Auto-generate slug from name
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    setFormData(prev => ({ ...prev, name, slug: prev.slug || slug }))
   }
 
   // Save category
-  const handleSave = () => {
-    if (!formData.name || !formData.label) {
-      alert('Please fill in all required fields')
+  const handleSave = async () => {
+    if (!formData.name || !formData.slug) {
+      alert('Please fill in name and slug')
       return
     }
 
-    // For now, just update local state (in production, would call API)
-    if (editingCategory) {
-      setCategories(prev => prev.map(cat => 
-        cat.id === editingCategory.id 
-          ? { ...cat, name: formData.name, label: formData.label, emoji: formData.emoji, color: formData.color }
-          : cat
-      ))
-    } else {
-      setCategories(prev => [...prev, {
-        id: `new-${Date.now()}`,
-        name: formData.name,
-        label: formData.label,
-        emoji: formData.emoji,
-        color: formData.color,
-        productCount: 0,
-      }])
+    setSaving(true)
+    try {
+      const url = editingCategory 
+        ? '/api/admin/categories' 
+        : '/api/admin/categories'
+      const method = editingCategory ? 'PATCH' : 'POST'
+      const body = editingCategory 
+        ? { id: editingCategory.id, name: formData.name, slug: formData.slug, description: formData.description }
+        : { name: formData.name, slug: formData.slug, description: formData.description }
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+
+      if (res.ok) {
+        await fetchCategories()
+        closeModal()
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Failed to save category')
+      }
+    } catch (error) {
+      console.error('Failed to save:', error)
+      alert('Failed to save category')
+    } finally {
+      setSaving(false)
     }
-    closeModal()
   }
 
   // Delete category
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     const category = categories.find(c => c.id === id)
-    if (category && category.productCount > 0) {
-      alert(`Cannot delete "${category.label}" - it has ${category.productCount} products. Remove or reassign products first.`)
+    const count = productCounts[id] || 0
+    
+    if (count > 0) {
+      alert(`Cannot delete "${category?.name}" - it has ${count} products. Remove or reassign products first.`)
       return
     }
-    if (confirm(`Are you sure you want to delete "${category?.label}"?`)) {
-      setCategories(prev => prev.filter(cat => cat.id !== id))
+    
+    if (!confirm(`Are you sure you want to delete "${category?.name}"?`)) return
+
+    try {
+      const res = await fetch(`/api/admin/categories?id=${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setCategories(prev => prev.filter(cat => cat.id !== id))
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Failed to delete')
+      }
+    } catch (error) {
+      console.error('Failed to delete:', error)
+      alert('Failed to delete category')
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#8B1E22]" />
+      </div>
+    )
   }
 
   return (
@@ -165,59 +228,65 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category) => (
-          <div
-            key={category.id}
-            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
-          >
-            {/* Category Header */}
-            <div className="flex items-start gap-4 mb-4">
-              <div 
-                className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl"
-                style={{ backgroundColor: `${category.color}20` }}
-              >
-                {category.emoji}
+      {categories.length === 0 ? (
+        <div className="bg-white rounded-xl p-12 text-center">
+          <Tag className="w-12 h-12 text-[#6B5344] mx-auto mb-4" />
+          <p className="text-[#6B5344]">No categories yet. Add your first category to get started.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+            >
+              {/* Category Header */}
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl bg-[#F7F2E9]">
+                  {getEmoji(category.name)}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-[#3A2C2A] text-lg">{category.name}</h3>
+                  <p className="text-sm text-[#6B5344]">/{category.slug}</p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-[#3A2C2A] text-lg">{category.label}</h3>
-                <p className="text-sm text-[#6B5344]">{category.name}</p>
-              </div>
-            </div>
 
-            {/* Stats */}
-            <div className="flex items-center justify-between py-3 border-t border-[#E8DDD0]">
-              <div className="flex items-center gap-2 text-[#6B5344]">
-                <Package className="w-4 h-4" />
-                <span>{category.productCount} products</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => openModal(category)}
-                  className="p-2 text-[#6B5344] hover:text-[#8B1E22] transition-colors"
-                >
-                  <Edit className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(category.id)}
-                  className="p-2 text-[#6B5344] hover:text-red-500 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+              {/* Description */}
+              {category.description && (
+                <p className="text-sm text-[#6B5344] mb-4 line-clamp-2">{category.description}</p>
+              )}
 
-            {/* Color Preview */}
-            <div className="flex items-center gap-2 mt-3">
-              <span className="text-xs text-[#6B5344]">Color:</span>
-              <div 
-                className="w-6 h-6 rounded-full"
-                style={{ backgroundColor: category.color }}
-              />
+              {/* Stats */}
+              <div className="flex items-center justify-between py-3 border-t border-[#E8DDD0]">
+                <div className="flex items-center gap-2 text-[#6B5344]">
+                  <Package className="w-4 h-4" />
+                  <span>{productCounts[category.id] || 0} products</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => openModal(category)}
+                    className="p-2 text-[#6B5344] hover:text-[#8B1E22] transition-colors"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(category.id)}
+                    className="p-2 text-[#6B5344] hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Active Status */}
+              <div className="flex items-center gap-2 mt-3">
+                <span className={`w-2 h-2 rounded-full ${category.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
+                <span className="text-xs text-[#6B5344]">{category.isActive ? 'Active' : 'Inactive'}</span>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Category Count */}
       <div className="mt-6 text-sm text-[#6B5344]">
@@ -240,79 +309,64 @@ export default function AdminCategoriesPage() {
 
             {/* Modal Body */}
             <div className="p-6 space-y-4">
-              {/* Name (slug) */}
+              {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
-                  URL Name (slug) *
+                  Name *
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
-                  placeholder="e.g., bakery, bread, catering"
-                />
-                <p className="text-xs text-[#6B5344] mt-1">Used in URL: /products?category=your-name</p>
-              </div>
-
-              {/* Label */}
-              <div>
-                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
-                  Display Name *
-                </label>
-                <input
-                  type="text"
-                  name="label"
-                  value={formData.label}
-                  onChange={handleInputChange}
+                  onChange={handleNameChange}
                   required
                   className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
                   placeholder="e.g., Patisserie, Artisan Bread"
                 />
               </div>
 
-              {/* Emoji Picker */}
+              {/* Slug */}
               <div>
-                <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
-                  Icon
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
+                  URL Slug *
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  {emojiOptions.map((emoji) => (
-                    <button
-                      key={emoji}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, emoji }))}
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl transition-colors ${
-                        formData.emoji === emoji
-                          ? 'bg-[#8B1E22] text-white'
-                          : 'bg-[#F7F2E9] hover:bg-[#E8DDD0]'
-                      }`}
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  name="slug"
+                  value={formData.slug}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
+                  placeholder="e.g., patisserie, artisan-bread"
+                />
+                <p className="text-xs text-[#6B5344] mt-1">Used in URL: /products?category=your-slug</p>
               </div>
 
-              {/* Color Picker */}
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-[#3A2C2A] mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-[#E8DDD0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B1E22]"
+                  placeholder="Optional description for this category"
+                />
+              </div>
+
+              {/* Emoji Preview */}
               <div>
                 <label className="block text-sm font-medium text-[#3A2C2A] mb-2">
-                  Color
+                  Preview Icon
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  {colorOptions.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, color }))}
-                      className={`w-8 h-8 rounded-full transition-transform ${
-                        formData.color === color ? 'ring-2 ring-offset-2 ring-[#8B1E22] scale-110' : 'hover:scale-110'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
+                <div className="flex items-center gap-3 p-3 bg-[#F7F2E9] rounded-lg">
+                  <span className="text-3xl">{getEmoji(formData.name)}</span>
+                  <span className="text-sm text-[#6B5344]">
+                    Icon is auto-selected based on category name
+                  </span>
                 </div>
               </div>
             </div>
@@ -327,7 +381,7 @@ export default function AdminCategoriesPage() {
               </button>
               <button
                 onClick={handleSave}
-                disabled={saving || !formData.name || !formData.label}
+                disabled={saving || !formData.name || !formData.slug}
                 className="btn-secondary-sm disabled:opacity-50"
               >
                 {saving ? (
