@@ -27,8 +27,29 @@ export default function CareersPage() {
       return
     }
 
-    // In production, this would submit to an API
-    setSubmitted(true)
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: 'Careers Application',
+          category: 'careers',
+          message: formData.message,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to submit application')
+      }
+
+      setSubmitted(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit application. Please try again.')
+    }
   }
 
   if (submitted) {
