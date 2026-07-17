@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category')
     const available = searchParams.get('available')
     const includeWholesale = searchParams.get('includeWholesale') === 'true'
+    const availabilityFilter = searchParams.get('availability') // RETAIL, WHOLESALE, or BOTH
 
     let query = supabaseAdmin
       .from('Product')
@@ -36,6 +37,14 @@ export async function GET(request: NextRequest) {
     if (available === 'true') {
       query = query.eq('available', true)
     }
+
+    // Filter by availability type (for wholesale store vs retail store)
+    if (availabilityFilter === 'WHOLESALE') {
+      query = query.in('availability', ['WHOLESALE', 'BOTH'])
+    } else if (availabilityFilter === 'RETAIL') {
+      query = query.in('availability', ['RETAIL', 'BOTH'])
+    }
+    // If not specified, return all products (for admin view)
 
     const { data: products, error } = await query
 
