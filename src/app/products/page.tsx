@@ -92,7 +92,7 @@ export default function ProductsPage() {
 
       const data = await response.json()
       setProducts(data.products)
-      setCategories(data.categories)
+      setCategories(data.categorySlugs || data.categories || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       // Fall back to empty products if API fails

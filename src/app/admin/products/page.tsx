@@ -71,6 +71,7 @@ export default function AdminProductsPage() {
       const response = await fetch('/api/products')
       if (response.ok) {
         const data = await response.json()
+        // Use full category objects for admin (id, name, slug)
         setCategories(data.categories || [])
       }
     } catch (err) {

@@ -70,13 +70,14 @@ export async function GET(request: NextRequest) {
     // Get categories as slugs array for the filter tabs
     const { data: categories } = await supabaseAdmin
       .from('Category')
-      .select('slug')
+      .select('id, name, slug')
       .eq('isActive', true)
       .order('sortOrder', { ascending: true })
 
     return NextResponse.json({
       products: transformedProducts,
-      categories: categories?.map(c => c.slug) || [],
+      categories: categories || [],
+      categorySlugs: categories?.map(c => c.slug) || [],
     })
   } catch (error) {
     console.error('Error fetching products:', error)
