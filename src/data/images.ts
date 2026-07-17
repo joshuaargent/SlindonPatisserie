@@ -123,7 +123,7 @@ export function getImageById(id: string): ImageEntry | undefined {
 
 // Placeholder image for when actual images aren't available
 export const placeholderImage = {
-  path: '/images/placeholder.jpg',
-  alt: 'Image coming soon',
-  description: 'Image will be added soon',
+  path: '/images/placeholder.svg',
+  alt: 'Image placeholder',
+  description: 'Image placeholder',
 };
